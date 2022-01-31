@@ -11,6 +11,8 @@ namespace Labs.Lab1
         private int mVertexBufferObjectID;
         private ShaderUtility mShader;
 
+        //TODO: TAKE NOTE OF CULLING, WINDING 
+
         public Lab1Window()
             : base(
                 800, // Width
@@ -29,10 +31,10 @@ namespace Labs.Lab1
         protected override void OnLoad(EventArgs e)
         {
             GL.ClearColor(Color4.Green);
+            GL.Enable(EnableCap.CullFace);
 
-
-            float[] vertices = new float[] { -0.8f, -0.8f,
-                                             -0.8f, 0.8f,
+            float[] vertices = new float[] { -0.8f, 0.8f,
+                                             -0.8f, -0.8f,
                                              0.8f, 0.8f };
 
             GL.GenBuffers(1, out mVertexBufferObjectID);
