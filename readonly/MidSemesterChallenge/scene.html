@@ -1,0 +1,55 @@
+
+<html>
+<head>
+<title>Mid Semester Challenge!</title>
+</head>
+<body>
+<h2>08214 Mid Semester Challenge</h2>
+<p>
+The goal of the mid semester challenge is to give you the opportunity to check your skills and to think about what you've learnt so far. 
+The skills you require to complete this challenge are also very similar to the skills that will be required for your ACW.
+</p>
+<p>For your own records you should try to commit your work to SVN whenever a new piece of functionality is completed, with an appropriate message.
+To help you maintain focus you might want to write an ordered list of the necessary tasks you will need to complete. As you complete each task you should commit 
+your work with a description of the task you have just completed.
+</p>
+<p>
+You challenge (should you choose to accept it) is to use OpenGL to generate the following scene.
+</p>
+<img src='screenshot.jpg' width='816' height='639'/>
+<p>To help you figure out what goes where here is an orthographic top-down view of the scene</p>
+<img src='ortho.jpg' width='816' height='639'/><br/>
+<b>Background Colour:</b>
+<p>Colour R:0.5019608 G:0 B:0.5019608</p>
+<b>The large cube which surrounds the other objects:</b>
+<p>Colour R:0 G:1 B:0 Dimension 24 units</p>
+<p>All other objects should be resting on the floor of the large surrounding cube.</p>
+<b>The big cuboid in the scene:</b>
+<p>Colour R:0.8627451 G:0.07843138 B:0.2352941 Dimension 7 units Height 4 units X 7 Z 6</p>
+<b>The small cuboid in the scene:</b>
+<p>Colour R:0 G:0 B:1 Dimension 2 units Height 7 positioned on top of the big cube (centred alligned vertically) and rotated by 0.5235988 radians</p>
+<b>The sphere in the scene:</b>
+<p>Colour R:0 G:0.5019608 B:0 Radius 3 units X 4 Z -6</p>
+<b>The cylinder in the scene:</b>
+<p>Colour R:0.5764706 G:0.4392157 B:0.8588235 Radius 2 length 4 is positioned with X value 6 (Z is alligned with the centre of the scene) and rotated by 1.047198 radians</p>
+<p>Use whatever lighting you like. In the screenshot the scene is lit using a white point light at the centre of the scene, and all object have the same ambient and specular reflectivities, and the same shininess.</p>
+<h3>Helpful Hints</h3>
+<p>There are two cubes in the scene - an inside cube and an outside cube. You could change the cull face, but then you would have to deal with
+the normal vectors pointing in the opposite direction. Alternatively you can either generate a model for each using the (made up) sjg format.</p>
+<p>Here is a description of the sjg format:
+<ul><li>The first line is ignored.</li>
+    <li>The next line is the number of vertices.</li>
+    <li>6 floats are read in for each vertex. The could be anything. I suggest x,y,z position and nx,ny,nz normal vectors.</li>
+    <li>After all the vertices are read in the next line is ignored.</li>
+    <li>The next line is the number of triangles.</li>
+    <li>3 integers are read in for each triangle.</li></ul>
+</p>
+<p>Be aware of the dimensions of the models so that you can scale, translate and rotate them into place. The sphere and cylinders both have a radius of 1 unit. The cylinder has a length of 2 units.</p>
+<p>Develop your solution iteratively, and commit your work each time you get something working.</p>
+<p>Think about how you might be able to save some time and effort using better class design. This will serve you well in preparation for your ACW. Here are some suggestions for areas of improvement.
+    <ul><li>Loading a model into vertex buffers, element buffers and a vertex array object is messy and involves a lot of code repetition.</li>
+    <li>If you are drawing two things that use the same model you should make sure to only load that model once. You could keep a record of what has already been loaded, and only load things that have not been loaded before.</li>
+    </ul>
+</p>
+</body>
+</html>
