@@ -33,12 +33,27 @@ namespace Labs.Lab1
             GL.ClearColor(Color4.Green);
             GL.Enable(EnableCap.CullFace);
 
-            float[] vertices = new float[] { -0.8f, 0.8f, // Top Left Corner, Triangle 1
-                                             -0.8f, -0.8f, // Bottom Left corner, Triangle 1
-                                             0.8f, 0.8f, // Top Right corner, Triangle 1
-                                              -0.8f, -0.8f, // Bottom Left corner, Triangle 2
-                                              0.8f, -0.8f, // Bottom Right corner, Triangle 2
-                                              0.8f, 0.8f }; // Top Right corner, Triangle 2
+            //float[] vertices = new float[] { -0.8f, 0.8f, // Top Left Corner, Triangle 1
+            //                                 -0.8f, -0.8f, // Bottom Left corner, Triangle 1
+            //                                 0.8f, 0.8f, // Top Right corner, Triangle 1
+            //                                  -0.8f, -0.8f, // Bottom Left corner, Triangle 2
+            //                                  0.8f, -0.8f, // Bottom Right corner, Triangle 2
+            //                                  0.8f, 0.8f }; // Top Right corner, Triangle 2
+
+
+            float[] vertices = new float[] { 
+                                 -0.4f, 0.0f,
+                                  0.4f, 0.0f,
+                                  0.0f, 0.6f,
+                                 -0.4f, 0.0f,
+                                 -0.8f, -0.6f,
+                                 0.0f, -0.6f,
+                                 0.4f, 0.0f,
+                                 0.0f, -0.6f,
+                                 0.8f, -0.6f
+
+
+            };
 
             GL.GenBuffers(1, out mVertexBufferObjectID);
             GL.BindBuffer(BufferTarget.ArrayBuffer, mVertexBufferObjectID);
@@ -77,7 +92,8 @@ namespace Labs.Lab1
 
             #endregion
 
-            GL.DrawArrays(PrimitiveType.Triangles, 0, 6);
+            // Second argument is where to start the draw, Third argument is the end of the draw
+            GL.DrawArrays(PrimitiveType.Triangles, 0, 9);
 
             this.SwapBuffers();
         }
