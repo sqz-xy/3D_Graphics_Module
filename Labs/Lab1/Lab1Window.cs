@@ -73,9 +73,16 @@ namespace Labs.Lab1
                                   -0.6f, 0.2f,//11
                                  -0.6f, -0.6f,//12
                                    0.2f,-0.6f,//13
-                                    0.2f,-0.2f//14
-
-                                    //reuse 10 and 14 i think
+                                   0.2f,-0.2f,//14
+                                 -0.4f, -0.2f,//15
+                                  0.0f, -0.2f,//16
+                                  0.6f, -0.2f,//17
+                                  0.6f, 0.2f, //18
+                                  0.0f, 0.2f, //19
+                                  0.4f,-0.2f,  //20 
+                                  0.4f,-0.6f, //21
+                                  0.6f,-0.6f, //22 
+                                  0.6f, -0.2f //23
             };
 
             //The index of the vertices 0 in the indices corresponds to element 0 in the vertices
@@ -88,14 +95,13 @@ namespace Labs.Lab1
                                           9,8,7,
                                           1,11,10,
                                           10,11,12,
-                                          10,13,14
-                                          
-
-                                          
-
-
-                                          
-                                          }; //0,5,2,
+                                          10,13,14,
+                                          10,14,15,
+                                          16,17,18,
+                                          19,16,18,
+                                          20,21,22,
+                                          23,20,22                                      
+            }; 
 
             GL.GenBuffers(2, mVertexBufferObjectIDArray);
 
@@ -150,7 +156,7 @@ namespace Labs.Lab1
 
             // Second argument is where to start the draw, Third argument is the end of the draw
              
-GL.DrawElements(PrimitiveType.Triangles, 64, DrawElementsType.UnsignedInt, 0);
+GL.DrawElements(PrimitiveType.Triangles, 46, DrawElementsType.UnsignedInt, 0);
 
             this.SwapBuffers();
         }
