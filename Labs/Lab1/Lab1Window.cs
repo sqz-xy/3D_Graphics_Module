@@ -178,7 +178,7 @@ namespace Labs.Lab1
 
             // Second argument is where to start the draw, Third argument is the end of the draw
              
-            GL.DrawElements(PrimitiveType.TriangleStrip, 46, DrawElementsType.UnsignedInt, 0);
+            GL.DrawElements(PrimitiveType.TriangleStrip, 5, DrawElementsType.UnsignedInt, 0);
 
             this.SwapBuffers();
         }
