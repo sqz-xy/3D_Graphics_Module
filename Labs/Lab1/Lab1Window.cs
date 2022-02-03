@@ -120,10 +120,10 @@ namespace Labs.Lab1
             //                  2,
             //                  1};
 
-            uint[] indices = new uint[] { 0,4,3,
-                              2,
-                              1};
-            //L2T10 Stuck on triangle strip
+            uint[] indices = new uint[] { 2,1,3,0,4
+                              
+                              };
+            
 
             GL.GenBuffers(2, mVertexBufferObjectIDArray);
 
