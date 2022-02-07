@@ -34,11 +34,11 @@ namespace Labs.Lab2
             GL.Enable(EnableCap.DepthTest);
 
             float[] triangleVertices = new float[] {
-                                             -0.8f, 0.8f, 0.4f, 1.0f, 0.0f, 1.0f,
+                                             -0.8f, 0.8f, 0.4f, 1.0f, 0.0f, 0.0f,
 
-                                             -0.6f, -0.4f, 0.4f, 1.0f, 0.0f, 1.0f,
+                                             -0.6f, -0.4f, 0.4f, 0.0f, 1f, 0.0f,
 
-                                             0.2f, 0.2f, 0.4f, 1.0f, 0.0f, 1.0f};
+                                             0.2f, 0.2f, 0.4f, 0.0f, 0.0f, 1.0f};
 
 
 
@@ -48,11 +48,11 @@ namespace Labs.Lab2
 
             float[] squareVertices = new float[] { -0.2f, 0.6f, 0.2f, 0.0f, 1.0f, 1.0f,
 
-                                                   -0.2f, -0.4f, 0.2f, 0.0f, 1.0f, 1.0f,
+                                                   -0.2f, -0.4f, 0.2f, 0.0f, 0.0f, 1.0f,
 
                                                    0.8f, -0.4f, 0.2f, 0.0f, 1.0f, 1.0f,
 
-                                                   0.8f, 0.6f, 0.2f, 0.0f, 1.0f, 1.0f,};
+                                                   0.8f, 0.6f, 0.2f, 1.0f, 1.0f, 0.0f,};
 
 
 
