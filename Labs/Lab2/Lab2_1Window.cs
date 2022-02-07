@@ -30,17 +30,20 @@ namespace Labs.Lab2
         protected override void OnLoad(EventArgs e)
         {
             GL.ClearColor(Color4.CadetBlue);
+            GL.Enable(EnableCap.DepthTest);
 
-            float[] triangleVertices = new float[] { -0.8f, 0.8f,
-                                             -0.6f, -0.4f,
-                                             0.2f, 0.2f };
+            float[] triangleVertices = new float[] { 
+                                            -0.8f, 0.8f, 0.4f,
+                                            -0.6f, -0.4f, 0.4f,
+                                             0.2f, 0.2f, 0.4f };
 
             uint[] triangleIndices = new uint[] { 0, 1, 2 };
 
-            float[] squareVertices = new float[] { -0.2f, -0.4f,
-                                             0.8f, -0.4f,
-                                             0.8f, 0.6f,
-                                             -0.2f, 0.6f};
+            float[] squareVertices = new float[] { 
+                                            -0.2f, -0.4f, 0.2f,
+                                             0.8f, -0.4f, 0.2f,
+                                             0.8f, 0.6f, 0.2f,
+                                            -0.2f, 0.6f, 0.2f};
 
             uint[] squareIndices = new uint[] { 0, 1, 2, 3, 3, 0 };
 
@@ -102,7 +105,7 @@ namespace Labs.Lab2
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
-            GL.Clear(ClearBufferMask.ColorBufferBit);
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             // Square
 
@@ -114,7 +117,7 @@ namespace Labs.Lab2
             GL.UseProgram(mShader.ShaderProgramID);
             int vPositionLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vPosition");
             GL.EnableVertexAttribArray(vPositionLocation);
-            GL.VertexAttribPointer(vPositionLocation, 2, VertexAttribPointerType.Float, false, 2 * sizeof(float), 0);
+            GL.VertexAttribPointer(vPositionLocation, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
 
             #endregion
 
@@ -128,7 +131,7 @@ namespace Labs.Lab2
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, mTriangleVertexBufferObjectIDArray[1]);
 
             // Shader loading
-            GL.VertexAttribPointer(vPositionLocation, 2, VertexAttribPointerType.Float, false, 2 *
+            GL.VertexAttribPointer(vPositionLocation, 3, VertexAttribPointerType.Float, false, 3 *
             sizeof(float), 0);
 
             GL.Uniform4(uColourLocation, Color4.Red);
