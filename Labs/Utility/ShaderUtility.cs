@@ -43,7 +43,7 @@ namespace Labs.Utility
             GL.AttachShader(ShaderProgramID, FragmentShaderID);
             GL.LinkProgram(ShaderProgramID);
         }
-
+        
         public void Delete()
         {
             GL.DetachShader(ShaderProgramID, VertexShaderID);
