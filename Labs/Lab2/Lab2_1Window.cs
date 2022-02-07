@@ -6,6 +6,7 @@ using System;
 
 namespace Labs.Lab2
 {
+    // L21T6 ADD PER VERTEX...
     class Lab2_1Window : GameWindow
     {        
         private int[] mTriangleVertexBufferObjectIDArray = new int[2];
