@@ -104,10 +104,9 @@ namespace Labs.Lab2
             base.OnRenderFrame(e);
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
+            // Triangle
             GL.BindBuffer(BufferTarget.ArrayBuffer, mTriangleVertexBufferObjectIDArray[0]);
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, mTriangleVertexBufferObjectIDArray[1]);
-
-
 
             #region Shader Loading Code
 
@@ -119,17 +118,19 @@ namespace Labs.Lab2
             #endregion
 
             int uColourLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uColour");
-            GL.Uniform4(uColourLocation, Color4.Red);
 
+            GL.Uniform4(uColourLocation, Color4.Red);
             GL.DrawElements(PrimitiveType.Triangles, 3, DrawElementsType.UnsignedInt, 0);
 
-            // Square buffer code
-            GL.Uniform4(uColourLocation, Color4.Blue);
-
+            // Squares
             GL.BindBuffer(BufferTarget.ArrayBuffer, mSquareVertexBufferObjectIDArray[0]);
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, mSquareVertexBufferObjectIDArray[1]);
+
+            // Shader loading
             GL.VertexAttribPointer(vPositionLocation, 2, VertexAttribPointerType.Float, false, 2 *
             sizeof(float), 0);
+
+            GL.Uniform4(uColourLocation, Color4.Blue);
             GL.DrawElements(PrimitiveType.TriangleFan, 4, DrawElementsType.UnsignedInt, 0);
 
             this.SwapBuffers();
