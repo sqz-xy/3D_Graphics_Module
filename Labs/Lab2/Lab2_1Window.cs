@@ -11,6 +11,9 @@ namespace Labs.Lab2
     {        
         private int[] mTriangleVertexBufferObjectIDArray = new int[2];
         private int[] mSquareVertexBufferObjectIDArray = new int[2];
+
+        private int[] mVertexObjectIDs = new int[2];
+
         private ShaderUtility mShader;
 
         public Lab2_1Window()
