@@ -12,7 +12,7 @@ namespace Labs.Lab2
         private int[] mTriangleVertexBufferObjectIDArray = new int[2];
         private int[] mSquareVertexBufferObjectIDArray = new int[2];
 
-        private int[] mVertexObjectIDs = new int[2];
+        private int[] mVertexArrayObjectIDs = new int[2];
 
         private ShaderUtility mShader;
 
@@ -30,6 +30,8 @@ namespace Labs.Lab2
                 )
         {
         }
+
+        //UNCOMMENT VBO STUFF AND TRY TO FIX IT
 
         protected override void OnLoad(EventArgs e)
         {
@@ -63,60 +65,91 @@ namespace Labs.Lab2
 
                                                 3, 3, 0};
 
-            // Triangle
-            GL.GenBuffers(2, mTriangleVertexBufferObjectIDArray);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, mTriangleVertexBufferObjectIDArray[0]);
-            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(triangleVertices.Length * sizeof(float)), triangleVertices, BufferUsageHint.StaticDraw);
-
-            int size;
-            GL.GetBufferParameter(BufferTarget.ArrayBuffer, BufferParameterName.BufferSize, out size);
-
-            if (triangleVertices.Length * sizeof(float) != size)
-            {
-                throw new ApplicationException("Vertex data not loaded onto graphics card correctly");
-            }
-
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, mTriangleVertexBufferObjectIDArray[1]);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(triangleIndices.Length * sizeof(int)), triangleIndices, BufferUsageHint.StaticDraw);
-
-            GL.GetBufferParameter(BufferTarget.ElementArrayBuffer, BufferParameterName.BufferSize, out size);
-
-            if (triangleIndices.Length * sizeof(int) != size)
-            {
-                throw new ApplicationException("Index data not loaded onto graphics card correctly");
-            }
-
-            // Square
-            GL.GenBuffers(2, mSquareVertexBufferObjectIDArray);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, mSquareVertexBufferObjectIDArray[0]);
-            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(squareVertices.Length * sizeof(float)), squareVertices, BufferUsageHint.StaticDraw);
-
-
-            GL.GetBufferParameter(BufferTarget.ArrayBuffer, BufferParameterName.BufferSize, out size);
-
-            if (squareVertices.Length * sizeof(float) != size)
-            {
-                throw new ApplicationException("Vertex data not loaded onto graphics card correctly");
-            }
-
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, mSquareVertexBufferObjectIDArray[1]);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(squareIndices.Length * sizeof(int)), squareIndices, BufferUsageHint.StaticDraw);
-
-            GL.GetBufferParameter(BufferTarget.ElementArrayBuffer, BufferParameterName.BufferSize, out size);
-
-            if (squareIndices.Length * sizeof(int) != size)
-            {
-                throw new ApplicationException("Index data not loaded onto graphics card correctly");
-            }
-
             #region Shader Loading Code
 
             mShader = new ShaderUtility(@"Lab2/Shaders/vLab21.vert", @"Lab2/Shaders/fSimple.frag");
 
             #endregion
 
+
+            GL.UseProgram(mShader.ShaderProgramID);
             int vColourLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vColour");
+            int vPositionLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vPosition");
+
+            // Triangle
+            //GL.GenBuffers(2, mTriangleVertexBufferObjectIDArray);
+            //GL.BindBuffer(BufferTarget.ArrayBuffer, mTriangleVertexBufferObjectIDArray[0]);
+            //GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(triangleVertices.Length * sizeof(float)), triangleVertices, BufferUsageHint.StaticDraw);
+
+            //int size;
+            //GL.GetBufferParameter(BufferTarget.ArrayBuffer, BufferParameterName.BufferSize, out size);
+
+            //if (triangleVertices.Length * sizeof(float) != size)
+            //{
+            //    throw new ApplicationException("Vertex data not loaded onto graphics card correctly");
+            //}
+
+            //GL.BindBuffer(BufferTarget.ElementArrayBuffer, mTriangleVertexBufferObjectIDArray[1]);
+            //GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(triangleIndices.Length * sizeof(int)), triangleIndices, BufferUsageHint.StaticDraw);
+
+            //GL.GetBufferParameter(BufferTarget.ElementArrayBuffer, BufferParameterName.BufferSize, out size);
+
+            //if (triangleIndices.Length * sizeof(int) != size)
+            //{
+            //    throw new ApplicationException("Index data not loaded onto graphics card correctly");
+            //}
+
+
+            GL.GenBuffers(2, mVertexArrayObjectIDs);
+            GL.GenVertexArrays(2, mVertexArrayObjectIDs);
+
+            GL.BindVertexArray(mVertexArrayObjectIDs[0]);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, mTriangleVertexBufferObjectIDArray[0]);
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, mTriangleVertexBufferObjectIDArray[1]);
+            GL.VertexAttribPointer(vPositionLocation, 3, VertexAttribPointerType.Float, false, 6 *
+            sizeof(float), 0);
+            GL.VertexAttribPointer(vColourLocation, 3, VertexAttribPointerType.Float, false, 6 *
+            sizeof(float), 3 * sizeof(float));
             GL.EnableVertexAttribArray(vColourLocation);
+            GL.EnableVertexAttribArray(vPositionLocation);
+
+            // Square
+            //GL.GenBuffers(2, mSquareVertexBufferObjectIDArray);
+            //GL.BindBuffer(BufferTarget.ArrayBuffer, mSquareVertexBufferObjectIDArray[0]);
+            //GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(squareVertices.Length * sizeof(float)), squareVertices, BufferUsageHint.StaticDraw);
+
+
+            //GL.GetBufferParameter(BufferTarget.ArrayBuffer, BufferParameterName.BufferSize, out size);
+
+            //if (squareVertices.Length * sizeof(float) != size)
+            //{
+            //    throw new ApplicationException("Vertex data not loaded onto graphics card correctly");
+            //}
+
+            //GL.BindBuffer(BufferTarget.ElementArrayBuffer, mSquareVertexBufferObjectIDArray[1]);
+            //GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(squareIndices.Length * sizeof(int)), squareIndices, BufferUsageHint.StaticDraw);
+
+            //GL.GetBufferParameter(BufferTarget.ElementArrayBuffer, BufferParameterName.BufferSize, out size);
+
+            //if (squareIndices.Length * sizeof(int) != size)
+            //{
+            //    throw new ApplicationException("Index data not loaded onto graphics card correctly");
+            //}
+
+            //int vColourLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vColour");
+            //GL.EnableVertexAttribArray(vColourLocation);
+
+            //GL.GenBuffers(2, mVertexArrayObjectIDs);
+           // GL.GenVertexArrays(2, mVertexArrayObjectIDs);
+            GL.BindVertexArray(mVertexArrayObjectIDs[1]);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, mSquareVertexBufferObjectIDArray[0]);
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, mSquareVertexBufferObjectIDArray[1]);
+            GL.VertexAttribPointer(vPositionLocation, 3, VertexAttribPointerType.Float, false, 6 *
+            sizeof(float), 0);
+            GL.VertexAttribPointer(vColourLocation, 3, VertexAttribPointerType.Float, false, 6 *
+            sizeof(float), 3 * sizeof(float));
+            GL.EnableVertexAttribArray(vColourLocation);
+            GL.EnableVertexAttribArray(vPositionLocation);
 
             base.OnLoad(e);
         }
@@ -126,27 +159,34 @@ namespace Labs.Lab2
             base.OnRenderFrame(e);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            GL.UseProgram(mShader.ShaderProgramID);
+            //GL.UseProgram(mShader.ShaderProgramID);
+            //int vColourLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vColour");
+            //int vPositionLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vPosition");
 
-            int vColourLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vColour");
-            int vPositionLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vPosition");
-            GL.EnableVertexAttribArray(vPositionLocation);
-
-            // Square
-            GL.BindBuffer(BufferTarget.ArrayBuffer, mSquareVertexBufferObjectIDArray[0]);
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, mSquareVertexBufferObjectIDArray[1]);
-
-            GL.VertexAttribPointer(vPositionLocation, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
-            GL.VertexAttribPointer(vColourLocation, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 3 * sizeof(float));
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            GL.BindVertexArray(mVertexArrayObjectIDs[1]);
             GL.DrawElements(PrimitiveType.TriangleFan, 4, DrawElementsType.UnsignedInt, 0);
-
-            // Triangle
-            GL.BindBuffer(BufferTarget.ArrayBuffer, mTriangleVertexBufferObjectIDArray[0]);
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, mTriangleVertexBufferObjectIDArray[1]);
-
-            GL.VertexAttribPointer(vPositionLocation, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
-            GL.VertexAttribPointer(vColourLocation, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 3 * sizeof(float));
+            GL.BindVertexArray(mVertexArrayObjectIDs[0]);
             GL.DrawElements(PrimitiveType.Triangles, 3, DrawElementsType.UnsignedInt, 0);
+            GL.BindVertexArray(0);
+
+            //GL.EnableVertexAttribArray(vPositionLocation);
+
+            //// Square
+            //GL.BindBuffer(BufferTarget.ArrayBuffer, mSquareVertexBufferObjectIDArray[0]);
+            //GL.BindBuffer(BufferTarget.ElementArrayBuffer, mSquareVertexBufferObjectIDArray[1]);
+
+            //GL.VertexAttribPointer(vPositionLocation, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
+            //GL.VertexAttribPointer(vColourLocation, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 3 * sizeof(float));
+            //GL.DrawElements(PrimitiveType.TriangleFan, 4, DrawElementsType.UnsignedInt, 0);
+
+            //// Triangle
+            //GL.BindBuffer(BufferTarget.ArrayBuffer, mTriangleVertexBufferObjectIDArray[0]);
+            //GL.BindBuffer(BufferTarget.ElementArrayBuffer, mTriangleVertexBufferObjectIDArray[1]);
+
+            //GL.VertexAttribPointer(vPositionLocation, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
+            //GL.VertexAttribPointer(vColourLocation, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 3 * sizeof(float));
+            //GL.DrawElements(PrimitiveType.Triangles, 3, DrawElementsType.UnsignedInt, 0);
 
             this.SwapBuffers();
         }
@@ -154,8 +194,10 @@ namespace Labs.Lab2
         protected override void OnUnload(EventArgs e)
         {
             base.OnUnload(e);
-            GL.DeleteBuffers(2, mTriangleVertexBufferObjectIDArray);
-            GL.DeleteBuffers(2, mSquareVertexBufferObjectIDArray);
+            //GL.DeleteBuffers(2, mTriangleVertexBufferObjectIDArray);
+            //GL.DeleteBuffers(2, mSquareVertexBufferObjectIDArray);
+            GL.BindVertexArray(0);
+            GL.DeleteVertexArrays(2, mVertexArrayObjectIDs);
             GL.UseProgram(0);
             mShader.Delete();
         }
