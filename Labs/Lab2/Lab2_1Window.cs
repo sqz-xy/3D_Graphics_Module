@@ -76,9 +76,10 @@ namespace Labs.Lab2
             int vColourLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vColour");
             int vPositionLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vPosition");
 
+            GL.GenVertexArrays(2, mVertexArrayObjectIDs);
+
             //Triangle
 
-            GL.GenVertexArrays(2, mVertexArrayObjectIDs);
             GL.GenBuffers(2, mTriangleVertexBufferObjectIDArray);
 
             GL.BindVertexArray(mVertexArrayObjectIDs[0]);

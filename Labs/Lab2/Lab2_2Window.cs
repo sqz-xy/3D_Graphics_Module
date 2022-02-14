@@ -78,20 +78,25 @@ namespace Labs.Lab2
         {
             base.OnRenderFrame(e);
 
-            int uModelLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
-
-            Matrix4 m1 = Matrix4.CreateTranslation(1, 0, 0); // x, y, z, which direction
-            GL.UniformMatrix4(uModelLocation, true, ref m1);
-
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            
+
+            int uModelLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
+            int uModelLocation2 = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
+
+            // Square
+            Matrix4 m1Translate = Matrix4.CreateTranslation(-0.5f, 0.5f, 0); // x, y, z, which direction
+            Matrix4 m1Rotate = Matrix4.CreateRotationZ(0.8f);
+            Matrix4 m1Result = m1Translate * m1Rotate;
+            GL.UniformMatrix4(uModelLocation, true, ref m1Result);
+    
             GL.BindVertexArray(mVAO_ID);
             GL.DrawElements(BeginMode.Triangles, mModel.Indices.Length, DrawElementsType.UnsignedInt, 0);
 
-            m1 = Matrix4.CreateTranslation(-0.5f, 0.5f, 0); // x, y, z, which direction
-            GL.UniformMatrix4(uModelLocation, true, ref m1);
-
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            // Square
+            Matrix4 m2Translate = Matrix4.CreateTranslation(-0.5f, 0.5f, 0); // x, y, z, which direction
+            Matrix4 m2Rotate = Matrix4.CreateRotationZ(0.8f);
+            Matrix4 m2Result = m2Rotate * m2Translate;
+            GL.UniformMatrix4(uModelLocation2, true, ref m2Result);
 
             GL.BindVertexArray(mVAO_ID);
             GL.DrawElements(BeginMode.Triangles, mModel.Indices.Length, DrawElementsType.UnsignedInt, 0);
