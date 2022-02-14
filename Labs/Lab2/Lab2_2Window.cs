@@ -135,26 +135,36 @@ namespace Labs.Lab2
             int uModelLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
             int uModelLocation2 = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
 
-            // Square
-            Matrix4 m1Translate = Matrix4.CreateTranslation(-1f, 1f, 0); // x, y, z, which direction
-            Matrix4 m1Rotate = Matrix4.CreateRotationZ(1f);
-            Matrix4 m1Result = m1Translate * m1Rotate;
-            GL.UniformMatrix4(uModelLocation, true, ref m1Result);
-    
-            GL.BindVertexArray(mVAO_ID);
-            GL.DrawElements(BeginMode.Triangles, mModel.Indices.Length, DrawElementsType.UnsignedInt, 0);
+            // Test Squares
+            //DrawSquare(uModelLocation, Matrix4.CreateTranslation(-1f, 1f, 0), Matrix4.CreateRotationZ(1f));
+            //DrawSquare(uModelLocation, Matrix4.CreateTranslation(1f, -1f, 0), Matrix4.CreateRotationZ(1f));
+            //DrawSquare(uModelLocation, Matrix4.CreateTranslation(0.5f, -1f, 0), Matrix4.CreateRotationZ(1f));
 
-            // Square
-            Matrix4 m2Translate = Matrix4.CreateTranslation(1f, -1f, 0); // x, y, z, which direction
-            Matrix4 m2Rotate = Matrix4.CreateRotationZ(1f);
-            Matrix4 m2Result = m2Rotate * m2Translate;
-            GL.UniformMatrix4(uModelLocation2, true, ref m2Result);
-
-            GL.BindVertexArray(mVAO_ID);
-            GL.DrawElements(BeginMode.Triangles, mModel.Indices.Length, DrawElementsType.UnsignedInt, 0);
+            for (int x = 1; x < 11; x++)
+            {
+                float xPos = x / 2f;
+                for (int y = 1; y < 11; y++)
+                {
+                    float yPos = y / 2f;
+                    for (int z = 1; z < 11; z++)
+                    {
+                        float zPos = z / 2f;
+                        DrawSquare(uModelLocation, Matrix4.CreateTranslation(xPos, yPos, zPos), Matrix4.CreateRotationZ(1f), Matrix4.CreateScale(0.5f));
+                    }
+                }
+            }
 
             GL.BindVertexArray(0);
             this.SwapBuffers();
+        }
+
+        private void DrawSquare(int uModelLocation, Matrix4 pTranslation, Matrix4 pRotation, Matrix4 pScale)
+        {
+            Matrix4 m1Result = pTranslation * pRotation * pScale;
+            GL.UniformMatrix4(uModelLocation, true, ref m1Result);
+
+            GL.BindVertexArray(mVAO_ID);
+            GL.DrawElements(BeginMode.Triangles, mModel.Indices.Length, DrawElementsType.UnsignedInt, 0);
         }
 
         protected override void OnUnload(EventArgs e)
