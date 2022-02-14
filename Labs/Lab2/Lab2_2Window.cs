@@ -38,6 +38,7 @@ namespace Labs.Lab2
             GL.Enable(EnableCap.CullFace);
 
             mView = Matrix4.Identity;
+            //mView = Matrix4.CreateTranslation(0, 0, -2);
 
             mModel = ModelUtility.LoadModel(@"Utility/Models/lab22model.sjg");    
             mShader = new ShaderUtility(@"Lab2/Shaders/vLab22.vert", @"Lab2/Shaders/fSimple.frag");
@@ -109,14 +110,16 @@ namespace Labs.Lab2
                 {
                     if (windowWidth < 1) { windowWidth = 1; }
                     float ratio = windowHeight / windowWidth;
-                    Matrix4 projection = Matrix4.CreateOrthographic(ratio * 10, 10, -1, 1);             
+                    Matrix4 projection = Matrix4.CreateOrthographic(ratio * 10, 10, -1, 1);
+                    //Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(1, (float)ClientRectangle.Width / ClientRectangle.Height, 0.5f, 5);
                     GL.UniformMatrix4(uProjectionLocation, true, ref projection);
                 }
                 else
                 {
                     if (windowHeight < 1) { windowHeight = 1; }
                     float ratio = windowHeight / windowWidth;
-                    Matrix4 projection = Matrix4.CreateOrthographic(10, ratio * 10, -1, 1);                
+                    Matrix4 projection = Matrix4.CreateOrthographic(10, ratio * 10, -1, 1);
+                    //Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(1, (float)ClientRectangle.Width / ClientRectangle.Height, 0.5f, 5);
                     GL.UniformMatrix4(uProjectionLocation, true, ref projection);
                 }
             }
