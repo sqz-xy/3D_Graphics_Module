@@ -50,7 +50,7 @@ namespace Labs.Lab2
             int uProjectionLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uProjection");
 
             // View Matrix
-            Vector3 eye = new Vector3(0.0f, 0.5f, 0.5f);
+            Vector3 eye = new Vector3(0.0f, 0.5f, -5f); // Should be 0.5f temp fix, ask in lab, concerning mView initialisation
             Vector3 lookAt = new Vector3(0, 0, 0);
             Vector3 up = new Vector3(0, 1, 0);
             mView = Matrix4.LookAt(eye, lookAt, up);
@@ -106,22 +106,23 @@ namespace Labs.Lab2
                 int uProjectionLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uProjection");
                 float windowHeight = (float)this.ClientRectangle.Height;
                 float windowWidth = (float)this.ClientRectangle.Width;
-                if (windowHeight > windowWidth)
-                {
-                    if (windowWidth < 1) { windowWidth = 1; }
-                    float ratio = windowHeight / windowWidth;
-                    Matrix4 projection = Matrix4.CreateOrthographic(ratio * 10, 10, -1, 1);
-                    //Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(1, (float)ClientRectangle.Width / ClientRectangle.Height, 0.5f, 5);
-                    GL.UniformMatrix4(uProjectionLocation, true, ref projection);
-                }
-                else
-                {
-                    if (windowHeight < 1) { windowHeight = 1; }
-                    float ratio = windowHeight / windowWidth;
-                    Matrix4 projection = Matrix4.CreateOrthographic(10, ratio * 10, -1, 1);
-                    //Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(1, (float)ClientRectangle.Width / ClientRectangle.Height, 0.5f, 5);
-                    GL.UniformMatrix4(uProjectionLocation, true, ref projection);
-                }
+                Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(1, windowWidth / windowHeight, 0.5f, 5);
+                //if (windowHeight > windowWidth)
+                //{
+                //    if (windowWidth < 1) { windowWidth = 1; }
+                //    float ratio = windowHeight / windowWidth;
+                //    //Matrix4 projection = Matrix4.CreateOrthographic(ratio * 10, 10, -1, 1);
+                //    Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(1, ratio, 0.5f, 5);
+                //    GL.UniformMatrix4(uProjectionLocation, true, ref projection);
+                //}
+                //else
+                //{
+                //    if (windowHeight < 1) { windowHeight = 1; }
+                //    float ratio = windowHeight / windowWidth;
+                //    //Matrix4 projection = Matrix4.CreateOrthographic(10, ratio * 10, -1, 1);
+                //    Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(1, (float)ClientRectangle.Width / ClientRectangle.Height, 0.5f, 5);
+                //    GL.UniformMatrix4(uProjectionLocation, true, ref projection);
+                //}
             }
         }
 
@@ -135,8 +136,8 @@ namespace Labs.Lab2
             int uModelLocation2 = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
 
             // Square
-            Matrix4 m1Translate = Matrix4.CreateTranslation(-0.5f, 0.5f, 0); // x, y, z, which direction
-            Matrix4 m1Rotate = Matrix4.CreateRotationZ(0.8f);
+            Matrix4 m1Translate = Matrix4.CreateTranslation(-1f, 1f, 0); // x, y, z, which direction
+            Matrix4 m1Rotate = Matrix4.CreateRotationZ(1f);
             Matrix4 m1Result = m1Translate * m1Rotate;
             GL.UniformMatrix4(uModelLocation, true, ref m1Result);
     
@@ -144,8 +145,8 @@ namespace Labs.Lab2
             GL.DrawElements(BeginMode.Triangles, mModel.Indices.Length, DrawElementsType.UnsignedInt, 0);
 
             // Square
-            Matrix4 m2Translate = Matrix4.CreateTranslation(-0.5f, 0.5f, 0); // x, y, z, which direction
-            Matrix4 m2Rotate = Matrix4.CreateRotationZ(0.8f);
+            Matrix4 m2Translate = Matrix4.CreateTranslation(1f, -1f, 0); // x, y, z, which direction
+            Matrix4 m2Rotate = Matrix4.CreateRotationZ(1f);
             Matrix4 m2Result = m2Rotate * m2Translate;
             GL.UniformMatrix4(uModelLocation2, true, ref m2Result);
 
