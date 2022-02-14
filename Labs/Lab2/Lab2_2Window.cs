@@ -8,6 +8,7 @@ namespace Labs.Lab2
 {
     public class Lab2_2Window : GameWindow
     {
+        private Matrix4 mView;
         public Lab2_2Window()
             : base(
                 800, // Width
@@ -35,11 +36,24 @@ namespace Labs.Lab2
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.CullFace);
 
+            mView = Matrix4.Identity;
+
             mModel = ModelUtility.LoadModel(@"Utility/Models/lab22model.sjg");    
             mShader = new ShaderUtility(@"Lab2/Shaders/vLab22.vert", @"Lab2/Shaders/fSimple.frag");
             GL.UseProgram(mShader.ShaderProgramID);
+
             int vPositionLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vPosition");
             int vColourLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vColour");
+            int uViewLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uView");
+
+            // View Matrices
+            Vector3 eye = new Vector3(0.0f, 0.5f, 0.5f);
+            Vector3 lookAt = new Vector3(0, 0, 0);
+            Vector3 up = new Vector3(0, 1, 0);
+            mView = Matrix4.LookAt(eye, lookAt, up);
+
+            // Set the view matrix
+            GL.UniformMatrix4(uViewLocation, true, ref mView);
 
             mVAO_ID = GL.GenVertexArray();
             GL.GenBuffers(mVBO_IDs.Length, mVBO_IDs);
