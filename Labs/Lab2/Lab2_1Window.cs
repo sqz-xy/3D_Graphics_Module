@@ -164,10 +164,13 @@ namespace Labs.Lab2
             //int vPositionLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vPosition");
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
             GL.BindVertexArray(mVertexArrayObjectIDs[1]);
             GL.DrawElements(PrimitiveType.TriangleFan, 4, DrawElementsType.UnsignedInt, 0);
+
             GL.BindVertexArray(mVertexArrayObjectIDs[0]);
             GL.DrawElements(PrimitiveType.Triangles, 3, DrawElementsType.UnsignedInt, 0);
+
             GL.BindVertexArray(0);
 
             //GL.EnableVertexAttribArray(vPositionLocation);
