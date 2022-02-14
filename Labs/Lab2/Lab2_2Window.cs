@@ -87,7 +87,8 @@ namespace Labs.Lab2
             GL.BindVertexArray(0);
 
             // Projection Matrix
-            Matrix4 projection = Matrix4.CreateOrthographic(10, 10, -1, 1);
+            //Matrix4 projection = Matrix4.CreateOrthographic(10, 10, -1, 1);
+            Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(1, (float)ClientRectangle.Width / ClientRectangle.Height, 0.5f, 5);
             GL.UniformMatrix4(uProjectionLocation, true, ref projection);
 
             base.OnLoad(e);
@@ -98,7 +99,7 @@ namespace Labs.Lab2
         {
             base.OnResize(e);
             GL.Viewport(this.ClientRectangle);
-            // Continue with this
+            // Continue with this L22T10 Create a perspective camera
             if (mShader != null)
             {
                 int uProjectionLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uProjection");
@@ -108,14 +109,14 @@ namespace Labs.Lab2
                 {
                     if (windowWidth < 1) { windowWidth = 1; }
                     float ratio = windowHeight / windowWidth;
-                    Matrix4 projection = Matrix4.CreateOrthographic(ratio * 10, 10, -1, 1);
+                    Matrix4 projection = Matrix4.CreateOrthographic(ratio * 10, 10, -1, 1);             
                     GL.UniformMatrix4(uProjectionLocation, true, ref projection);
                 }
                 else
                 {
                     if (windowHeight < 1) { windowHeight = 1; }
                     float ratio = windowHeight / windowWidth;
-                    Matrix4 projection = Matrix4.CreateOrthographic(10, ratio * 10, -1, 1);
+                    Matrix4 projection = Matrix4.CreateOrthographic(10, ratio * 10, -1, 1);                
                     GL.UniformMatrix4(uProjectionLocation, true, ref projection);
                 }
             }
