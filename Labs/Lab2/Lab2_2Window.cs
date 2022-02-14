@@ -129,5 +129,37 @@ namespace Labs.Lab2
             mShader.Delete();
             base.OnUnload(e);
         }
+
+        protected override void OnKeyPress(KeyPressEventArgs e)
+        {
+            base.OnKeyPress(e);
+            if (e.KeyChar == 'a')
+            {
+                mView = mView * Matrix4.CreateTranslation(0.01f, 0, 0);
+                MoveCamera();
+            }
+            if (e.KeyChar == 'd')
+            {
+                mView = mView * Matrix4.CreateTranslation(-0.01f, 0, 0);
+                MoveCamera();
+            }
+            if (e.KeyChar == 'w')
+            {
+                mView = mView * Matrix4.CreateTranslation(0, -0.1f, 0);
+                MoveCamera();
+            }
+            if (e.KeyChar == 's')
+            {
+                mView = mView * Matrix4.CreateTranslation(0, 0.1f, 0);
+                MoveCamera();
+            }
+
+        }
+
+        private void MoveCamera()
+        {
+            int uViewLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uView");
+            GL.UniformMatrix4(uViewLocation, true, ref mView);
+        }
     }
 }
