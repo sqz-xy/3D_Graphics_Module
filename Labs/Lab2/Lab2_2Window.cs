@@ -98,8 +98,27 @@ namespace Labs.Lab2
         {
             base.OnResize(e);
             GL.Viewport(this.ClientRectangle);
-
-
+            // Continue with this
+            if (mShader != null)
+            {
+                int uProjectionLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uProjection");
+                float windowHeight = (float)this.ClientRectangle.Height;
+                float windowWidth = (float)this.ClientRectangle.Width;
+                if (windowHeight > windowWidth)
+                {
+                    if (windowWidth < 1) { windowWidth = 1; }
+                    float ratio = windowHeight / windowWidth;
+                    Matrix4 projection = Matrix4.CreateOrthographic(ratio * 10, 10, -1, 1);
+                    GL.UniformMatrix4(uProjectionLocation, true, ref projection);
+                }
+                else
+                {
+                    if (windowHeight < 1) { windowHeight = 1; }
+                    float ratio = windowHeight / windowWidth;
+                    Matrix4 projection = Matrix4.CreateOrthographic(10, ratio * 10, -1, 1);
+                    GL.UniformMatrix4(uProjectionLocation, true, ref projection);
+                }
+            }
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
@@ -149,22 +168,22 @@ namespace Labs.Lab2
             base.OnKeyPress(e);
             if (e.KeyChar == 'a')
             {
-                mView = mView * Matrix4.CreateTranslation(0.01f, 0, 0);
+                mView = mView * Matrix4.CreateTranslation(0.1f, 0, 0);
                 MoveCamera();
             }
             if (e.KeyChar == 'd')
             {
-                mView = mView * Matrix4.CreateTranslation(-0.01f, 0, 0);
+                mView = mView * Matrix4.CreateTranslation(-0.1f, 0, 0);
                 MoveCamera();
             }
             if (e.KeyChar == 'w')
             {
-                mView = mView * Matrix4.CreateTranslation(0, -0.01f, 0);
+                mView = mView * Matrix4.CreateTranslation(0, -0.1f, 0);
                 MoveCamera();
             }
             if (e.KeyChar == 's')
             {
-                mView = mView * Matrix4.CreateTranslation(0, 0.01f, 0);
+                mView = mView * Matrix4.CreateTranslation(0, 0.1f, 0);
                 MoveCamera();
             }
 
