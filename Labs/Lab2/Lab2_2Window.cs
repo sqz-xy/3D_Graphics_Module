@@ -191,6 +191,26 @@ namespace Labs.Lab2
                 mView = mView * Matrix4.CreateTranslation(0, 0.1f, 0);
                 MoveCamera();
             }
+            if (e.KeyChar == 'q')
+            {
+                mView = mView * Matrix4.CreateTranslation(0, 0, 0.1f);
+                MoveCamera();
+            }
+            if (e.KeyChar == 'e')
+            {
+                mView = mView * Matrix4.CreateTranslation(0, 0, -0.1f);
+                MoveCamera();
+            }
+            if (e.KeyChar == 'r')
+            {
+                mView = mView * Matrix4.CreateRotationY(0.1f);
+                MoveCamera();
+            }
+            if (e.KeyChar == 'f')
+            {
+                mView = mView * Matrix4.CreateRotationY(-0.1f);
+                MoveCamera();
+            }
 
         }
 
