@@ -41,7 +41,7 @@ namespace Labs.Lab2
             float[] triangleVertices = new float[] {
                                              -0.8f, 0.8f, 0.4f, 1.0f, 0.0f, 0.0f,
 
-                                             -0.6f, -0.4f, 0.4f, 0.0f, 1f, 0.0f,
+                                             -0.6f, -0.4f, 0.4f, 0.0f, 1.0f, 0.0f,
 
                                              0.2f, 0.2f, 0.4f, 0.0f, 0.0f, 1.0f};
 
