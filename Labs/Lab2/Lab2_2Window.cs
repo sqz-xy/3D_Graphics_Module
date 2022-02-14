@@ -77,6 +77,11 @@ namespace Labs.Lab2
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
+
+            int uModelLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
+            Matrix4 m1 = Matrix4.CreateTranslation(1, 0, 0);
+            GL.UniformMatrix4(uModelLocation, true, ref m1);
+
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             
             GL.BindVertexArray(mVAO_ID);
