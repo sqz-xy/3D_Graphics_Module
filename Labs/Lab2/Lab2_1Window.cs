@@ -123,10 +123,6 @@ namespace Labs.Lab2
             base.OnRenderFrame(e);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            //GL.UseProgram(mShader.ShaderProgramID);
-            //int vColourLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vColour");
-            //int vPositionLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vPosition");
-
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             GL.BindVertexArray(mVertexArrayObjectIDs[1]);
