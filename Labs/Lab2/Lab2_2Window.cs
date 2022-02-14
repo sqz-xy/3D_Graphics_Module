@@ -8,7 +8,7 @@ namespace Labs.Lab2
 {
     public class Lab2_2Window : GameWindow
     {
-        private Matrix4 mView;
+
         public Lab2_2Window()
             : base(
                 800, // Width
@@ -28,6 +28,7 @@ namespace Labs.Lab2
         private int mVAO_ID;
         private ShaderUtility mShader;
         private ModelUtility mModel;
+        private Matrix4 mView;
 
         protected override void OnLoad(EventArgs e)
         {
@@ -45,16 +46,17 @@ namespace Labs.Lab2
             int vPositionLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vPosition");
             int vColourLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vColour");
             int uViewLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uView");
+            int uProjectionLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uProjection");
 
-            // View Matrices
+            // View Matrix
             Vector3 eye = new Vector3(0.0f, 0.5f, 0.5f);
             Vector3 lookAt = new Vector3(0, 0, 0);
             Vector3 up = new Vector3(0, 1, 0);
             mView = Matrix4.LookAt(eye, lookAt, up);
-
-            // Set the view matrix
             GL.UniformMatrix4(uViewLocation, true, ref mView);
 
+
+            // Load model vertices and indices
             mVAO_ID = GL.GenVertexArray();
             GL.GenBuffers(mVBO_IDs.Length, mVBO_IDs);
             
@@ -84,8 +86,20 @@ namespace Labs.Lab2
 
             GL.BindVertexArray(0);
 
+            // Projection Matrix
+            Matrix4 projection = Matrix4.CreateOrthographic(10, 10, -1, 1);
+            GL.UniformMatrix4(uProjectionLocation, true, ref projection);
+
             base.OnLoad(e);
             
+        }
+
+        protected override void OnResize(EventArgs e)
+        {
+            base.OnResize(e);
+            GL.Viewport(this.ClientRectangle);
+
+
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
@@ -145,12 +159,12 @@ namespace Labs.Lab2
             }
             if (e.KeyChar == 'w')
             {
-                mView = mView * Matrix4.CreateTranslation(0, -0.1f, 0);
+                mView = mView * Matrix4.CreateTranslation(0, -0.01f, 0);
                 MoveCamera();
             }
             if (e.KeyChar == 's')
             {
-                mView = mView * Matrix4.CreateTranslation(0, 0.1f, 0);
+                mView = mView * Matrix4.CreateTranslation(0, 0.01f, 0);
                 MoveCamera();
             }
 
