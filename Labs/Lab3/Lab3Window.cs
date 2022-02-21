@@ -36,15 +36,15 @@ namespace Labs.Lab3
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.CullFace);
 
-            mShader = new ShaderUtility(@"Lab3/Shaders/vLighting.vert", @"Lab3/Shaders/fPassThrough.frag");
+            // LIGHT NEEDS TO BE UPDATED BY MOVEMENT, CHECK THIS
+            mShader = new ShaderUtility(@"Lab3/Shaders/vPassThrough.vert", @"Lab3/Shaders/fLighting.frag");
             GL.UseProgram(mShader.ShaderProgramID);
             int vPositionLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vPosition");
             int vNormalLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vNormal");
 
             int uLightLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLightPosition");
-            Vector3 lightPosition = new Vector3(0, -100, 0);
-            //Vector3.Normalize(ref lightDirection, out normalisedLightDirection);
-            GL.Uniform3(uLightLocation, lightPosition);
+            Vector4 lightPosition = new Vector4(20, -1, 8.5f, 1);
+            GL.Uniform4(uLightLocation, lightPosition);
 
             GL.GenVertexArrays(mVAO_IDs.Length, mVAO_IDs);
             GL.GenBuffers(mVBO_IDs.Length, mVBO_IDs);
@@ -130,12 +130,14 @@ namespace Labs.Lab3
                 mView = mView * Matrix4.CreateTranslation(0.0f, 0.0f, 0.05f);
                 int uView = GL.GetUniformLocation(mShader.ShaderProgramID, "uView");
                 GL.UniformMatrix4(uView, true, ref mView);
+                UpdateLightPos();
             }
             if (e.KeyChar == 'a')
             {
                 mView = mView * Matrix4.CreateRotationY(-0.025f);
                 int uView = GL.GetUniformLocation(mShader.ShaderProgramID, "uView");
-                GL.UniformMatrix4(uView, true, ref mView);            
+                GL.UniformMatrix4(uView, true, ref mView);
+                UpdateLightPos();
             }
             if (e.KeyChar == 'q')
             {
@@ -144,6 +146,7 @@ namespace Labs.Lab3
                 Matrix4 inverseTranslation = Matrix4.CreateTranslation(-t);
                 mGroundModel = mGroundModel * inverseTranslation * Matrix4.CreateRotationY(-0.025f) *
                 translation;
+                UpdateLightPos();
             }
             if (e.KeyChar == 'e')
             {
@@ -152,6 +155,7 @@ namespace Labs.Lab3
                 Matrix4 inverseTranslation = Matrix4.CreateTranslation(-t);
                 mGroundModel = mGroundModel * inverseTranslation * Matrix4.CreateRotationY(0.025f) *
                 translation;
+                UpdateLightPos();
             }
             if (e.KeyChar == 'c')
             {
@@ -160,6 +164,7 @@ namespace Labs.Lab3
                 Matrix4 inverseTranslation = Matrix4.CreateTranslation(-t);
                 mSphereModel = mSphereModel * inverseTranslation * Matrix4.CreateRotationY(-0.025f) *
                 translation;
+                UpdateLightPos();
             }
             if (e.KeyChar == 'v')
             {
@@ -168,7 +173,15 @@ namespace Labs.Lab3
                 Matrix4 inverseTranslation = Matrix4.CreateTranslation(-t);
                 mSphereModel = mSphereModel * inverseTranslation * Matrix4.CreateRotationY(0.025f) *
                 translation;
+                UpdateLightPos();
             }
+        }
+
+        private void UpdateLightPos()
+        {
+            int uLightLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLightPosition");
+            Vector4 lightPosition = Vector4.Transform(new Vector4(2, 1, -8.5f, 1), mView);
+            GL.Uniform4(uLightLocation, lightPosition);
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
