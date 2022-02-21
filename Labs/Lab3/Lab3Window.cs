@@ -44,7 +44,7 @@ namespace Labs.Lab3
             int vNormalLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vNormal");
 
             int uLightLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLightPosition");
-            Vector4 lightPosition = new Vector4(20, -1, 8.5f, 1);
+            Vector4 lightPosition = new Vector4(20, 3, 8.5f, 1);
             GL.Uniform4(uLightLocation, lightPosition);
 
             GL.GenVertexArrays(mVAO_IDs.Length, mVAO_IDs);
@@ -175,7 +175,7 @@ namespace Labs.Lab3
                 Matrix4 inverseTranslation = Matrix4.CreateTranslation(-t);
                 mGroundModel = mGroundModel * inverseTranslation * Matrix4.CreateRotationY(-0.025f) *
                 translation;
-                UpdateLightPos();
+    
             }
             if (e.KeyChar == 'e')
             {
@@ -184,7 +184,7 @@ namespace Labs.Lab3
                 Matrix4 inverseTranslation = Matrix4.CreateTranslation(-t);
                 mGroundModel = mGroundModel * inverseTranslation * Matrix4.CreateRotationY(0.025f) *
                 translation;
-                UpdateLightPos();
+                
             }
             if (e.KeyChar == 'c')
             {
@@ -193,7 +193,7 @@ namespace Labs.Lab3
                 Matrix4 inverseTranslation = Matrix4.CreateTranslation(-t);
                 mCreatureModel = mCreatureModel * inverseTranslation * Matrix4.CreateRotationY(-0.025f) *
                 translation;
-                UpdateLightPos();
+               
             }
             if (e.KeyChar == 'v')
             {
@@ -202,14 +202,14 @@ namespace Labs.Lab3
                 Matrix4 inverseTranslation = Matrix4.CreateTranslation(-t);
                 mCreatureModel = mCreatureModel * inverseTranslation * Matrix4.CreateRotationY(0.025f) *
                 translation;
-                UpdateLightPos();
+                
             }
         }
 
         private void UpdateLightPos()
         {
             int uLightLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLightPosition");
-            Vector4 lightPosition = Vector4.Transform(new Vector4(2, 1, -8.5f, 1), mView);
+            Vector4 lightPosition = Vector4.Transform(new Vector4(20, 1, 8.5f, 1), mView);
             GL.Uniform4(uLightLocation, lightPosition);
         }
 
