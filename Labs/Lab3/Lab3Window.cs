@@ -132,6 +132,10 @@ namespace Labs.Lab3
             int uView = GL.GetUniformLocation(mShader.ShaderProgramID, "uView");
             GL.UniformMatrix4(uView, true, ref mView);
 
+            int uEyePosition = GL.GetUniformLocation(mShader.ShaderProgramID, "uEyePosition");
+            Vector4 EyePosition = new Vector4(mView.ExtractTranslation(), 1);
+            GL.Uniform4(uEyePosition, EyePosition);
+
             mGroundModel = Matrix4.CreateTranslation(0, 0, -5f);
             mCreatureModel = Matrix4.CreateTranslation(0, 2, -5f);
             mCylinderModel = Matrix4.CreateTranslation(0, 0, -5f);
@@ -211,6 +215,14 @@ namespace Labs.Lab3
             int uLightLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLightPosition");
             Vector4 lightPosition = Vector4.Transform(new Vector4(20, 1, 8.5f, 1), mView);
             GL.Uniform4(uLightLocation, lightPosition);
+            UpdateEyePos();
+        }
+
+        private void UpdateEyePos()
+        {
+            int uEyePosition = GL.GetUniformLocation(mShader.ShaderProgramID, "uEyePosition");
+            Vector4 EyePosition = new Vector4(mView.ExtractTranslation(), 1);
+            GL.Uniform4(uEyePosition, EyePosition);
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
