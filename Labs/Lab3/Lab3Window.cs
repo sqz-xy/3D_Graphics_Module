@@ -132,6 +132,16 @@ namespace Labs.Lab3
                 int uView = GL.GetUniformLocation(mShader.ShaderProgramID, "uView");
                 GL.UniformMatrix4(uView, true, ref mView);            
             }
+            if (e.KeyChar == 'q')
+            {
+                mGroundModel = mGroundModel * Matrix4.CreateRotationY(-0.025f);
+                mSphereModel = mSphereModel * Matrix4.CreateRotationY(-0.025f);
+            }
+            if (e.KeyChar == 'e')
+            {
+                mGroundModel = mGroundModel * Matrix4.CreateRotationY(0.025f);
+                mSphereModel = mSphereModel * Matrix4.CreateRotationY(0.025f);
+            }
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
