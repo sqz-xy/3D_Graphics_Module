@@ -41,6 +41,11 @@ namespace Labs.Lab3
             int vPositionLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vPosition");
             int vNormalLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vNormal");
 
+            int uLightDirectionLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLightDirection");
+            Vector3 normalisedLightDirection, lightDirection = new Vector3(-1, -1, -1);
+            Vector3.Normalize(ref lightDirection, out normalisedLightDirection);
+            GL.Uniform3(uLightDirectionLocation, normalisedLightDirection);
+
             GL.GenVertexArrays(mVAO_IDs.Length, mVAO_IDs);
             GL.GenBuffers(mVBO_IDs.Length, mVBO_IDs);
 
