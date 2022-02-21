@@ -14,5 +14,6 @@ void main()
 { 
 	gl_Position = vec4(vPosition, 1) * uModel * uView * uProjection; 
 	vec3 inverseTransposeNormal = normalize(vNormal * mat3(transpose(inverse(uModel * uView))));
-	oColour = vec4(vec3(max(dot(inverseTransposeNormal, -uLightDirection), 0)), 1);
+	vec3 lightDir = normalize(-uLightDirection * mat3(uView));
+	oColour = vec4(vec3(max(dot(inverseTransposeNormal, lightDir), 0)), 1);
 }
