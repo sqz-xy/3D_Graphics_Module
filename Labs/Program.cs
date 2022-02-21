@@ -12,14 +12,14 @@ namespace Labs
         /* Change m_CurrentTask to the current task you are working on.
          * Valid tasks are L1, L2_1, L2_2, L3, Challenge, L4 and ACW
          */
-        private static Lab m_CurrentLab = Lab.L3;
+        private static Lab m_CurrentLab = Lab.L4;
 
         #region No Changes Required Here Ever!
         /* 
          * By all means look at this code, but you will not be required to change
          * any of this code to complete any lab work
          */
-        private enum Lab { L1, L2_1, L2_2, L3, Challenge, L4_1, L4_2, L5, ACW };
+        private enum Lab { L1, L2_1, L2_2, L3, Challenge, L4_1, L4_2, L4, ACW };
         static void Main(string[] args)
         {
             GameWindow window = null;
@@ -40,7 +40,7 @@ namespace Labs
                 case Lab.Challenge:
                     window = new Challenge.ChallengeWindow();
                     break;
-                case Lab.L5:
+                case Lab.L4:
                     window = new Lab4.Lab4Window();
                     break;
                 case Lab.ACW:
