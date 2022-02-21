@@ -41,10 +41,10 @@ namespace Labs.Lab3
             int vPositionLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vPosition");
             int vNormalLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vNormal");
 
-            int uLightDirectionLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLightLocation");
-            Vector3 normalisedLightDirection, lightDirection = new Vector3(2, -1, -8.5f);
-            Vector3.Normalize(ref lightDirection, out normalisedLightDirection);
-            GL.Uniform3(uLightDirectionLocation, normalisedLightDirection);
+            int uLightLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLightPosition");
+            Vector3 lightPosition = new Vector3(0, -100, 0);
+            //Vector3.Normalize(ref lightDirection, out normalisedLightDirection);
+            GL.Uniform3(uLightLocation, lightPosition);
 
             GL.GenVertexArrays(mVAO_IDs.Length, mVAO_IDs);
             GL.GenBuffers(mVBO_IDs.Length, mVBO_IDs);
@@ -69,8 +69,8 @@ namespace Labs.Lab3
             GL.VertexAttribPointer(vPositionLocation, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
 
             //Go back and check this
-            //GL.EnableVertexAttribArray(vNormalLocation);
-            //GL.VertexAttribPointer(vNormalLocation, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
+            GL.EnableVertexAttribArray(vNormalLocation);
+            GL.VertexAttribPointer(vNormalLocation, 3, VertexAttribPointerType.Float, true, 6 * sizeof(float), 3 * sizeof(float));
 
             mSphereModelUtility = ModelUtility.LoadModel(@"Utility/Models/sphere.bin"); 
 
@@ -96,7 +96,7 @@ namespace Labs.Lab3
             GL.VertexAttribPointer(vPositionLocation, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
 
             GL.EnableVertexAttribArray(vNormalLocation);
-            GL.VertexAttribPointer(vNormalLocation, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
+            GL.VertexAttribPointer(vNormalLocation, 3, VertexAttribPointerType.Float, true, 6 * sizeof(float), 3 * sizeof(float));
 
             GL.BindVertexArray(0);
 

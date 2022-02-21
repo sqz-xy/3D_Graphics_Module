@@ -12,6 +12,7 @@ out vec4 oColour;
 
 void main() 
 { 
+	//vec4 tempPos = vec4(2, 1, -8.5, 1) * uView;
 	gl_Position = vec4(vPosition, 1) * uModel * uView * uProjection; 
 	vec3 inverseTransposeNormal = normalize(vNormal * mat3(transpose(inverse(uModel * uView))));
 	vec4 surfacePosition = vec4(vPosition, 1) * uModel * uView;
