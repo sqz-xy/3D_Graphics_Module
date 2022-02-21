@@ -103,7 +103,10 @@ namespace Labs.Lab4
                 throw new Exception("Could not find file " + filepath);
             }
 
-          
+            int vTexCoordsLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vTexCoords");
+            
+
+
             mVAO_ID = GL.GenVertexArray();
             GL.GenBuffers(mVBO_IDs.Length, mVBO_IDs);
 
@@ -128,6 +131,9 @@ namespace Labs.Lab4
 
             GL.EnableVertexAttribArray(vPositionLocation);
             GL.VertexAttribPointer(vPositionLocation, 2, VertexAttribPointerType.Float, false, 4 * sizeof(float), 0);
+
+            GL.EnableVertexAttribArray(vTexCoordsLocation);
+            GL.VertexAttribPointer(vTexCoordsLocation, 2, VertexAttribPointerType.Float, false, 4 * sizeof(float), 2 * sizeof(float));
 
             GL.BindVertexArray(0);
 
