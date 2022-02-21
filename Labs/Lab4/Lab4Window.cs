@@ -35,20 +35,20 @@ namespace Labs.Lab4
             // Set some GL state
             GL.ClearColor(Color4.Firebrick);
 
-            float[] vertices = {-0.5f, -0.5f, 0.1f, -0.1f,
-                                -0.25f, -0.5f, 0.2f, -0.2f,
-                                0.0f, -0.5f, 0.3f, -0.3f,
-                                0.25f, -0.5f, 0.4f, -0.4f,
+            float[] vertices = {-0.5f, -0.5f, -0.5f, -0.5f,
+                                -0.25f, -0.5f, -0.25f, -0.5f,
+                                0.0f, -0.5f, 0.0f, -0.5f,
+                                0.25f, -0.5f,  0.25f, -0.5f,
                                 0.5f, -0.5f, 0.5f, -0.5f,
-                                -0.5f, 0.0f, 0.6f, -0.6f,
-                                -0.25f, 0.0f, 0.7f, -0.7f,
-                                0.0f, 0.0f, 0.8f, -0.8f,
-                                0.25f, 0.0f, 0.9f, -0.9f,
-                                0.5f, 0.0f, 1.0f, -1.0f,
-                               -0.5f, 0.5f, -0.1f, 0.1f,
-                                -0.25f, 0.5f, -0.2f, 0.2f,
-                                0.0f, 0.5f, -0.3f, 0.3f,
-                                0.25f, 0.5f, -0.4f, 0.4f,
+                                -0.5f, 0.0f, -0.5f, 0.0f,
+                                -0.25f, 0.0f, -0.25f, 0.0f,
+                                0.0f, 0.0f, 0.0f, 0.0f,
+                                0.25f, 0.0f, 0.25f, 0.0f,
+                                0.5f, 0.0f, 0.5f, 0.0f,
+                               -0.5f, 0.5f, -0.5f, 0.5f,
+                                -0.25f, 0.5f, -0.25f, 0.5f,
+                                0.0f, 0.5f, 0.0f, 0.5f,
+                                0.25f, 0.5f, 0.25f, 0.5f,
                                 0.5f, 0.5f, -0.5f, 0.5f
                                 };
 
@@ -97,14 +97,18 @@ namespace Labs.Lab4
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter,
                 (int)TextureMagFilter.Linear);
                 TextureBitmap.UnlockBits(TextureData);
+                TextureBitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
             }
             else
             {
                 throw new Exception("Could not find file " + filepath);
             }
 
+        
+
             int vTexCoordsLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vTexCoords");
-            
+            int uTextureSamplerLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uTextureSampler");
+            GL.Uniform1(uTextureSamplerLocation, 0);
 
 
             mVAO_ID = GL.GenVertexArray();
