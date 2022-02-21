@@ -134,13 +134,35 @@ namespace Labs.Lab3
             }
             if (e.KeyChar == 'q')
             {
-                mGroundModel = mGroundModel * Matrix4.CreateRotationY(-0.025f);
-                mSphereModel = mSphereModel * Matrix4.CreateRotationY(-0.025f);
+                Vector3 t = mGroundModel.ExtractTranslation();
+                Matrix4 translation = Matrix4.CreateTranslation(t);
+                Matrix4 inverseTranslation = Matrix4.CreateTranslation(-t);
+                mGroundModel = mGroundModel * inverseTranslation * Matrix4.CreateRotationY(-0.025f) *
+                translation;
             }
             if (e.KeyChar == 'e')
             {
-                mGroundModel = mGroundModel * Matrix4.CreateRotationY(0.025f);
-                mSphereModel = mSphereModel * Matrix4.CreateRotationY(0.025f);
+                Vector3 t = mGroundModel.ExtractTranslation();
+                Matrix4 translation = Matrix4.CreateTranslation(t);
+                Matrix4 inverseTranslation = Matrix4.CreateTranslation(-t);
+                mGroundModel = mGroundModel * inverseTranslation * Matrix4.CreateRotationY(0.025f) *
+                translation;
+            }
+            if (e.KeyChar == 'c')
+            {
+                Vector3 t = mSphereModel.ExtractTranslation();
+                Matrix4 translation = Matrix4.CreateTranslation(t);
+                Matrix4 inverseTranslation = Matrix4.CreateTranslation(-t);
+                mSphereModel = mSphereModel * inverseTranslation * Matrix4.CreateRotationY(-0.025f) *
+                translation;
+            }
+            if (e.KeyChar == 'v')
+            {
+                Vector3 t = mSphereModel.ExtractTranslation();
+                Matrix4 translation = Matrix4.CreateTranslation(t);
+                Matrix4 inverseTranslation = Matrix4.CreateTranslation(-t);
+                mSphereModel = mSphereModel * inverseTranslation * Matrix4.CreateRotationY(0.025f) *
+                translation;
             }
         }
 
