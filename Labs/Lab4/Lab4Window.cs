@@ -28,10 +28,15 @@ namespace Labs.Lab4
         private int[] mVBO_IDs = new int[2];
         private int mVAO_ID;
         private ShaderUtility mShader;
-        private int mTexture_ID; 
+        private int mTexture_ID;
+        private int mTexture_ID_2;
+        private int mRateOfDissolve = 1;
+        private float mThreshold = 0.1f;
 
         protected override void OnLoad(EventArgs e)
         {
+            // ASK ABOUT MULTIPLE TEXTURE LOADING
+            // ASK ABOUT TEXTURE VERTICES
             // Set some GL state
             GL.ClearColor(Color4.Firebrick);
 
@@ -76,6 +81,9 @@ namespace Labs.Lab4
             GL.UseProgram(mShader.ShaderProgramID);
             int vPositionLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vPosition");
 
+            int uThresholdLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uThreshold");
+            GL.Uniform1(uThresholdLocation, 0.05f);
+
             string filepath = @"Lab4/Textures/texture.png";
             if (System.IO.File.Exists(filepath))
             {
@@ -104,11 +112,43 @@ namespace Labs.Lab4
                 throw new Exception("Could not find file " + filepath);
             }
 
-        
+            filepath = @"Lab4/Textures/texture2.png";
+            if (System.IO.File.Exists(filepath))
+            {
+                Bitmap TextureBitmap = new Bitmap(filepath);
+                BitmapData TextureData = TextureBitmap.LockBits(
+                new System.Drawing.Rectangle(0, 0, TextureBitmap.Width,
+                TextureBitmap.Height), ImageLockMode.ReadOnly,
+                System.Drawing.Imaging.PixelFormat.Format32bppRgb);
+
+                GL.ActiveTexture(TextureUnit.Texture1);
+                GL.GenTextures(1, out mTexture_ID_2);
+                GL.BindTexture(TextureTarget.Texture2D, mTexture_ID_2);
+                GL.TexImage2D(TextureTarget.Texture2D,
+                0, PixelInternalFormat.Rgba, TextureData.Width, TextureData.Height,
+                0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
+                PixelType.UnsignedByte, TextureData.Scan0);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter,
+                (int)TextureMinFilter.Linear);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter,
+                (int)TextureMagFilter.Linear);
+                TextureBitmap.UnlockBits(TextureData);
+                TextureBitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
+            }
+            else
+            {
+                throw new Exception("Could not find file " + filepath);
+            }
+
+
 
             int vTexCoordsLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vTexCoords");
+
             int uTextureSamplerLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uTextureSampler");
             GL.Uniform1(uTextureSamplerLocation, 0);
+
+            int uTextureSamplerLocation2 = GL.GetUniformLocation(mShader.ShaderProgramID, "uTextureSampler2");
+            GL.Uniform1(uTextureSamplerLocation2, 0);
 
 
             mVAO_ID = GL.GenVertexArray();
@@ -157,6 +197,19 @@ namespace Labs.Lab4
             this.SwapBuffers();
         }
 
+        protected override void OnUpdateFrame(FrameEventArgs e)
+        {
+            float timestep = (float)e.Time;
+            float thresholdChange = mRateOfDissolve * timestep;
+            if (mThreshold + thresholdChange < 0 || mThreshold + thresholdChange > 1)
+            {
+                mRateOfDissolve = -mRateOfDissolve;
+            }
+            mThreshold += mRateOfDissolve * timestep;
+            int uThresholdLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uThreshold");
+            GL.Uniform1(uThresholdLocation, mThreshold);
+        }
+
         protected override void OnUnload(EventArgs e)
         {
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
@@ -164,6 +217,8 @@ namespace Labs.Lab4
             GL.BindVertexArray(0);
             GL.DeleteBuffers(mVBO_IDs.Length, mVBO_IDs);
             GL.DeleteVertexArray(mVAO_ID);
+            GL.DeleteTexture(mTexture_ID);
+            GL.DeleteTexture(mTexture_ID_2);
             mShader.Delete();
             base.OnUnload(e);
         }
