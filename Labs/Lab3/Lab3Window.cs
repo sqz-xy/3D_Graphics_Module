@@ -32,13 +32,14 @@ namespace Labs.Lab3
         protected override void OnLoad(EventArgs e)
         {
             // Set some GL state
-            GL.ClearColor(Color4.Black);
+            GL.ClearColor(Color4.CornflowerBlue);
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.CullFace);
 
             mShader = new ShaderUtility(@"Lab3/Shaders/vLighting.vert", @"Lab3/Shaders/fPassThrough.frag");
             GL.UseProgram(mShader.ShaderProgramID);
             int vPositionLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vPosition");
+            int vNormalLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vNormal");
 
             GL.GenVertexArrays(mVAO_IDs.Length, mVAO_IDs);
             GL.GenBuffers(mVBO_IDs.Length, mVBO_IDs);
@@ -62,6 +63,10 @@ namespace Labs.Lab3
             GL.EnableVertexAttribArray(vPositionLocation);
             GL.VertexAttribPointer(vPositionLocation, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
 
+            //Go back and check this
+            //GL.EnableVertexAttribArray(vNormalLocation);
+            //GL.VertexAttribPointer(vNormalLocation, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
+
             mSphereModelUtility = ModelUtility.LoadModel(@"Utility/Models/sphere.bin"); 
 
             GL.BindVertexArray(mVAO_IDs[1]);
@@ -84,6 +89,9 @@ namespace Labs.Lab3
 
             GL.EnableVertexAttribArray(vPositionLocation);
             GL.VertexAttribPointer(vPositionLocation, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
+
+            GL.EnableVertexAttribArray(vNormalLocation);
+            GL.VertexAttribPointer(vNormalLocation, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
 
             GL.BindVertexArray(0);
 
