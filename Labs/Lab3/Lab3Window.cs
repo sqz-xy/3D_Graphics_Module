@@ -43,11 +43,24 @@ namespace Labs.Lab3
             int vPositionLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vPosition");
             int vNormalLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vNormal");
 
-            int uLightPositionLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLight.Position");
             Vector4 lightPosition = new Vector4(2, 4, -8.5f, 1);
             lightPosition = Vector4.Transform(lightPosition, mView);
+
+            //Vector4 lightPosition2 = new Vector4(4, 2, -13f, 1);
+            //lightPosition2 = Vector4.Transform(lightPosition2, mView);
+
+            //Vector4 lightPosition3 = new Vector4(8, 10, 0f, 1);
+            //lightPosition3 = Vector4.Transform(lightPosition3, mView);
+
+            int uLightPositionLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLight.Position");
             GL.Uniform4(uLightPositionLocation, lightPosition);
-       
+
+            //int uLightPositionLocation2 = GL.GetUniformLocation(mShader.ShaderProgramID, "uLight[1].Position");
+            //GL.Uniform4(uLightPositionLocation2, lightPosition2);
+
+            //int uLightPositionLocation3 = GL.GetUniformLocation(mShader.ShaderProgramID, "uLight[2].Position");
+            //GL.Uniform4(uLightPositionLocation3, lightPosition3);
+
             int uAmbientReflectivity = GL.GetUniformLocation(mShader.ShaderProgramID, "uMaterial.AmbientReflectivity");
             Vector3 colour4 = new Vector3(0.5f, 0.5f, 0.5f);
             GL.Uniform3(uAmbientReflectivity, colour4);
@@ -164,8 +177,8 @@ namespace Labs.Lab3
         private void ChangeLightColour(Vector3 pAmbientColour, Vector3 pDiffuseColour, Vector3 pSpecularColour)
         {
             int uAmbientLightLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLight.AmbientLight");
-            Vector3 colour1 = new Vector3(pAmbientColour);
-            GL.Uniform3(uAmbientLightLocation, colour1);
+            Vector3 colour = new Vector3(pAmbientColour);
+            GL.Uniform3(uAmbientLightLocation, colour);
 
             int uDiffuseLightLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLight.DiffuseLight");
             Vector3 colour2 = new Vector3(pDiffuseColour);
@@ -174,6 +187,30 @@ namespace Labs.Lab3
             int uSpecularLightLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLight.SpecularLight");
             Vector3 colour3 = new Vector3(pSpecularColour);
             GL.Uniform3(uSpecularLightLocation, colour3);
+
+            //int uAmbientLightLocation2 = GL.GetUniformLocation(mShader.ShaderProgramID, "uLight[1].AmbientLight");
+            //Vector3 colour4 = new Vector3(0f, 0.1f, 0f);
+            //GL.Uniform3(uAmbientLightLocation2, colour4);
+
+            //int uDiffuseLightLocation2 = GL.GetUniformLocation(mShader.ShaderProgramID, "uLight[1].DiffuseLight");
+            //Vector3 colour5 = new Vector3(0f, 0.1f, 0f);
+            //GL.Uniform3(uDiffuseLightLocation2, colour5);
+
+            //int uSpecularLightLocation2 = GL.GetUniformLocation(mShader.ShaderProgramID, "uLight[1].SpecularLight");
+            //Vector3 colour6 = new Vector3(0f, 0.1f, 0f);
+            //GL.Uniform3(uSpecularLightLocation2, colour6);
+
+            //int uAmbientLightLocation3 = GL.GetUniformLocation(mShader.ShaderProgramID, "uLight[2].AmbientLight");
+            //Vector3 colour7 = new Vector3(0f, 0f, 0.1f);
+            //GL.Uniform3(uAmbientLightLocation3, colour7);
+
+            //int uDiffuseLightLocation3 = GL.GetUniformLocation(mShader.ShaderProgramID, "uLight[2].DiffuseLight");
+            //Vector3 colour8 = new Vector3(0f, 0f, 0.1f);
+            //GL.Uniform3(uDiffuseLightLocation3, colour8);
+
+            //int uSpecularLightLocation3 = GL.GetUniformLocation(mShader.ShaderProgramID, "uLight[2].SpecularLight");
+            //Vector3 colour9 = new Vector3(0f, 0f, 0.1f);
+            //GL.Uniform3(uSpecularLightLocation3, colour9);
         }
 
         protected override void OnResize(EventArgs e)
