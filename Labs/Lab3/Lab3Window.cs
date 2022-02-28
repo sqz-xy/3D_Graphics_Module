@@ -38,39 +38,31 @@ namespace Labs.Lab3
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.CullFace);
 
-            // LIGHT NEEDS TO BE UPDATED BY MOVEMENT, CHECK THIS
             mShader = new ShaderUtility(@"Lab3/Shaders/vPassThrough.vert", @"Lab3/Shaders/fLighting.frag");
             GL.UseProgram(mShader.ShaderProgramID);
             int vPositionLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vPosition");
             int vNormalLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vNormal");
 
-            //int uAmbientLightLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLight.AmbientLight");
-            //Vector3 colour1 = new Vector3(0.0215f, 0.1745f,  0.0215f);
-            //GL.Uniform3(uAmbientLightLocation, colour1);
+            int uLightPositionLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLight.Position");
+            Vector4 lightPosition = new Vector4(2, 4, -8.5f, 1);
+            lightPosition = Vector4.Transform(lightPosition, mView);
+            GL.Uniform4(uLightPositionLocation, lightPosition);
+       
+            int uAmbientReflectivity = GL.GetUniformLocation(mShader.ShaderProgramID, "uMaterial.AmbientReflectivity");
+            Vector3 colour4 = new Vector3(0.5f, 0.5f, 0.5f);
+            GL.Uniform3(uAmbientReflectivity, colour4);
 
-            //int uDiffuseLightLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLight.DiffuseLight");
-            //Vector3 colour2 = new Vector3(0.54f, 0.89f, 0.63f);
-            //GL.Uniform3(uDiffuseLightLocation, colour2);
+            int uDiffuseReflectivity = GL.GetUniformLocation(mShader.ShaderProgramID, "uMaterial.DiffuseReflectivity");
+            Vector3 colour5 = new Vector3(0.5f, 0.5f, 0.5f);
+            GL.Uniform3(uDiffuseReflectivity, colour5);
 
-            //int uSpecularLightLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLight.SpecularLight");
-            //Vector3 colour3 = new Vector3(0.332741f, 0.328634f, 0.346435f);
-            //GL.Uniform3(uSpecularLightLocation, colour3);
+            int uSpecularReflectivity = GL.GetUniformLocation(mShader.ShaderProgramID, "uMaterial.SpecularReflectivity");
+            Vector3 colour6 = new Vector3(0.5f, 0.5f, 0.5f);
+            GL.Uniform3(uSpecularReflectivity, colour6);
 
-            //int uAmbientReflectivity = GL.GetUniformLocation(mShader.ShaderProgramID, "uMaterial.AmbientReflectivity");
-            //Vector3 colour4 = new Vector3(10f, 10f, 10f);
-            //GL.Uniform3(uAmbientReflectivity, colour4);
-
-            //int uDiffuseReflectivity = GL.GetUniformLocation(mShader.ShaderProgramID, "uMaterial.AmbientReflectivity");
-            //Vector3 colour5 = new Vector3(5f, 5f, 5f);
-            //GL.Uniform3(uDiffuseReflectivity, colour5);
-
-            //int uSpecularReflectivity = GL.GetUniformLocation(mShader.ShaderProgramID, "uMaterial.AmbientReflectivity");
-            //Vector3 colour6 = new Vector3(10f, 10f, 10f);
-            //GL.Uniform3(uSpecularReflectivity, colour6);
-
-            //int uShininess = GL.GetUniformLocation(mShader.ShaderProgramID, "uMaterial.AmbientReflectivity");
-            //double shininess = 0.6f;
-            //GL.Uniform1(uShininess, shininess);
+            int uShininess = GL.GetUniformLocation(mShader.ShaderProgramID, "uMaterial.Shininess");
+            float shininess = 10f;
+            GL.Uniform1(uShininess, shininess);
 
             GL.GenVertexArrays(mVAO_IDs.Length, mVAO_IDs);
             GL.GenBuffers(mVBO_IDs.Length, mVBO_IDs);
@@ -98,11 +90,11 @@ namespace Labs.Lab3
             GL.EnableVertexAttribArray(vNormalLocation);
             GL.VertexAttribPointer(vNormalLocation, 3, VertexAttribPointerType.Float, true, 6 * sizeof(float), 3 * sizeof(float));
 
-            mCreature = ModelUtility.LoadModel(@"Utility/Models/model.bin"); 
+            mCreature = ModelUtility.LoadModel(@"Utility/Models/model.bin");
 
             GL.BindVertexArray(mVAO_IDs[1]);
             GL.BindBuffer(BufferTarget.ArrayBuffer, mVBO_IDs[1]);
-            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(mCreature.Vertices.Length * sizeof(float)), mCreature.Vertices, BufferUsageHint.StaticDraw);           
+            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(mCreature.Vertices.Length * sizeof(float)), mCreature.Vertices, BufferUsageHint.StaticDraw);
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, mVBO_IDs[2]);
             GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(mCreature.Indices.Length * sizeof(float)), mCreature.Indices, BufferUsageHint.StaticDraw);
 
@@ -157,20 +149,31 @@ namespace Labs.Lab3
             int uView = GL.GetUniformLocation(mShader.ShaderProgramID, "uView");
             GL.UniformMatrix4(uView, true, ref mView);
 
-            //int uEyePosition = GL.GetUniformLocation(mShader.ShaderProgramID, "uEyePosition");
-            //Vector4 EyePosition = new Vector4(mView.ExtractTranslation(), 1);
-            //GL.Uniform4(uEyePosition, EyePosition);
-
-            int uLightPositionLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLightPosition");
-            Vector4 transformedLightPos = Vector4.Transform(mLightPosition, mView);
-            GL.Uniform4(uLightPositionLocation, transformedLightPos);
+            int uEyePosition = GL.GetUniformLocation(mShader.ShaderProgramID, "uEyePosition");
+            Vector4 EyePosition = new Vector4(mView.ExtractTranslation(), 1);
+            GL.Uniform4(uEyePosition, EyePosition);
 
             mGroundModel = Matrix4.CreateTranslation(0, 0, -5f);
             mCreatureModel = Matrix4.CreateTranslation(0, 2, -5f);
             mCylinderModel = Matrix4.CreateTranslation(0, 0, -5f);
 
             base.OnLoad(e);
-            
+
+        }
+
+        private void ChangeLightColour(Vector3 pAmbientColour, Vector3 pDiffuseColour, Vector3 pSpecularColour)
+        {
+            int uAmbientLightLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLight.AmbientLight");
+            Vector3 colour1 = new Vector3(pAmbientColour);
+            GL.Uniform3(uAmbientLightLocation, colour1);
+
+            int uDiffuseLightLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLight.DiffuseLight");
+            Vector3 colour2 = new Vector3(pDiffuseColour);
+            GL.Uniform3(uDiffuseLightLocation, colour2);
+
+            int uSpecularLightLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLight.SpecularLight");
+            Vector3 colour3 = new Vector3(pSpecularColour);
+            GL.Uniform3(uSpecularLightLocation, colour3);
         }
 
         protected override void OnResize(EventArgs e)
@@ -252,19 +255,7 @@ namespace Labs.Lab3
             Vector4 transformedLightPos = Vector4.Transform(mLightPosition, mView);
             GL.Uniform4(uLightPositionLocation, transformedLightPos);
 
-            //int uAmbientLightLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLight.AmbientLight");
-            //Vector3 colour = Vector3.Transform(new Vector3(0.0215f, 0.1745f, 0.0215f), mView);
-            //GL.Uniform3(uAmbientLightLocation, colour);
-
-            //int uDiffuseLightLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLight.DiffuseLight");
-            //colour = Vector3.Transform(new Vector3(0.07568f, 0.61424f, 0.07568f), mView);
-            //GL.Uniform3(uDiffuseLightLocation, colour);
-
-            //int uSpecularLightLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLight.SpecularLight");
-            //colour = Vector3.Transform(new Vector3(0.633f, 0.727811f, 0.633f), mView);
-            //GL.Uniform3(uSpecularLightLocation, colour);
-
-            //UpdateEyePos();
+            UpdateEyePos();
         }
 
         private void UpdateEyePos()
@@ -281,16 +272,18 @@ namespace Labs.Lab3
 
 
             int uModel = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
-            GL.UniformMatrix4(uModel, true, ref mGroundModel);  
+            GL.UniformMatrix4(uModel, true, ref mGroundModel);
 
             GL.BindVertexArray(mVAO_IDs[0]);
+            ChangeLightColour(new Vector3(0.0215f, 0.1745f, 0.0215f), new Vector3(0.07568f, 0.61424f, 0.07568f), new Vector3(0.07568f, 0.61424f, 0.07568f));
             GL.DrawArrays(PrimitiveType.TriangleFan, 0, 4);
 
             Matrix4 m = mCreatureModel * mGroundModel;
             uModel = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
-            GL.UniformMatrix4(uModel, true, ref m); 
-
+            GL.UniformMatrix4(uModel, true, ref m);
+           
             GL.BindVertexArray(mVAO_IDs[1]);
+            ChangeLightColour(new Vector3(0.25f, 0.20725f, 0.20725f), new Vector3(1f, 0.829f, 0.829f), new Vector3(0.296648f, 0.296648f, 0.296648f));
             GL.DrawElements(PrimitiveType.Triangles, mCreature.Indices.Length, DrawElementsType.UnsignedInt, 0);
 
             Matrix4 m2 = mCylinderModel * mGroundModel;
@@ -298,6 +291,7 @@ namespace Labs.Lab3
             GL.UniformMatrix4(uModel, true, ref m2);
 
             GL.BindVertexArray(mVAO_IDs[2]);
+            ChangeLightColour(new Vector3(0.5f, 0f, 0f), new Vector3(0.4f, 0.4f, 0.7f), new Vector3(0.7f, 0.4f, 0.4f));
             GL.DrawElements(PrimitiveType.Triangles, mCylinder.Indices.Length, DrawElementsType.UnsignedInt, 0);
 
             GL.BindVertexArray(0);
