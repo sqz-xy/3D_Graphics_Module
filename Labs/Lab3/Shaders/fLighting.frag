@@ -10,7 +10,12 @@ out vec4 FragColour;
 
 void main()
 {
+	//vec4 lightDir = normalize(uLightPosition - oSurfacePosition);
 	vec4 lightDir = normalize(uLightPosition - oSurfacePosition);
+	vec4 eyeDirection = normalize(uEyePosition - oSurfacePosition);
+	vec4 reflectedVector = reflect(-lightDir, oNormal);
+	float specularFactor = pow(max(dot( reflectedVector, eyeDirection), 0.0), 30);
 	float diffuseFactor = max(dot(oNormal, lightDir), 0);
-	FragColour = vec4(vec3(diffuseFactor), 1);
+	float ambientFactor = 0.05f;
+	FragColour = vec4(vec3(diffuseFactor + specularFactor + ambientFactor), 1);
 }
