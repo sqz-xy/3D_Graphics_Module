@@ -16,7 +16,8 @@ namespace Labs.ACW
         private ShaderUtility mShader;
         private ModelUtility mCylinder;
         private ModelUtility mCreature;
-        private Matrix4 mView, mCreatureModel, mGroundModel, mCylinderModel;
+        private Matrix4 mView, mStaticView, mCreatureModel, mGroundModel, mCylinderModel;
+        private bool mStaticViewEnabled = false;
 
         public ACWWindow()
             : base(
@@ -129,6 +130,8 @@ namespace Labs.ACW
             int uView = GL.GetUniformLocation(mShader.ShaderProgramID, "uView");
             GL.UniformMatrix4(uView, true, ref mView);
 
+            mStaticView = Matrix4.CreateTranslation(5, -1.5f, 0);
+
             mGroundModel = Matrix4.CreateTranslation(0, 0, -5f);
             mCreatureModel = Matrix4.CreateTranslation(0, 2, -5f);
             mCylinderModel = Matrix4.CreateTranslation(0, 0, -5f);
@@ -138,6 +141,67 @@ namespace Labs.ACW
         protected override void OnKeyPress(KeyPressEventArgs e)
         {
             base.OnKeyPress(e);
+
+            if (e.KeyChar == 'p')
+            {
+                mStaticViewEnabled = !mStaticViewEnabled;
+
+                if(mStaticViewEnabled)
+                {
+                    int uView = GL.GetUniformLocation(mShader.ShaderProgramID, "uView");
+                    GL.UniformMatrix4(uView, true, ref mStaticView);
+                }
+                else
+                {
+                    int uView = GL.GetUniformLocation(mShader.ShaderProgramID, "uView");
+                    GL.UniformMatrix4(uView, true, ref mView);
+                }
+                
+            }
+
+            if (!mStaticViewEnabled)
+            {
+                if (e.KeyChar == 'a')
+                {
+                    mView = mView * Matrix4.CreateTranslation(0.1f, 0, 0);
+                    MoveCamera();
+                }
+                if (e.KeyChar == 'd')
+                {
+                    mView = mView * Matrix4.CreateTranslation(-0.1f, 0, 0);
+                    MoveCamera();
+                }
+                if (e.KeyChar == 'w')
+                {
+                    mView = mView * Matrix4.CreateTranslation(0, -0.1f, 0);
+                    MoveCamera();
+                }
+                if (e.KeyChar == 's')
+                {
+                    mView = mView * Matrix4.CreateTranslation(0, 0.1f, 0);
+                    MoveCamera();
+                }
+                if (e.KeyChar == 'q')
+                {
+                    mView = mView * Matrix4.CreateTranslation(0, 0, 0.1f);
+                    MoveCamera();
+                }
+                if (e.KeyChar == 'e')
+                {
+                    mView = mView * Matrix4.CreateTranslation(0, 0, -0.1f);
+                    MoveCamera();
+                }
+                if (e.KeyChar == 'r')
+                {
+                    mView = mView * Matrix4.CreateRotationY(0.1f);
+                    MoveCamera();
+                }
+                if (e.KeyChar == 'f')
+                {
+                    mView = mView * Matrix4.CreateRotationY(-0.1f);
+                    MoveCamera();
+                }
+            }          
         }
 
         protected override void OnResize(EventArgs e)
@@ -195,6 +259,12 @@ namespace Labs.ACW
             GL.DeleteVertexArrays(mVAO_IDs.Length, mVAO_IDs);
             mShader.Delete();
             base.OnUnload(e);
+        }
+
+        private void MoveCamera()
+        {
+            int uViewLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uView");
+            GL.UniformMatrix4(uViewLocation, true, ref mView);
         }
     }
 }
