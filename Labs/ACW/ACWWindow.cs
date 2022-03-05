@@ -130,7 +130,10 @@ namespace Labs.ACW
             int uView = GL.GetUniformLocation(mShader.ShaderProgramID, "uView");
             GL.UniformMatrix4(uView, true, ref mView);
 
-            mStaticView = Matrix4.CreateTranslation(5, -1.5f, 0);
+            Vector3 eye = new Vector3(0f, 5f, 5f); // Should be 0.5f temp fix, ask in lab, concerning mView initialisation
+            Vector3 lookAt = new Vector3(0, 0, -5f);
+            Vector3 up = new Vector3(0, 1, 0);
+            mStaticView = Matrix4.LookAt(eye, lookAt, up);
 
             mGroundModel = Matrix4.CreateTranslation(0, 0, -5f);
             mCreatureModel = Matrix4.CreateTranslation(0, 2, -5f);
