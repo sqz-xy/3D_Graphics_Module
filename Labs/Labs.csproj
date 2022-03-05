@@ -60,6 +60,12 @@
     <Compile Include="Utility\ShaderUtility.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ACW\Shaders\fPassThrough.frag">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ACW\Shaders\vLighting.vert">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="App.config" />
     <None Include="Lab2\Shaders\fSimple.frag">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -109,7 +115,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="ACW\Shaders\" />
     <Folder Include="Challenge\Shaders\" />
   </ItemGroup>
   <ItemGroup>
