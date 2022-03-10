@@ -16,7 +16,7 @@ namespace Labs.ACW
         private ShaderUtility mShader;
         private ModelUtility mCylinder;
         private ModelUtility mCreature;
-        private Matrix4 mView, mStaticView, mCreatureModel, mGroundModel, mCylinderModel;
+        private Matrix4 mView, mStaticView, mCreatureModel, mGroundModel, mLeftCylinder, mMiddleCylinder, mRightCylinder;
         private bool mStaticViewEnabled = false;
 
         public ACWWindow()
@@ -71,7 +71,7 @@ namespace Labs.ACW
             GL.EnableVertexAttribArray(vNormalLocation);
             GL.VertexAttribPointer(vNormalLocation, 3, VertexAttribPointerType.Float, true, 6 * sizeof(float), 3 * sizeof(float));
 
-            mCreature = ModelUtility.LoadModel(@"Utility/Models/model.bin");
+            mCreature = ModelUtility.LoadModel(@"Utility/Models/sphere.bin");
 
             GL.BindVertexArray(mVAO_IDs[1]);
             GL.BindBuffer(BufferTarget.ArrayBuffer, mVBO_IDs[1]);
@@ -137,7 +137,9 @@ namespace Labs.ACW
 
             mGroundModel = Matrix4.CreateTranslation(0, 0, -5f);
             mCreatureModel = Matrix4.CreateTranslation(0, 2, -5f);
-            mCylinderModel = Matrix4.CreateTranslation(0, 0, -5f);
+            mLeftCylinder = Matrix4.CreateTranslation(-5, 0, -5f);
+            mMiddleCylinder = Matrix4.CreateTranslation(0, 0, -5f);
+            mRightCylinder = Matrix4.CreateTranslation(5, 0, -5f);
 
         }
 
@@ -176,32 +178,32 @@ namespace Labs.ACW
                 }
                 if (e.KeyChar == 'w')
                 {
-                    mView = mView * Matrix4.CreateTranslation(0, -0.1f, 0);
+                    mView = mView * Matrix4.CreateTranslation(0, 0, 0.1f);
                     MoveCamera();
                 }
                 if (e.KeyChar == 's')
+                {
+                    mView = mView * Matrix4.CreateTranslation(0, 0, -0.1f);
+                    MoveCamera();
+                }
+                if (e.KeyChar == ' ')
+                {
+                    mView = mView * Matrix4.CreateTranslation(0, -0.1f, 0);
+                    MoveCamera();
+                }
+                if (e.KeyChar == 'c')
                 {
                     mView = mView * Matrix4.CreateTranslation(0, 0.1f, 0);
                     MoveCamera();
                 }
                 if (e.KeyChar == 'q')
                 {
-                    mView = mView * Matrix4.CreateTranslation(0, 0, 0.1f);
+                    mView = mView * Matrix4.CreateRotationY(-0.05f);
                     MoveCamera();
                 }
                 if (e.KeyChar == 'e')
                 {
-                    mView = mView * Matrix4.CreateTranslation(0, 0, -0.1f);
-                    MoveCamera();
-                }
-                if (e.KeyChar == 'r')
-                {
-                    mView = mView * Matrix4.CreateRotationY(0.1f);
-                    MoveCamera();
-                }
-                if (e.KeyChar == 'f')
-                {
-                    mView = mView * Matrix4.CreateRotationY(-0.1f);
+                    mView = mView * Matrix4.CreateRotationY(0.05f);
                     MoveCamera();
                 }
             }          
@@ -221,7 +223,7 @@ namespace Labs.ACW
 
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
- 	        base.OnUpdateFrame(e);
+         
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
@@ -242,9 +244,23 @@ namespace Labs.ACW
             GL.BindVertexArray(mVAO_IDs[1]);
             GL.DrawElements(PrimitiveType.Triangles, mCreature.Indices.Length, DrawElementsType.UnsignedInt, 0);
 
-            Matrix4 m2 = mCylinderModel * mGroundModel;
+            Matrix4 m2 = mLeftCylinder * mGroundModel;
             uModel = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
             GL.UniformMatrix4(uModel, true, ref m2);
+
+            GL.BindVertexArray(mVAO_IDs[2]);
+            GL.DrawElements(PrimitiveType.Triangles, mCylinder.Indices.Length, DrawElementsType.UnsignedInt, 0);
+
+            Matrix4 m3 = mMiddleCylinder * mGroundModel;
+            uModel = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
+            GL.UniformMatrix4(uModel, true, ref m3);
+
+            GL.BindVertexArray(mVAO_IDs[2]);
+            GL.DrawElements(PrimitiveType.Triangles, mCylinder.Indices.Length, DrawElementsType.UnsignedInt, 0);
+
+            Matrix4 m4 = mRightCylinder * mGroundModel;
+            uModel = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
+            GL.UniformMatrix4(uModel, true, ref m4);
 
             GL.BindVertexArray(mVAO_IDs[2]);
             GL.DrawElements(PrimitiveType.Triangles, mCylinder.Indices.Length, DrawElementsType.UnsignedInt, 0);
