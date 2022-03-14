@@ -11,7 +11,7 @@ namespace Labs.ACW
     public class ACWWindow : GameWindow
     {
 
-        private int[] mVBO_IDs = new int[4];
+        private int[] mVBO_IDs = new int[5];
         private int[] mVAO_IDs = new int[3];
         private ShaderUtility mShader;
         private ModelUtility mCylinder;
@@ -101,9 +101,9 @@ namespace Labs.ACW
             mCylinder = ModelUtility.LoadModel(@"Utility/Models/cylinder.bin");
 
             GL.BindVertexArray(mVAO_IDs[2]);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, mVBO_IDs[2]);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, mVBO_IDs[3]);
             GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(mCylinder.Vertices.Length * sizeof(float)), mCylinder.Vertices, BufferUsageHint.StaticDraw);
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, mVBO_IDs[3]);
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, mVBO_IDs[4]);
             GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(mCylinder.Indices.Length * sizeof(float)), mCylinder.Indices, BufferUsageHint.StaticDraw);
 
             GL.GetBufferParameter(BufferTarget.ArrayBuffer, BufferParameterName.BufferSize, out size);
