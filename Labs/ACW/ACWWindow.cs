@@ -71,7 +71,7 @@ namespace Labs.ACW
             GL.EnableVertexAttribArray(vNormalLocation);
             GL.VertexAttribPointer(vNormalLocation, 3, VertexAttribPointerType.Float, true, 6 * sizeof(float), 3 * sizeof(float));
 
-            mCreature = ModelUtility.LoadModel(@"Utility/Models/sphere.bin");
+            mCreature = ModelUtility.LoadModel(@"Utility/Models/model.bin");
 
             GL.BindVertexArray(mVAO_IDs[1]);
             GL.BindBuffer(BufferTarget.ArrayBuffer, mVBO_IDs[1]);
