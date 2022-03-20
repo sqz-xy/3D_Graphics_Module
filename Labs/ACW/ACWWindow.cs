@@ -59,7 +59,7 @@ namespace Labs.ACW
                                             1.0f,-1.0f, 1.0f // 6//
         };
 
-        float[] CubeIndices = new float[]
+        uint[] CubeIndices = new uint[]
         {
             1, 2, 3,
             4, 1, 5,
@@ -225,7 +225,7 @@ namespace Labs.ACW
             mLeftCylinder = Matrix4.CreateTranslation(-5, 0, -5f);
             mMiddleCylinder = Matrix4.CreateTranslation(0, 0, -5f);
             mRightCylinder = Matrix4.CreateTranslation(5, 0, -5f);
-            mCube = Matrix4.CreateTranslation(-5, 2, -5f);
+            mCube = Matrix4.CreateTranslation(-10, 4, -10f);
             mCubeScale = Matrix4.CreateScale(0.5f);
 
             mCube *= mCubeScale;
@@ -325,13 +325,11 @@ namespace Labs.ACW
 
             GL.BindVertexArray(mVAO_IDs[0]);
             GL.DrawArrays(PrimitiveType.TriangleFan, 0, 4);
-
-            GL.BindVertexArray(mVAO_IDs[3]);
-            GL.DrawArrays(PrimitiveType.Triangles, 0, 34);
-
+         
             Matrix4 m = mCreatureModel * mGroundModel;
             uModel = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
             GL.UniformMatrix4(uModel, true, ref m);
+
 
             GL.BindVertexArray(mVAO_IDs[1]);
             GL.DrawElements(PrimitiveType.Triangles, mCreature.Indices.Length, DrawElementsType.UnsignedInt, 0);
@@ -360,6 +358,9 @@ namespace Labs.ACW
             Matrix4 m5 = mCube * mGroundModel;
             uModel = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
             GL.UniformMatrix4(uModel, true, ref m5);
+
+            GL.BindVertexArray(mVAO_IDs[3]);
+            GL.DrawElements(PrimitiveType.Triangles, CubeIndices.Length, DrawElementsType.UnsignedInt, 0);
 
             GL.BindVertexArray(0);
             this.SwapBuffers();
