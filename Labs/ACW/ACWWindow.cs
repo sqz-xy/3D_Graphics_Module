@@ -230,7 +230,7 @@ namespace Labs.ACW
 
             mCube *= mCubeScale;
 
-            // Lighting
+            // Lighting, Currently up to directional
 
             int uLightDirectionLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLightDirection");
             Vector3 normalisedLightDirection, lightDirection = new Vector3(-1, -1, -1);
