@@ -249,8 +249,8 @@ namespace Labs.ACW
         {
             float deltaTime = (float)e.Time;
 
-            Matrix4 cubeTranslationUp = Matrix4.CreateTranslation(0 , 0.1f, 0);
-            Matrix4 cubeTranslationDown = Matrix4.CreateTranslation(0, -0.1f, 0);
+            Matrix4 cubeTranslationUp = Matrix4.CreateTranslation(0 , 4f * deltaTime, 0);
+            Matrix4 cubeTranslationDown = Matrix4.CreateTranslation(0, -4f * deltaTime, 0);
 
             Vector3 cubePos = mCubeModel.ExtractTranslation();
             
@@ -275,7 +275,7 @@ namespace Labs.ACW
             Matrix4 creatureRotation = Matrix4.CreateRotationY(mCreatureAngle);
             mCreatureModel = creatureRotation;
             mCreatureModel *= Matrix4.CreateTranslation(0f, 2f, -5f);
-            mCreatureAngle += 0.1f;
+            mCreatureAngle += (4f * deltaTime);
 
 
             //GL.UniformMatrix4(uModelLocation, true, ref creatureRotation);
