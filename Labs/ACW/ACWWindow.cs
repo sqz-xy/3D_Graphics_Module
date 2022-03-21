@@ -249,7 +249,6 @@ namespace Labs.ACW
         {
             float deltaTime = (float)e.Time;
 
-
             Matrix4 cubeTranslationUp = Matrix4.CreateTranslation(0 , 0.1f, 0);
             Matrix4 cubeTranslationDown = Matrix4.CreateTranslation(0, -0.1f, 0);
 
