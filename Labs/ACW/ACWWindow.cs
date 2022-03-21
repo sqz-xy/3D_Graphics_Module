@@ -19,63 +19,7 @@ namespace Labs.ACW
         private Matrix4 mView, mStaticView, mCreatureModel, mGroundModel, mLeftCylinder, mMiddleCylinder, mRightCylinder, mCube, mCubeScale;
         private bool mStaticViewEnabled = false;
 
-        //float[] CubeVertices = new float[] 
-        //{
-        //                                    -1.0f,-1.0f,-1.0f, // 1//
-        //                                    -1.0f,-1.0f, 1.0f, // 2//
-        //                                    -1.0f, 1.0f, 1.0f, // 3//
-        //                                    1.0f, 1.0f,-1.0f,  // 4//
-        //                                    -1.0f,-1.0f,-1.0f, // 1//
-        //                                    -1.0f, 1.0f,-1.0f, // 5//
-        //                                    1.0f,-1.0f, 1.0f,  // 6//
-        //                                    -1.0f,-1.0f,-1.0f, // 1//
-        //                                    1.0f,-1.0f,-1.0f,  // 7//
-        //                                    1.0f, 1.0f,-1.0f,  // 4//
-        //                                    1.0f,-1.0f,-1.0f,  // 8//
-        //                                    -1.0f,-1.0f,-1.0f, // 1//
-        //                                    -1.0f,-1.0f,-1.0f, // 1//
-        //                                    -1.0f, 1.0f, 1.0f, // 3//
-        //                                    -1.0f, 1.0f,-1.0f, // 5//
-        //                                    1.0f,-1.0f, 1.0f,  // 6//
-        //                                    -1.0f,-1.0f, 1.0f, // 2//
-        //                                    -1.0f,-1.0f,-1.0f, // 1//
-        //                                    -1.0f, 1.0f, 1.0f, // 3//
-        //                                    -1.0f,-1.0f, 1.0f, // 2//
-        //                                    1.0f,-1.0f, 1.0f,  // 6//
-        //                                    1.0f, 1.0f, 1.0f,  // 9//
-        //                                    1.0f,-1.0f,-1.0f, // 8//
-        //                                    1.0f, 1.0f,-1.0f, // 4//
-        //                                    1.0f,-1.0f,-1.0f, // 8//
-        //                                    1.0f, 1.0f, 1.0f, // 9//
-        //                                    1.0f,-1.0f, 1.0f,// 6//
-        //                                    1.0f, 1.0f, 1.0f, // 9//
-        //                                    1.0f, 1.0f,-1.0f, // 4//
-        //                                    -1.0f, 1.0f,-1.0f, // 5//
-        //                                    1.0f, 1.0f, 1.0f, // 9//
-        //                                    -1.0f, 1.0f,-1.0f, // 5//
-        //                                    -1.0f, 1.0f, 1.0f, // 3//
-        //                                    1.0f, 1.0f, 1.0f, // 9//
-        //                                    -1.0f, 1.0f, 1.0f, // 3//
-        //                                    1.0f,-1.0f, 1.0f // 6//
-        //};
-
-        //uint[] CubeIndices = new uint[]
-        //{
-        //    0, 1, 2,
-        //    3, 0, 4,
-        //    5, 0, 6,
-        //    3, 7, 0,
-        //    0, 2, 4,
-        //    5, 1, 0,
-        //    2, 1, 5,
-        //    8, 7, 3,
-        //    7, 8, 5,
-        //    8, 3, 4,
-        //    8, 4, 2,
-        //    8, 2, 5
-        //};
-
-        float[] CubeVertices = new float[]
+        float[] mCubeVertices = new float[]
         {
                 -0.5f, -0.5f,  0.5f, 0, 0, 1,
                 -0.5f,  0.5f,  0.5f, 1, 0, 0,
@@ -88,7 +32,7 @@ namespace Labs.ACW
 
         };
 
-        uint[] CubeIndices = new uint[]
+        uint[] mCubeIndices = new uint[]
         {
                 0,2,1,  0,3,2,
                 4,3,0,  4,7,3,
@@ -98,7 +42,7 @@ namespace Labs.ACW
                 7,5,6,  7,4,5
         };
 
-        float[] FloorVertices = new float[] 
+        float[] mFloorVertices = new float[] 
         {
             -10, 0, -10,0,1,0,
             -10, 0, 10,0,1,0,
@@ -106,7 +50,7 @@ namespace Labs.ACW
             10, 0, -10,0,1,0
         };
 
-        uint[] FloorIndices = new uint[]
+        uint[] mFloorIndices = new uint[]
         {
             0, 1, 2, 3
         };
@@ -143,13 +87,13 @@ namespace Labs.ACW
             //Floor
             GL.BindVertexArray(mVAO_IDs[0]);
             GL.BindBuffer(BufferTarget.ArrayBuffer, mVBO_IDs[0]);
-            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(FloorVertices.Length * sizeof(float)), FloorVertices, BufferUsageHint.StaticDraw);
+            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(mFloorVertices.Length * sizeof(float)), mFloorVertices, BufferUsageHint.StaticDraw);
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, mVBO_IDs[1]);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(FloorIndices.Length * sizeof(float)), FloorIndices, BufferUsageHint.StaticDraw);
+            GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(mFloorIndices.Length * sizeof(float)), mFloorIndices, BufferUsageHint.StaticDraw);
 
             int size;
             GL.GetBufferParameter(BufferTarget.ArrayBuffer, BufferParameterName.BufferSize, out size);
-            if (FloorVertices.Length * sizeof(float) != size)
+            if (mFloorVertices.Length * sizeof(float) != size)
             {
                 throw new ApplicationException("Vertex data not loaded onto graphics card correctly");
             }
@@ -217,12 +161,12 @@ namespace Labs.ACW
             // Cube
             GL.BindVertexArray(mVAO_IDs[3]);
             GL.BindBuffer(BufferTarget.ArrayBuffer, mVBO_IDs[6]);
-            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(CubeVertices.Length * sizeof(float)), CubeVertices, BufferUsageHint.StaticDraw);
+            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(mCubeVertices.Length * sizeof(float)), mCubeVertices, BufferUsageHint.StaticDraw);
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, mVBO_IDs[7]);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(CubeIndices.Length * sizeof(float)), CubeIndices, BufferUsageHint.StaticDraw);
+            GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(mCubeIndices.Length * sizeof(float)), mCubeIndices, BufferUsageHint.StaticDraw);
 
             GL.GetBufferParameter(BufferTarget.ArrayBuffer, BufferParameterName.BufferSize, out size);
-            if (CubeVertices.Length * sizeof(float) != size)
+            if (mCubeVertices.Length * sizeof(float) != size)
             {
                 throw new ApplicationException("Vertex data not loaded onto graphics card correctly");
             }
@@ -352,7 +296,7 @@ namespace Labs.ACW
             GL.UniformMatrix4(uModel, true, ref mGroundModel);
 
             GL.BindVertexArray(mVAO_IDs[0]);
-            GL.DrawElements(PrimitiveType.TriangleFan, FloorIndices.Length, DrawElementsType.UnsignedInt, 0);
+            GL.DrawElements(PrimitiveType.TriangleFan, mFloorIndices.Length, DrawElementsType.UnsignedInt, 0);
 
             Matrix4 m = mCreatureModel * mGroundModel;
             uModel = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
@@ -387,7 +331,7 @@ namespace Labs.ACW
             GL.UniformMatrix4(uModel, true, ref m5);
 
             GL.BindVertexArray(mVAO_IDs[3]);
-            GL.DrawElements(PrimitiveType.TriangleFan, CubeIndices.Length, DrawElementsType.UnsignedInt, 0);
+            GL.DrawElements(PrimitiveType.TriangleFan, mCubeIndices.Length, DrawElementsType.UnsignedInt, 0);
 
             GL.BindVertexArray(0);
             this.SwapBuffers();
