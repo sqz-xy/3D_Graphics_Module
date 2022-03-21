@@ -13,8 +13,8 @@ namespace Labs.ACW
 {
     public class ACWWindow : GameWindow
     {
-        private int[] mVBO_IDs = new int[8];
-        private int[] mVAO_IDs = new int[4];
+        private int[] mVBO_IDs = new int[10];
+        private int[] mVAO_IDs = new int[5];
         private int[] mTexture_IDs = new int[2];
 
         private ShaderUtility mShader;
@@ -22,7 +22,7 @@ namespace Labs.ACW
         private ModelUtility mCreature;
         private Matrix4 mView, mStaticView, mCreatureModel, mGroundModel, mLeftCylinder, mMiddleCylinder, mRightCylinder, mCubeModel;
         private bool mStaticViewEnabled = false;
-        private ArrayHandler mHandler;
+        private DataHandler mDataHandler;
 
         private float mCreatureAngle = 0.1f;
         private bool mIsUpOrDown = true;
@@ -62,6 +62,19 @@ namespace Labs.ACW
             0, 1, 2, 3
         };
 
+        float[] mBackWallVertices = new float[]
+        {
+            -10, 10,-10, 0, 1, 0, 0.0f, 0.0f, 1.0f,
+            -10, 0, -10, 0, 1, 0, 0.0f, 1.0f, 1.0f,
+             10, 0, -10, 0, 1, 0, 1.0f, 1.0f, 1.0f,
+             10, 10,-10, 0, 1, 0, 1.0f, 0.0f, 1.0f
+        };
+
+        int[] mBackWallIndices = new int[]
+        {
+            0, 1, 2, 3
+        };
+
         public ACWWindow()
             : base(
                 800, // Width
@@ -76,12 +89,12 @@ namespace Labs.ACW
                 )
         {
             this.VSync = VSyncMode.On;
-            mHandler = new ArrayHandler(ref mVAO_IDs, ref mVBO_IDs);
+            mDataHandler = new DataHandler(ref mVAO_IDs, ref mVBO_IDs);
         }
 
         protected override void OnLoad(EventArgs e)
         {
-            GL.ClearColor(Color4.CornflowerBlue);
+            GL.ClearColor(Color4.Black);
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.CullFace);
 
@@ -124,18 +137,21 @@ namespace Labs.ACW
             }
 
             // Floor
-            mHandler.BufferData(ref mVAO_IDs, ref mVBO_IDs, mFloorVertices, mFloorIndices, vPositionLocation, vNormalLocation, vTexCoordsLocation);
+            mDataHandler.BufferVertexData(ref mVAO_IDs, ref mVBO_IDs, mFloorVertices, mFloorIndices, vPositionLocation, vNormalLocation, vTexCoordsLocation);
 
             // Creature
             mCreature = ModelUtility.LoadModel(@"Utility/Models/model.bin");
-            mHandler.BufferData(ref mVAO_IDs, ref mVBO_IDs, mCreature.Vertices, mCreature.Indices, vPositionLocation, vNormalLocation, -1);
+            mDataHandler.BufferVertexData(ref mVAO_IDs, ref mVBO_IDs, mCreature.Vertices, mCreature.Indices, vPositionLocation, vNormalLocation, -1);
 
             // Cylinder
             mCylinder = ModelUtility.LoadModel(@"Utility/Models/cylinder.bin");
-            mHandler.BufferData(ref mVAO_IDs, ref mVBO_IDs, mCylinder.Vertices, mCylinder.Indices, vPositionLocation, vNormalLocation, -1);
+            mDataHandler.BufferVertexData(ref mVAO_IDs, ref mVBO_IDs, mCylinder.Vertices, mCylinder.Indices, vPositionLocation, vNormalLocation, -1);
            
             // Cube
-            mHandler.BufferData(ref mVAO_IDs, ref mVBO_IDs, mCubeVertices, mCubeIndices, vPositionLocation, vNormalLocation, vTexCoordsLocation);
+            mDataHandler.BufferVertexData(ref mVAO_IDs, ref mVBO_IDs, mCubeVertices, mCubeIndices, vPositionLocation, vNormalLocation, vTexCoordsLocation);
+
+            // Back wall
+            mDataHandler.BufferVertexData(ref mVAO_IDs, ref mVBO_IDs, mBackWallVertices, mBackWallIndices, vPositionLocation, vNormalLocation, vTexCoordsLocation);
 
             mView = Matrix4.CreateTranslation(0, -1.5f, 0);
             int uView = GL.GetUniformLocation(mShader.ShaderProgramID, "uView");
@@ -292,6 +308,9 @@ namespace Labs.ACW
             GL.BindVertexArray(mVAO_IDs[0]);
             GL.DrawElements(PrimitiveType.TriangleFan, mFloorIndices.Length, DrawElementsType.UnsignedInt, 0);
 
+            GL.BindVertexArray(mVAO_IDs[4]);
+            GL.DrawElements(PrimitiveType.TriangleFan, mBackWallIndices.Length, DrawElementsType.UnsignedInt, 0);
+
             Matrix4 m = mCreatureModel * mGroundModel;
             uModel = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
             GL.UniformMatrix4(uModel, true, ref m);
@@ -333,7 +352,7 @@ namespace Labs.ACW
 
         protected override void OnUnload(EventArgs e)
         {
-            mHandler.DeleteBuffers(ref mVAO_IDs, ref mVBO_IDs);
+            mDataHandler.DeleteBuffers(ref mVAO_IDs, ref mVBO_IDs);
             mShader.Delete();
             base.OnUnload(e);
         }
