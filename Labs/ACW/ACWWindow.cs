@@ -11,7 +11,7 @@ namespace Labs.ACW
     public class ACWWindow : GameWindow
     {
 
-        private int[] mVBO_IDs = new int[7];
+        private int[] mVBO_IDs = new int[8];
         private int[] mVAO_IDs = new int[4];
         private ShaderUtility mShader;
         private ModelUtility mCylinder;
@@ -19,64 +19,97 @@ namespace Labs.ACW
         private Matrix4 mView, mStaticView, mCreatureModel, mGroundModel, mLeftCylinder, mMiddleCylinder, mRightCylinder, mCube, mCubeScale;
         private bool mStaticViewEnabled = false;
 
-        float[] CubeVertices = new float[] 
+        //float[] CubeVertices = new float[] 
+        //{
+        //                                    -1.0f,-1.0f,-1.0f, // 1//
+        //                                    -1.0f,-1.0f, 1.0f, // 2//
+        //                                    -1.0f, 1.0f, 1.0f, // 3//
+        //                                    1.0f, 1.0f,-1.0f,  // 4//
+        //                                    -1.0f,-1.0f,-1.0f, // 1//
+        //                                    -1.0f, 1.0f,-1.0f, // 5//
+        //                                    1.0f,-1.0f, 1.0f,  // 6//
+        //                                    -1.0f,-1.0f,-1.0f, // 1//
+        //                                    1.0f,-1.0f,-1.0f,  // 7//
+        //                                    1.0f, 1.0f,-1.0f,  // 4//
+        //                                    1.0f,-1.0f,-1.0f,  // 8//
+        //                                    -1.0f,-1.0f,-1.0f, // 1//
+        //                                    -1.0f,-1.0f,-1.0f, // 1//
+        //                                    -1.0f, 1.0f, 1.0f, // 3//
+        //                                    -1.0f, 1.0f,-1.0f, // 5//
+        //                                    1.0f,-1.0f, 1.0f,  // 6//
+        //                                    -1.0f,-1.0f, 1.0f, // 2//
+        //                                    -1.0f,-1.0f,-1.0f, // 1//
+        //                                    -1.0f, 1.0f, 1.0f, // 3//
+        //                                    -1.0f,-1.0f, 1.0f, // 2//
+        //                                    1.0f,-1.0f, 1.0f,  // 6//
+        //                                    1.0f, 1.0f, 1.0f,  // 9//
+        //                                    1.0f,-1.0f,-1.0f, // 8//
+        //                                    1.0f, 1.0f,-1.0f, // 4//
+        //                                    1.0f,-1.0f,-1.0f, // 8//
+        //                                    1.0f, 1.0f, 1.0f, // 9//
+        //                                    1.0f,-1.0f, 1.0f,// 6//
+        //                                    1.0f, 1.0f, 1.0f, // 9//
+        //                                    1.0f, 1.0f,-1.0f, // 4//
+        //                                    -1.0f, 1.0f,-1.0f, // 5//
+        //                                    1.0f, 1.0f, 1.0f, // 9//
+        //                                    -1.0f, 1.0f,-1.0f, // 5//
+        //                                    -1.0f, 1.0f, 1.0f, // 3//
+        //                                    1.0f, 1.0f, 1.0f, // 9//
+        //                                    -1.0f, 1.0f, 1.0f, // 3//
+        //                                    1.0f,-1.0f, 1.0f // 6//
+        //};
+
+        //uint[] CubeIndices = new uint[]
+        //{
+        //    0, 1, 2,
+        //    3, 0, 4,
+        //    5, 0, 6,
+        //    3, 7, 0,
+        //    0, 2, 4,
+        //    5, 1, 0,
+        //    2, 1, 5,
+        //    8, 7, 3,
+        //    7, 8, 5,
+        //    8, 3, 4,
+        //    8, 4, 2,
+        //    8, 2, 5
+        //};
+
+        float[] CubeVertices = new float[]
         {
-                                            -1.0f,-1.0f,-1.0f, // 1//
-                                            -1.0f,-1.0f, 1.0f, // 2//
-                                            -1.0f, 1.0f, 1.0f, // 3//
-                                            1.0f, 1.0f,-1.0f,  // 4//
-                                            -1.0f,-1.0f,-1.0f, // 1//
-                                            -1.0f, 1.0f,-1.0f, // 5//
-                                            1.0f,-1.0f, 1.0f,  // 6//
-                                            -1.0f,-1.0f,-1.0f, // 1//
-                                            1.0f,-1.0f,-1.0f,  // 7//
-                                            1.0f, 1.0f,-1.0f,  // 4//
-                                            1.0f,-1.0f,-1.0f,  // 8//
-                                            -1.0f,-1.0f,-1.0f, // 1//
-                                            -1.0f,-1.0f,-1.0f, // 1//
-                                            -1.0f, 1.0f, 1.0f, // 3//
-                                            -1.0f, 1.0f,-1.0f, // 5//
-                                            1.0f,-1.0f, 1.0f,  // 6//
-                                            -1.0f,-1.0f, 1.0f, // 2//
-                                            -1.0f,-1.0f,-1.0f, // 1//
-                                            -1.0f, 1.0f, 1.0f, // 3//
-                                            -1.0f,-1.0f, 1.0f, // 2//
-                                            1.0f,-1.0f, 1.0f,  // 6//
-                                            1.0f, 1.0f, 1.0f,  // 9//
-                                            1.0f,-1.0f,-1.0f, // 8//
-                                            1.0f, 1.0f,-1.0f, // 4//
-                                            1.0f,-1.0f,-1.0f, // 8//
-                                            1.0f, 1.0f, 1.0f, // 9//
-                                            1.0f,-1.0f, 1.0f,// 6//
-                                            1.0f, 1.0f, 1.0f, // 9//
-                                            1.0f, 1.0f,-1.0f, // 4//
-                                            -1.0f, 1.0f,-1.0f, // 5//
-                                            1.0f, 1.0f, 1.0f, // 9//
-                                            -1.0f, 1.0f,-1.0f, // 5//
-                                            -1.0f, 1.0f, 1.0f, // 3//
-                                            1.0f, 1.0f, 1.0f, // 9//
-                                            -1.0f, 1.0f, 1.0f, // 3//
-                                            1.0f,-1.0f, 1.0f // 6//
+                -0.5f, -0.5f,  0.5f, 0, 0, 1,
+                -0.5f,  0.5f,  0.5f, 1, 0, 0,
+                0.5f,  0.5f,  0.5f, 0, 1, 0,
+                0.5f, -0.5f,  0.5f, 1, 1, 0,
+                -0.5f, -0.5f, -0.5f, 1, 1, 1,
+                -0.5f,  0.5f, -0.5f, 1, 0, 0,
+                0.5f,  0.5f, -0.5f, 1, 0, 1,
+                0.5f, -0.5f, -0.5f, 0, 0, 1
+
         };
 
         uint[] CubeIndices = new uint[]
         {
-            1, 2, 3,
-            4, 1, 5,
-            6, 1, 7,
-            4, 8, 1,
-            1, 3, 5,
-            6, 2, 1,
-            3, 2, 6,
-            9, 8, 4,
-            8, 9, 6,
-            9, 4, 5,
-            9, 5, 3,
-            9, 3, 6
+                0,2,1,  0,3,2,
+                4,3,0,  4,7,3,
+                4,1,5,  4,0,1,
+                3,6,2,  3,7,6,
+                1,6,5,  1,2,6,
+                7,5,6,  7,4,5
         };
 
+        float[] FloorVertices = new float[] 
+        {
+            -10, 0, -10,0,1,0,
+            -10, 0, 10,0,1,0,
+            10, 0, 10,0,1,0,
+            10, 0, -10,0,1,0
+        };
 
-
+        uint[] FloorIndices = new uint[]
+        {
+            0, 1, 2, 3
+        };
 
         public ACWWindow()
             : base(
@@ -95,13 +128,6 @@ namespace Labs.ACW
 
         protected override void OnLoad(EventArgs e)
         {
-            float[] FloorVertices = new float[] {-10, 0, -10,0,1,0,
-                                             -10, 0, 10,0,1,0,
-                                             10, 0, 10,0,1,0,
-                                             10, 0, -10,0,1,0,};
-
-            
-
             mShader = new ShaderUtility(@"ACW/Shaders/vLighting.vert", @"ACW/Shaders/fPassThrough.frag");
             GL.UseProgram(mShader.ShaderProgramID);
             int vPositionLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vPosition");
@@ -118,6 +144,8 @@ namespace Labs.ACW
             GL.BindVertexArray(mVAO_IDs[0]);
             GL.BindBuffer(BufferTarget.ArrayBuffer, mVBO_IDs[0]);
             GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(FloorVertices.Length * sizeof(float)), FloorVertices, BufferUsageHint.StaticDraw);
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, mVBO_IDs[1]);
+            GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(FloorIndices.Length * sizeof(float)), FloorIndices, BufferUsageHint.StaticDraw);
 
             int size;
             GL.GetBufferParameter(BufferTarget.ArrayBuffer, BufferParameterName.BufferSize, out size);
@@ -132,36 +160,13 @@ namespace Labs.ACW
             GL.EnableVertexAttribArray(vNormalLocation);
             GL.VertexAttribPointer(vNormalLocation, 3, VertexAttribPointerType.Float, true, 6 * sizeof(float), 3 * sizeof(float));
 
-            // Cube
-            //GL.BindVertexArray(mVAO_IDs[3]);
-            //GL.BindBuffer(BufferTarget.ArrayBuffer, mVBO_IDs[5]);
-            //GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(CubeVertices.Length * sizeof(float)), CubeVertices, BufferUsageHint.StaticDraw);
-
-            GL.BindVertexArray(mVAO_IDs[3]);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, mVBO_IDs[5]);
-            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(CubeVertices.Length * sizeof(float)), CubeVertices, BufferUsageHint.StaticDraw);
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, mVBO_IDs[6]);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(CubeIndices.Length * sizeof(float)), CubeIndices, BufferUsageHint.StaticDraw);
-
-            GL.GetBufferParameter(BufferTarget.ArrayBuffer, BufferParameterName.BufferSize, out size);
-            if (CubeVertices.Length * sizeof(float) != size)
-            {
-                throw new ApplicationException("Vertex data not loaded onto graphics card correctly");
-            }
-
-            GL.EnableVertexAttribArray(vPositionLocation);
-            GL.VertexAttribPointer(vPositionLocation, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
-
-            GL.EnableVertexAttribArray(vNormalLocation);
-            GL.VertexAttribPointer(vNormalLocation, 3, VertexAttribPointerType.Float, true, 6 * sizeof(float), 3 * sizeof(float));
-
             //Creature
             mCreature = ModelUtility.LoadModel(@"Utility/Models/model.bin");
 
             GL.BindVertexArray(mVAO_IDs[1]);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, mVBO_IDs[1]);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, mVBO_IDs[2]);
             GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(mCreature.Vertices.Length * sizeof(float)), mCreature.Vertices, BufferUsageHint.StaticDraw);
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, mVBO_IDs[2]);
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, mVBO_IDs[3]);
             GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(mCreature.Indices.Length * sizeof(float)), mCreature.Indices, BufferUsageHint.StaticDraw);
 
             GL.GetBufferParameter(BufferTarget.ArrayBuffer, BufferParameterName.BufferSize, out size);
@@ -186,9 +191,9 @@ namespace Labs.ACW
             mCylinder = ModelUtility.LoadModel(@"Utility/Models/cylinder.bin");
 
             GL.BindVertexArray(mVAO_IDs[2]);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, mVBO_IDs[3]);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, mVBO_IDs[4]);
             GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(mCylinder.Vertices.Length * sizeof(float)), mCylinder.Vertices, BufferUsageHint.StaticDraw);
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, mVBO_IDs[4]);
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, mVBO_IDs[5]);
             GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(mCylinder.Indices.Length * sizeof(float)), mCylinder.Indices, BufferUsageHint.StaticDraw);
 
             GL.GetBufferParameter(BufferTarget.ArrayBuffer, BufferParameterName.BufferSize, out size);
@@ -201,6 +206,25 @@ namespace Labs.ACW
             if (mCylinder.Indices.Length * sizeof(float) != size)
             {
                 throw new ApplicationException("Index data not loaded onto graphics card correctly");
+            }
+
+            GL.EnableVertexAttribArray(vPositionLocation);
+            GL.VertexAttribPointer(vPositionLocation, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
+
+            GL.EnableVertexAttribArray(vNormalLocation);
+            GL.VertexAttribPointer(vNormalLocation, 3, VertexAttribPointerType.Float, true, 6 * sizeof(float), 3 * sizeof(float));
+
+            // Cube
+            GL.BindVertexArray(mVAO_IDs[3]);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, mVBO_IDs[6]);
+            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(CubeVertices.Length * sizeof(float)), CubeVertices, BufferUsageHint.StaticDraw);
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, mVBO_IDs[7]);
+            GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(CubeIndices.Length * sizeof(float)), CubeIndices, BufferUsageHint.StaticDraw);
+
+            GL.GetBufferParameter(BufferTarget.ArrayBuffer, BufferParameterName.BufferSize, out size);
+            if (CubeVertices.Length * sizeof(float) != size)
+            {
+                throw new ApplicationException("Vertex data not loaded onto graphics card correctly");
             }
 
             GL.EnableVertexAttribArray(vPositionLocation);
@@ -225,10 +249,7 @@ namespace Labs.ACW
             mLeftCylinder = Matrix4.CreateTranslation(-5, 0, -5f);
             mMiddleCylinder = Matrix4.CreateTranslation(0, 0, -5f);
             mRightCylinder = Matrix4.CreateTranslation(5, 0, -5f);
-            mCube = Matrix4.CreateTranslation(-10, 4, -10f);
-            mCubeScale = Matrix4.CreateScale(0.5f);
-
-            mCube *= mCubeScale;
+            mCube = Matrix4.CreateTranslation(-5, 2, -5f);
 
             // Lighting, Currently up to directional
 
@@ -331,12 +352,11 @@ namespace Labs.ACW
             GL.UniformMatrix4(uModel, true, ref mGroundModel);
 
             GL.BindVertexArray(mVAO_IDs[0]);
-            GL.DrawArrays(PrimitiveType.TriangleFan, 0, 4);
-         
+            GL.DrawElements(PrimitiveType.TriangleFan, FloorIndices.Length, DrawElementsType.UnsignedInt, 0);
+
             Matrix4 m = mCreatureModel * mGroundModel;
             uModel = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
             GL.UniformMatrix4(uModel, true, ref m);
-
 
             GL.BindVertexArray(mVAO_IDs[1]);
             GL.DrawElements(PrimitiveType.Triangles, mCreature.Indices.Length, DrawElementsType.UnsignedInt, 0);
@@ -367,7 +387,7 @@ namespace Labs.ACW
             GL.UniformMatrix4(uModel, true, ref m5);
 
             GL.BindVertexArray(mVAO_IDs[3]);
-            GL.DrawElements(PrimitiveType.Triangles, CubeIndices.Length, DrawElementsType.UnsignedInt, 0);
+            GL.DrawElements(PrimitiveType.TriangleFan, CubeIndices.Length, DrawElementsType.UnsignedInt, 0);
 
             GL.BindVertexArray(0);
             this.SwapBuffers();
