@@ -9,8 +9,9 @@ out vec4 FragColour;
 
 void main()
 {
-	if (oTexCoords.xy != 0)
-		FragColour = texture(uTextureSampler, oTexCoords);
-	else
+	if (oTexCoords.xy == vec2(0, 0))
 		FragColour = oColour;
+	else
+		FragColour = texture(uTextureSampler, oTexCoords);
+		
 }

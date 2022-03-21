@@ -26,15 +26,14 @@ namespace Labs.ACW
 
         float[] mCubeVertices = new float[]
         {
-                -0.5f, -0.5f,  0.5f, 0, 0, 1, 0.0f, 0.0f, 1.0f,
-                -0.5f,  0.5f,  0.5f, 1, 0, 0, 0.0f, 1.0f, 1.0f,
-                0.5f,  0.5f,  0.5f, 0, 1, 0,  1.0f, 1.0f, 1.0f,
-                0.5f, -0.5f,  0.5f, 1, 1, 0,  1.0f, 0.0f, 1.0f,
-                -0.5f, -0.5f, -0.5f, 1, 1, 1, 0.0f, 0.0f, 1.0f,
-                -0.5f,  0.5f, -0.5f, 1, 0, 0, 0.0f, 1.0f, 1.0f,
-                0.5f,  0.5f, -0.5f, 1, 0, 1,  1.0f, 1.0f, 1.0f, 
-                0.5f, -0.5f, -0.5f, 0, 0, 1,  1.0f, 0.0f, 1.0f
-
+                -0.5f, -0.5f,  0.5f, 0, 0, 1,  0.0f, 0.0f, 1.0f,
+                -0.5f,  0.5f,  0.5f, 1, 0, 0,  0.0f, 1.0f, 1.0f,
+                 0.5f,  0.5f,  0.5f, 0, 1, 0,  1.0f, 1.0f, 1.0f,
+                 0.5f, -0.5f,  0.5f, 1, 1, 0,  1.0f, 0.0f, 1.0f,
+                -0.5f, -0.5f, -0.5f, 1, 1, 1,  0.0f, 0.0f, 1.0f,
+                -0.5f,  0.5f, -0.5f, 1, 0, 0,  0.0f, 1.0f, 1.0f,
+                 0.5f,  0.5f, -0.5f, 1, 0, 1,  1.0f, 1.0f, 1.0f, 
+                 0.5f, -0.5f, -0.5f, 0, 0, 1,  1.0f, 0.0f, 1.0f
         };
 
         int[] mCubeIndices = new int[]
@@ -49,10 +48,10 @@ namespace Labs.ACW
 
         float[] mFloorVertices = new float[] 
         {
-            -10, 0, -10, 0, 1, 0, 0.0f, 0.0f, 1.0f,
+            -10, 0,-10, 0, 1, 0, 0.0f, 0.0f, 1.0f,
             -10, 0, 10, 0, 1, 0, 0.0f, 1.0f, 1.0f,
-            10, 0, 10, 0, 1, 0, 1.0f, 1.0f, 1.0f,
-            10, 0, -10, 0, 1, 0, 1.0f, 0.0f, 1.0f
+             10, 0, 10, 0, 1, 0, 1.0f, 1.0f, 1.0f,
+             10, 0,-10, 0, 1, 0, 1.0f, 0.0f, 1.0f
         };
 
         int[] mFloorIndices = new int[]
@@ -250,11 +249,14 @@ namespace Labs.ACW
             int uModelLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
 
             Matrix4 cubeTranslation = Matrix4.CreateTranslation(0 , 0.1f, 0);
-            //mCubeModel *= cubeTranslation; Commented out for now
+            //Commented out for now
+            mCubeModel *= cubeTranslation; 
 
-            Matrix4 creatureRotation = Matrix4.CreateRotationY(105f);
-            Matrix4 creatureTransformation = mCreatureModel * creatureRotation;
-            GL.UniformMatrix4(uModelLocation, true, ref creatureTransformation);
+            // Make it continuous, float angle, increase it, then reset it
+            Matrix4 creatureRotation = Matrix4.CreateRotationY(deltaTime);
+            mCreatureModel = creatureRotation;
+            mCreatureModel *= Matrix4.CreateTranslation(0f, 2f, -5f);
+            //GL.UniformMatrix4(uModelLocation, true, ref creatureRotation);
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
