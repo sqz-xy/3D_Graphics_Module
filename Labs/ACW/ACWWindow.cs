@@ -13,7 +13,11 @@ namespace Labs.ACW
 {
     public class ACWWindow : GameWindow
     {
-        // TODO, add second texture for back wall
+        // TODO,
+        // Extend the data handler to handle textures
+        // add second texture for back wall and seperate the textures
+        // Upgrade lighting
+        // Add a final primitive
 
         private int[] mVBO_IDs = new int[10];
         private int[] mVAO_IDs = new int[5];
@@ -29,6 +33,7 @@ namespace Labs.ACW
         private float mCreatureAngle = 0.1f;
         private bool mIsUpOrDown = true;
 
+        // Removed tex coords from cube as they dont work due to reduced number of triangles
         float[] mCubeVertices = new float[]
         {
                 -0.5f, -0.5f,  0.5f, 0, 0, 1,
