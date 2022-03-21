@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ACW\ACWWindow.cs" />
+    <Compile Include="ACW\ArrayHandler.cs" />
     <Compile Include="Challenge\ChallengeWindow.cs" />
     <Compile Include="Lab1\Lab1Window.cs" />
     <Compile Include="Lab2\Lab2_1Window.cs" />
