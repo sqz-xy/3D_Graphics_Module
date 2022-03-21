@@ -24,6 +24,8 @@ namespace Labs.ACW
         private bool mStaticViewEnabled = false;
         private ArrayHandler mHandler;
 
+        private float mCreatureAngle = 0.1f;
+
         float[] mCubeVertices = new float[]
         {
                 -0.5f, -0.5f,  0.5f, 0, 0, 1,  0.0f, 0.0f, 1.0f,
@@ -253,7 +255,9 @@ namespace Labs.ACW
             mCubeModel *= cubeTranslation; 
 
             // Make it continuous, float angle, increase it, then reset it
-            Matrix4 creatureRotation = Matrix4.CreateRotationY(deltaTime);
+            Matrix4 creatureRotation = Matrix4.CreateRotationY(mCreatureAngle);
+            mCreatureAngle += 0.1f;
+
             mCreatureModel = creatureRotation;
             mCreatureModel *= Matrix4.CreateTranslation(0f, 2f, -5f);
             //GL.UniformMatrix4(uModelLocation, true, ref creatureRotation);
