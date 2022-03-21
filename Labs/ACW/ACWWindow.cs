@@ -25,6 +25,7 @@ namespace Labs.ACW
         private ArrayHandler mHandler;
 
         private float mCreatureAngle = 0.1f;
+        private bool mIsUpOrDown = true;
 
         float[] mCubeVertices = new float[]
         {
@@ -248,18 +249,36 @@ namespace Labs.ACW
         {
             float deltaTime = (float)e.Time;
 
-            int uModelLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
 
-            Matrix4 cubeTranslation = Matrix4.CreateTranslation(0 , 0.1f, 0);
-            //Commented out for now
-            mCubeModel *= cubeTranslation; 
+            Matrix4 cubeTranslationUp = Matrix4.CreateTranslation(0 , 0.1f, 0);
+            Matrix4 cubeTranslationDown = Matrix4.CreateTranslation(0, -0.1f, 0);
 
-            // Make it continuous, float angle, increase it, then reset it
+            Vector3 cubePos = mCubeModel.ExtractTranslation();
+            
+            if (mIsUpOrDown)
+            {
+                mCubeModel *= cubeTranslationUp;
+            }
+            if (!mIsUpOrDown)
+            {
+                mCubeModel *= cubeTranslationDown;
+            }
+
+            if (cubePos.Y > 8)
+            {
+                mIsUpOrDown = false;
+            }
+            if (cubePos.Y < 2)
+            {
+                mIsUpOrDown = true;
+            }
+
             Matrix4 creatureRotation = Matrix4.CreateRotationY(mCreatureAngle);
-            mCreatureAngle += 0.1f;
-
             mCreatureModel = creatureRotation;
             mCreatureModel *= Matrix4.CreateTranslation(0f, 2f, -5f);
+            mCreatureAngle += 0.1f;
+
+
             //GL.UniformMatrix4(uModelLocation, true, ref creatureRotation);
         }
 
