@@ -13,6 +13,8 @@ namespace Labs.ACW
 {
     public class ACWWindow : GameWindow
     {
+        // TODO, add second texture for back wall
+
         private int[] mVBO_IDs = new int[10];
         private int[] mVAO_IDs = new int[5];
         private int[] mTexture_IDs = new int[2];
@@ -29,14 +31,14 @@ namespace Labs.ACW
 
         float[] mCubeVertices = new float[]
         {
-                -0.5f, -0.5f,  0.5f, 0, 0, 1,  0.0f, 0.0f, 1.0f,
-                -0.5f,  0.5f,  0.5f, 1, 0, 0,  0.0f, 1.0f, 1.0f,
-                 0.5f,  0.5f,  0.5f, 0, 1, 0,  1.0f, 1.0f, 1.0f,
-                 0.5f, -0.5f,  0.5f, 1, 1, 0,  1.0f, 0.0f, 1.0f,
-                -0.5f, -0.5f, -0.5f, 1, 1, 1,  0.0f, 0.0f, 1.0f,
-                -0.5f,  0.5f, -0.5f, 1, 0, 0,  0.0f, 1.0f, 1.0f,
-                 0.5f,  0.5f, -0.5f, 1, 0, 1,  1.0f, 1.0f, 1.0f, 
-                 0.5f, -0.5f, -0.5f, 0, 0, 1,  1.0f, 0.0f, 1.0f
+                -0.5f, -0.5f,  0.5f, 0, 0, 1,
+                -0.5f,  0.5f,  0.5f, 1, 0, 0,
+                 0.5f,  0.5f,  0.5f, 0, 1, 0,
+                 0.5f, -0.5f,  0.5f, 1, 1, 0,
+                -0.5f, -0.5f, -0.5f, 1, 1, 1,
+                -0.5f,  0.5f, -0.5f, 1, 0, 0,
+                 0.5f,  0.5f, -0.5f, 1, 0, 1, 
+                 0.5f, -0.5f, -0.5f, 0, 0, 1
         };
 
         int[] mCubeIndices = new int[]
@@ -148,7 +150,7 @@ namespace Labs.ACW
             mDataHandler.BufferVertexData(ref mVAO_IDs, ref mVBO_IDs, mCylinder.Vertices, mCylinder.Indices, vPositionLocation, vNormalLocation, -1);
            
             // Cube
-            mDataHandler.BufferVertexData(ref mVAO_IDs, ref mVBO_IDs, mCubeVertices, mCubeIndices, vPositionLocation, vNormalLocation, vTexCoordsLocation);
+            mDataHandler.BufferVertexData(ref mVAO_IDs, ref mVBO_IDs, mCubeVertices, mCubeIndices, vPositionLocation, vNormalLocation, -1);
 
             // Back wall
             mDataHandler.BufferVertexData(ref mVAO_IDs, ref mVBO_IDs, mBackWallVertices, mBackWallIndices, vPositionLocation, vNormalLocation, vTexCoordsLocation);
