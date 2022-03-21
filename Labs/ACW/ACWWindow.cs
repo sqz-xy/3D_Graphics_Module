@@ -16,7 +16,7 @@ namespace Labs.ACW
         private ShaderUtility mShader;
         private ModelUtility mCylinder;
         private ModelUtility mCreature;
-        private Matrix4 mView, mStaticView, mCreatureModel, mGroundModel, mLeftCylinder, mMiddleCylinder, mRightCylinder, mCube, mCubeScale;
+        private Matrix4 mView, mStaticView, mCreatureModel, mGroundModel, mLeftCylinder, mMiddleCylinder, mRightCylinder, mCubeModel, mCubeScale;
         private bool mStaticViewEnabled = false;
 
         float[] mCubeVertices = new float[]
@@ -68,6 +68,7 @@ namespace Labs.ACW
                 GraphicsContextFlags.ForwardCompatible
                 )
         {
+            this.VSync = VSyncMode.On;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -193,7 +194,7 @@ namespace Labs.ACW
             mLeftCylinder = Matrix4.CreateTranslation(-5, 0, -5f);
             mMiddleCylinder = Matrix4.CreateTranslation(0, 0, -5f);
             mRightCylinder = Matrix4.CreateTranslation(5, 0, -5f);
-            mCube = Matrix4.CreateTranslation(-5, 2, -5f);
+            mCubeModel = Matrix4.CreateTranslation(-5, 2, -5f);
 
             // Lighting, Currently up to directional
 
@@ -284,7 +285,16 @@ namespace Labs.ACW
 
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
-         
+            float deltaTime = (float)e.Time;
+
+            int uModelLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
+
+            Matrix4 cubeTranslation = Matrix4.CreateTranslation(0 , 0.1f, 0);
+            mCubeModel *= cubeTranslation;
+
+            Matrix4 creatureRotation = Matrix4.CreateRotationY(105f);
+            Matrix4 creatureTransformation = mCreatureModel * creatureRotation;
+            GL.UniformMatrix4(uModelLocation, true, ref creatureTransformation);
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
@@ -326,12 +336,12 @@ namespace Labs.ACW
             GL.BindVertexArray(mVAO_IDs[2]);
             GL.DrawElements(PrimitiveType.Triangles, mCylinder.Indices.Length, DrawElementsType.UnsignedInt, 0);
 
-            Matrix4 m5 = mCube * mGroundModel;
+            Matrix4 m5 = mCubeModel * mGroundModel;
             uModel = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
             GL.UniformMatrix4(uModel, true, ref m5);
 
             GL.BindVertexArray(mVAO_IDs[3]);
-            GL.DrawElements(PrimitiveType.TriangleFan, mCubeIndices.Length, DrawElementsType.UnsignedInt, 0);
+            GL.DrawElements(PrimitiveType.Triangles, mCubeIndices.Length, DrawElementsType.UnsignedInt, 0);
 
             GL.BindVertexArray(0);
             this.SwapBuffers();
