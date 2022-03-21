@@ -119,6 +119,9 @@
     <Folder Include="Challenge\Shaders\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ACW\Textures\texture2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Lab4\Textures\texture.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

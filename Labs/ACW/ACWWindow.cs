@@ -5,6 +5,8 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 
 using System;
+using System.Drawing.Imaging;
+using System.Drawing;
 using System.Linq;
 
 namespace Labs.ACW
@@ -13,23 +15,25 @@ namespace Labs.ACW
     {
         private int[] mVBO_IDs = new int[8];
         private int[] mVAO_IDs = new int[4];
+        private int[] mTexture_IDs = new int[2];
+
         private ShaderUtility mShader;
         private ModelUtility mCylinder;
         private ModelUtility mCreature;
-        private Matrix4 mView, mStaticView, mCreatureModel, mGroundModel, mLeftCylinder, mMiddleCylinder, mRightCylinder, mCubeModel, mCubeScale;
+        private Matrix4 mView, mStaticView, mCreatureModel, mGroundModel, mLeftCylinder, mMiddleCylinder, mRightCylinder, mCubeModel;
         private bool mStaticViewEnabled = false;
         private ArrayHandler mHandler;
 
         float[] mCubeVertices = new float[]
         {
-                -0.5f, -0.5f,  0.5f, 0, 0, 1,
-                -0.5f,  0.5f,  0.5f, 1, 0, 0,
-                0.5f,  0.5f,  0.5f, 0, 1, 0,
-                0.5f, -0.5f,  0.5f, 1, 1, 0,
-                -0.5f, -0.5f, -0.5f, 1, 1, 1,
-                -0.5f,  0.5f, -0.5f, 1, 0, 0,
-                0.5f,  0.5f, -0.5f, 1, 0, 1,
-                0.5f, -0.5f, -0.5f, 0, 0, 1
+                -0.5f, -0.5f,  0.5f, 0, 0, 1, 0.0f, 0.0f, 1.0f,
+                -0.5f,  0.5f,  0.5f, 1, 0, 0, 0.0f, 1.0f, 1.0f,
+                0.5f,  0.5f,  0.5f, 0, 1, 0,  1.0f, 1.0f, 1.0f,
+                0.5f, -0.5f,  0.5f, 1, 1, 0,  1.0f, 0.0f, 1.0f,
+                -0.5f, -0.5f, -0.5f, 1, 1, 1, 0.0f, 0.0f, 1.0f,
+                -0.5f,  0.5f, -0.5f, 1, 0, 0, 0.0f, 1.0f, 1.0f,
+                0.5f,  0.5f, -0.5f, 1, 0, 1,  1.0f, 1.0f, 1.0f, 
+                0.5f, -0.5f, -0.5f, 0, 0, 1,  1.0f, 0.0f, 1.0f
 
         };
 
@@ -45,10 +49,10 @@ namespace Labs.ACW
 
         float[] mFloorVertices = new float[] 
         {
-            -10, 0, -10,0,1,0,
-            -10, 0, 10,0,1,0,
-            10, 0, 10,0,1,0,
-            10, 0, -10,0,1,0
+            -10, 0, -10, 0, 1, 0, 0.0f, 0.0f, 1.0f,
+            -10, 0, 10, 0, 1, 0, 0.0f, 1.0f, 1.0f,
+            10, 0, 10, 0, 1, 0, 1.0f, 1.0f, 1.0f,
+            10, 0, -10, 0, 1, 0, 1.0f, 0.0f, 1.0f
         };
 
         int[] mFloorIndices = new int[]
@@ -81,22 +85,55 @@ namespace Labs.ACW
 
             mShader = new ShaderUtility(@"ACW/Shaders/vLighting.vert", @"ACW/Shaders/fPassThrough.frag");
             GL.UseProgram(mShader.ShaderProgramID);
+
             int vPositionLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vPosition");
             int vNormalLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vNormal");
+            int vTexCoordsLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vTexCoords");
+
+            int uTextureSamplerLocation = GL.GetUniformLocation(mShader.ShaderProgramID,"uTextureSampler");
+            GL.Uniform1(uTextureSamplerLocation, 0);
+
+            string filepath = @"ACW/Textures/texture2.png";
+            if (System.IO.File.Exists(filepath))
+            {
+                Bitmap TextureBitmap = new Bitmap(filepath);
+                BitmapData TextureData = TextureBitmap.LockBits(
+                new System.Drawing.Rectangle(0, 0, TextureBitmap.Width,
+                TextureBitmap.Height), ImageLockMode.ReadOnly,
+                System.Drawing.Imaging.PixelFormat.Format32bppRgb);
+
+                GL.ActiveTexture(TextureUnit.Texture0);
+                GL.GenTextures(1, out mTexture_IDs[0]);
+                GL.BindTexture(TextureTarget.Texture2D, mTexture_IDs[0]);
+                GL.TexImage2D(TextureTarget.Texture2D,
+                0, PixelInternalFormat.Rgba, TextureData.Width, TextureData.Height,
+                0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
+                PixelType.UnsignedByte, TextureData.Scan0);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter,
+                (int)TextureMinFilter.Linear);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter,
+                (int)TextureMagFilter.Linear);
+                TextureBitmap.UnlockBits(TextureData);
+                TextureBitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
+            }
+            else
+            {
+                throw new Exception("Could not find file " + filepath);
+            }
 
             // Floor
-            mHandler.BufferData(ref mVAO_IDs, ref mVBO_IDs, mFloorVertices, mFloorIndices, vPositionLocation, vNormalLocation);
+            mHandler.BufferData(ref mVAO_IDs, ref mVBO_IDs, mFloorVertices, mFloorIndices, vPositionLocation, vNormalLocation, vTexCoordsLocation);
 
             // Creature
             mCreature = ModelUtility.LoadModel(@"Utility/Models/model.bin");
-            mHandler.BufferData(ref mVAO_IDs, ref mVBO_IDs, mCreature.Vertices, mCreature.Indices, vPositionLocation, vNormalLocation);
+            mHandler.BufferData(ref mVAO_IDs, ref mVBO_IDs, mCreature.Vertices, mCreature.Indices, vPositionLocation, vNormalLocation, -1);
 
             // Cylinder
             mCylinder = ModelUtility.LoadModel(@"Utility/Models/cylinder.bin");
-            mHandler.BufferData(ref mVAO_IDs, ref mVBO_IDs, mCylinder.Vertices, mCylinder.Indices, vPositionLocation, vNormalLocation);
-
+            mHandler.BufferData(ref mVAO_IDs, ref mVBO_IDs, mCylinder.Vertices, mCylinder.Indices, vPositionLocation, vNormalLocation, -1);
+           
             // Cube
-            mHandler.BufferData(ref mVAO_IDs, ref mVBO_IDs, mCubeVertices, mCubeIndices, vPositionLocation, vNormalLocation);
+            mHandler.BufferData(ref mVAO_IDs, ref mVBO_IDs, mCubeVertices, mCubeIndices, vPositionLocation, vNormalLocation, vTexCoordsLocation);
 
             mView = Matrix4.CreateTranslation(0, -1.5f, 0);
             int uView = GL.GetUniformLocation(mShader.ShaderProgramID, "uView");
@@ -213,7 +250,7 @@ namespace Labs.ACW
             int uModelLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
 
             Matrix4 cubeTranslation = Matrix4.CreateTranslation(0 , 0.1f, 0);
-            mCubeModel *= cubeTranslation;
+            //mCubeModel *= cubeTranslation; Commented out for now
 
             Matrix4 creatureRotation = Matrix4.CreateRotationY(105f);
             Matrix4 creatureTransformation = mCreatureModel * creatureRotation;

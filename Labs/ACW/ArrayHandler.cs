@@ -32,7 +32,7 @@ namespace Labs.ACW
         /// <param name="pIndices">The indices to bind</param>
         /// <param name="pPositionLocation">The vertex position information from the shader</param>
         /// <param name="pNormalLocation">The vertex normal information from the shader</param>
-		public void BufferData(ref int[] pVAO_IDs, ref int[] pVBO_IDs, float[] pVertices, int[] pIndices, int pPositionLocation, int pNormalLocation)
+		public void BufferData(ref int[] pVAO_IDs, ref int[] pVBO_IDs, float[] pVertices, int[] pIndices, int pPositionLocation, int pNormalLocation, int pTextureLocation)
         {
             // Bind data to the VAO and VBO
             GL.BindVertexArray(pVAO_IDs[mVAOIndex]);
@@ -60,15 +60,43 @@ namespace Labs.ACW
                 throw new ApplicationException("Index data not loaded onto graphics card correctly");
             }
 
-            // Enable Position and Normal vertex attributes for the shader
-            GL.EnableVertexAttribArray(pPositionLocation);
-            GL.VertexAttribPointer(pPositionLocation, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
-
-            GL.EnableVertexAttribArray(pNormalLocation);
-            GL.VertexAttribPointer(pNormalLocation, 3, VertexAttribPointerType.Float, true, 6 * sizeof(float), 3 * sizeof(float));
-
+            // Enable Position, Normal and Texture coordinate vertex attributes for the shader
+            // Issue with stride, models dont have tex coords, thats causing issues with the models
+            EnableVertexAttributes(pPositionLocation, pNormalLocation, pTextureLocation);
+            
             // Unbind buffer for cleanup purposes
             GL.BindVertexArray(0);
+        }
+
+        /// <summary>
+        /// Enables vertex attributes for the shapes and shaders
+        /// </summary>
+        /// <param name="pPositionLocation">Position location in the shader</param>
+        /// <param name="pNormalLocation">Normal location in the shader</param>
+        /// <param name="pTextureLocation">Texture location in the shader</param>
+        private void EnableVertexAttributes(int pPositionLocation, int pNormalLocation, int pTextureLocation) 
+        { 
+            // Account for textures using increased stride
+            if (pTextureLocation != -1)
+            {
+                GL.EnableVertexAttribArray(pPositionLocation);
+                GL.VertexAttribPointer(pPositionLocation, 3, VertexAttribPointerType.Float, false, 9 * sizeof(float), 0);
+
+                GL.EnableVertexAttribArray(pNormalLocation);
+                GL.VertexAttribPointer(pNormalLocation, 3, VertexAttribPointerType.Float, true, 9 * sizeof(float), 3 * sizeof(float));
+
+                GL.EnableVertexAttribArray(pTextureLocation);
+                GL.VertexAttribPointer(pTextureLocation, 3, VertexAttribPointerType.Float, false, 9 * sizeof(float), 6 * sizeof(float));
+            }
+            // No texture coordinates available
+            else
+            {
+                GL.EnableVertexAttribArray(pPositionLocation);
+                GL.VertexAttribPointer(pPositionLocation, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
+
+                GL.EnableVertexAttribArray(pNormalLocation);
+                GL.VertexAttribPointer(pNormalLocation, 3, VertexAttribPointerType.Float, true, 6 * sizeof(float), 3 * sizeof(float));
+            }       
         }
 
         /// <summary>

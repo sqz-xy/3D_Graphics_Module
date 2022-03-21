@@ -1,11 +1,16 @@
 ﻿#version 330
 
+uniform sampler2D uTextureSampler;
+
 in vec4 oColour;
+in vec2 oTexCoords;
 
 out vec4 FragColour;
 
 void main()
 {
-	//vec4 colour = vec4(10, 0, 0, 0);
-	FragColour = oColour;
+	if (oTexCoords.xy != 0)
+		FragColour = texture(uTextureSampler, oTexCoords);
+	else
+		FragColour = oColour;
 }
