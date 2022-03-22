@@ -32,7 +32,7 @@ namespace Labs.ACW
         /// </summary>
         /// <param name="pFilePath">The path of the texture to bind</param>
         /// <param name="pTexture_IDs">The array of texture IDs</param>
-        public void BindTextureData(string pFilePath)
+        public int BindTextureData(string pFilePath)
         {
             string filepath = @pFilePath;
             if (System.IO.File.Exists(filepath))
@@ -59,6 +59,8 @@ namespace Labs.ACW
                 (int)TextureMagFilter.Linear);
                 TextureBitmap.UnlockBits(TextureData);
                 TextureBitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
+
+                return mTextureIndex - 1;
             }
             else
             {

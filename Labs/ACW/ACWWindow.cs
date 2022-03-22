@@ -38,6 +38,7 @@ namespace Labs.ACW
         private bool mIsUpOrDown = true;
 
         private int mFloorIndex, mWallIndex, mCreatureIndex, mCylinderIndex, mCubeIndex;
+        private int mTexture1Index, mTexture2Index;
 
         // Removed tex coords from cube as they dont work due to reduced number of triangles
         float[] mCubeVertices = new float[]
@@ -47,12 +48,12 @@ namespace Labs.ACW
                     -0.5f, -0.5f,  0.5f, 0, 1, 1,
                      0.5f, -0.5f,  0.5f, 1, 1, 1,
                     -0.5f, -0.5f, -0.5f, 0, 0, 1,
-                     0.5f, -0.5f, -0.5f, 1, 0, 1,
-                    -0.5f,  0.5f, -0.5f, 0, 1, 1,
-                     0.5f,  0.5f, -0.5f, 1, 1, 1,
-                    -0.5f,  0.5f,  0.5f, 1, 1, 1,
-                    -0.5f,  0.5f, -0.5f, 1, 0, 1,
-                     0.5f,  0.5f,  0.5f, 0, 1, 1,
+                     0.5f, -0.5f, -0.5f, 1, 0, 1, 
+                    -0.5f,  0.5f, -0.5f, 0, 1, 1, 
+                     0.5f,  0.5f, -0.5f, 1, 1, 1, 
+                    -0.5f,  0.5f,  0.5f, 1, 1, 1, 
+                    -0.5f,  0.5f, -0.5f, 1, 0, 1, 
+                     0.5f,  0.5f,  0.5f, 0, 1, 1, 
                      0.5f,  0.5f, -0.5f, 0, 0, 1
         };
 
@@ -123,18 +124,20 @@ namespace Labs.ACW
             int vNormalLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vNormal");
             int vTexCoordsLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vTexCoords");
 
-            int uTextureSamplerLocation1 = GL.GetUniformLocation(mShader.ShaderProgramID,"uTextureSampler1");
-            GL.Uniform1(uTextureSamplerLocation1, 0);
-
-            int uTextureSamplerLocation2 = GL.GetUniformLocation(mShader.ShaderProgramID, "uTextureSampler2");
-            GL.Uniform1(uTextureSamplerLocation2, 1);
 
             // Bind Texture Data:
             // Floor
-            mTextureHandler.BindTextureData("ACW/Textures/texture.png");
+            mTexture1Index = mTextureHandler.BindTextureData("ACW/Textures/texture.png");
 
             // Wall
-            mTextureHandler.BindTextureData("ACW/Textures/texture2.png");
+            mTexture2Index = mTextureHandler.BindTextureData("ACW/Textures/texture2.png");
+
+            // Send them to the fragment shader using their indexes
+            int uTextureSamplerLocation1 = GL.GetUniformLocation(mShader.ShaderProgramID,"uTextureSampler1");
+            GL.Uniform1(uTextureSamplerLocation1, mTexture1Index);
+
+            int uTextureSamplerLocation2 = GL.GetUniformLocation(mShader.ShaderProgramID, "uTextureSampler2");
+            GL.Uniform1(uTextureSamplerLocation2, mTexture2Index);
 
             // Bind Vertex Data:
             // Floor
