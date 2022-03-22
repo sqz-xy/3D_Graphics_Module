@@ -140,8 +140,6 @@ namespace Labs.Lab4
                 throw new Exception("Could not find file " + filepath);
             }
 
-
-
             int vTexCoordsLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vTexCoords");
 
             int uTextureSamplerLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uTextureSampler");
@@ -150,7 +148,9 @@ namespace Labs.Lab4
             int uTextureSamplerLocation2 = GL.GetUniformLocation(mShader.ShaderProgramID, "uTextureSampler2");
             GL.Uniform1(uTextureSamplerLocation2, 0);
 
-
+            int uTextureIndexLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uTextureIndex");
+            GL.Uniform1(uTextureIndexLocation, 0);
+         
             mVAO_ID = GL.GenVertexArray();
             GL.GenBuffers(mVBO_IDs.Length, mVBO_IDs);
 

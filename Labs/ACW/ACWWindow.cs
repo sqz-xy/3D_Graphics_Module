@@ -116,8 +116,11 @@ namespace Labs.ACW
             int vNormalLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vNormal");
             int vTexCoordsLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vTexCoords");
 
-            int uTextureSamplerLocation = GL.GetUniformLocation(mShader.ShaderProgramID,"uTextureSampler");
-            GL.Uniform1(uTextureSamplerLocation, 0);
+            int uTextureSamplerLocation1 = GL.GetUniformLocation(mShader.ShaderProgramID,"uTextureSampler1");
+            GL.Uniform1(uTextureSamplerLocation1, 0);
+
+            int uTextureSamplerLocation2 = GL.GetUniformLocation(mShader.ShaderProgramID, "uTextureSampler2");
+            GL.Uniform1(uTextureSamplerLocation2, 1);
 
             // Bind Texture Data:
             // Floor
@@ -296,12 +299,20 @@ namespace Labs.ACW
             int uModel = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
             GL.UniformMatrix4(uModel, true, ref mGroundModel);
 
+            // For multiple textures
+            int uTextureIndexLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uTextureIndex");
+            
+            // Floor
+            GL.Uniform1(uTextureIndexLocation, 0);
             GL.BindVertexArray(mVAO_IDs[0]);
             GL.DrawElements(PrimitiveType.TriangleFan, mFloorIndices.Length, DrawElementsType.UnsignedInt, 0);
 
+            // Back wall
+            GL.Uniform1(uTextureIndexLocation, 1);
             GL.BindVertexArray(mVAO_IDs[4]);
             GL.DrawElements(PrimitiveType.TriangleFan, mBackWallIndices.Length, DrawElementsType.UnsignedInt, 0);
 
+            // Creature
             Matrix4 m = mCreatureModel * mGroundModel;
             uModel = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
             GL.UniformMatrix4(uModel, true, ref m);
@@ -309,6 +320,7 @@ namespace Labs.ACW
             GL.BindVertexArray(mVAO_IDs[1]);
             GL.DrawElements(PrimitiveType.Triangles, mCreature.Indices.Length, DrawElementsType.UnsignedInt, 0);
 
+            // Left Cylinder
             Matrix4 m2 = mLeftCylinder * mGroundModel;
             uModel = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
             GL.UniformMatrix4(uModel, true, ref m2);
@@ -316,6 +328,7 @@ namespace Labs.ACW
             GL.BindVertexArray(mVAO_IDs[2]);
             GL.DrawElements(PrimitiveType.Triangles, mCylinder.Indices.Length, DrawElementsType.UnsignedInt, 0);
 
+            // Middle Cylinder
             Matrix4 m3 = mMiddleCylinder * mGroundModel;
             uModel = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
             GL.UniformMatrix4(uModel, true, ref m3);
@@ -323,6 +336,7 @@ namespace Labs.ACW
             GL.BindVertexArray(mVAO_IDs[2]);
             GL.DrawElements(PrimitiveType.Triangles, mCylinder.Indices.Length, DrawElementsType.UnsignedInt, 0);
 
+            // Right Cylinder
             Matrix4 m4 = mRightCylinder * mGroundModel;
             uModel = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
             GL.UniformMatrix4(uModel, true, ref m4);
@@ -330,6 +344,7 @@ namespace Labs.ACW
             GL.BindVertexArray(mVAO_IDs[2]);
             GL.DrawElements(PrimitiveType.Triangles, mCylinder.Indices.Length, DrawElementsType.UnsignedInt, 0);
 
+            // Cube
             Matrix4 m5 = mCubeModel * mGroundModel;
             uModel = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
             GL.UniformMatrix4(uModel, true, ref m5);
