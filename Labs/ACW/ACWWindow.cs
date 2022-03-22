@@ -109,7 +109,7 @@ namespace Labs.ACW
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.CullFace);
 
-            mShader = new ShaderUtility(@"ACW/Shaders/vLighting.vert", @"ACW/Shaders/fPassThrough.frag");
+            mShader = new ShaderUtility(@"ACW/Shaders/vVertexShader.vert", @"ACW/Shaders/fFragmentShader.frag");
             GL.UseProgram(mShader.ShaderProgramID);
 
             int vPositionLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vPosition");
@@ -119,10 +119,14 @@ namespace Labs.ACW
             int uTextureSamplerLocation = GL.GetUniformLocation(mShader.ShaderProgramID,"uTextureSampler");
             GL.Uniform1(uTextureSamplerLocation, 0);
 
-            // Buffer Texture Data:
+            // Bind Texture Data:
+            // Floor
+            mTextureHandler.BindTextureData("ACW/Textures/texture.png", ref mTexture_IDs);
+
+            // Wall
             mTextureHandler.BindTextureData("ACW/Textures/texture2.png", ref mTexture_IDs);
 
-            // Buffer Vertex Data:
+            // Bind Vertex Data:
             // Floor
             mDataHandler.BindVertexData(ref mVAO_IDs, ref mVBO_IDs, mFloorVertices, mFloorIndices, vPositionLocation, vNormalLocation, vTexCoordsLocation);
 

@@ -62,10 +62,10 @@
     <Compile Include="Utility\ShaderUtility.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ACW\Shaders\fPassThrough.frag">
+    <None Include="ACW\Shaders\fFragmentShader.frag">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="ACW\Shaders\vLighting.vert">
+    <None Include="ACW\Shaders\vVertexShader.vert">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="App.config" />
@@ -120,6 +120,9 @@
     <Folder Include="Challenge\Shaders\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ACW\Textures\texture.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="ACW\Textures\texture2.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
