@@ -313,18 +313,17 @@ namespace Labs.ACW
             int uTextureIndexLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uTextureIndex");
             
             // Floor
-            GL.Uniform1(uTextureIndexLocation, 0);
+            GL.Uniform1(uTextureIndexLocation, mTexture1Index);
             GL.BindVertexArray(mVertexDataHandler.GetVAOAtIndex(mFloorIndex));
             GL.DrawElements(PrimitiveType.TriangleFan, mFloorIndices.Length, DrawElementsType.UnsignedInt, 0);
 
             // Back wall
-            GL.Uniform1(uTextureIndexLocation, 1);
+            GL.Uniform1(uTextureIndexLocation, mTexture2Index);
             GL.BindVertexArray(mVertexDataHandler.GetVAOAtIndex(mWallIndex));
             GL.DrawElements(PrimitiveType.TriangleFan, mBackWallIndices.Length, DrawElementsType.UnsignedInt, 0);
 
             // Creature
             Matrix4 m = mCreatureModel * mGroundModel;
-            uModel = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
             GL.UniformMatrix4(uModel, true, ref m);
 
             GL.BindVertexArray(mVertexDataHandler.GetVAOAtIndex(mCreatureIndex));
@@ -332,7 +331,6 @@ namespace Labs.ACW
 
             // Left Cylinder
             Matrix4 m2 = mLeftCylinder * mGroundModel;
-            uModel = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
             GL.UniformMatrix4(uModel, true, ref m2);
 
             GL.BindVertexArray(mVertexDataHandler.GetVAOAtIndex(mCylinderIndex));
@@ -340,7 +338,6 @@ namespace Labs.ACW
 
             // Middle Cylinder
             Matrix4 m3 = mMiddleCylinder * mGroundModel;
-            uModel = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
             GL.UniformMatrix4(uModel, true, ref m3);
 
             GL.BindVertexArray(mVertexDataHandler.GetVAOAtIndex(mCylinderIndex));
@@ -348,7 +345,6 @@ namespace Labs.ACW
 
             // Right Cylinder
             Matrix4 m4 = mRightCylinder * mGroundModel;
-            uModel = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
             GL.UniformMatrix4(uModel, true, ref m4);
 
             GL.BindVertexArray(mVertexDataHandler.GetVAOAtIndex(mCylinderIndex));
@@ -356,7 +352,6 @@ namespace Labs.ACW
 
             // Cube
             Matrix4 m5 = mCubeModel * mGroundModel;
-            uModel = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
             GL.UniformMatrix4(uModel, true, ref m5);
 
             GL.BindVertexArray(mVertexDataHandler.GetVAOAtIndex(mCubeIndex));

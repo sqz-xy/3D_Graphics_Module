@@ -12,9 +12,11 @@ out vec4 FragColour;
 
 void main()
 {
+	// If no Texture Coords are present
 	if (oTexCoords.xy == vec2(0, 0))
 		FragColour = oColour;
 	else
+		// Check the current texture index
 		if (uTextureIndex == 0)
 			FragColour = texture(uTextureSampler1, oTexCoords);
 		else if (uTextureIndex == 1)
