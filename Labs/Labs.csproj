@@ -48,7 +48,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ACW\ACWWindow.cs" />
-    <Compile Include="ACW\DataHandler.cs" />
+    <Compile Include="ACW\TextureHandler.cs" />
+    <Compile Include="ACW\VertexDataHandler.cs" />
     <Compile Include="Challenge\ChallengeWindow.cs" />
     <Compile Include="Lab1\Lab1Window.cs" />
     <Compile Include="Lab2\Lab2_1Window.cs" />

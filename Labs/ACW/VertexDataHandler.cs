@@ -8,12 +8,12 @@ using System;
 
 namespace Labs.ACW
 {
-	public class DataHandler
+	public class VertexDataHandler
 	{
 		private int mVBOIndex;
 		private int mVAOIndex;
 
-		public DataHandler(ref int[] pVAO_IDs, ref int[] pVBO_IDs)
+		public VertexDataHandler(ref int[] pVAO_IDs, ref int[] pVBO_IDs)
 		{
 			mVBOIndex = 0;
 			mVAOIndex = 0;
@@ -32,7 +32,7 @@ namespace Labs.ACW
         /// <param name="pIndices">The indices to bind</param>
         /// <param name="pPositionLocation">The vertex position information from the shader</param>
         /// <param name="pNormalLocation">The vertex normal information from the shader</param>
-		public void BufferVertexData(ref int[] pVAO_IDs, ref int[] pVBO_IDs, float[] pVertices, int[] pIndices, int pPositionLocation, int pNormalLocation, int pTextureLocation)
+		public void BindVertexData(ref int[] pVAO_IDs, ref int[] pVBO_IDs, float[] pVertices, int[] pIndices, int pPositionLocation, int pNormalLocation, int pTextureLocation)
         {
             // Bind data to the VAO and VBO
             GL.BindVertexArray(pVAO_IDs[mVAOIndex]);

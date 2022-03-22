@@ -28,7 +28,9 @@ namespace Labs.ACW
         private ModelUtility mCreature;
         private Matrix4 mView, mStaticView, mCreatureModel, mGroundModel, mLeftCylinder, mMiddleCylinder, mRightCylinder, mCubeModel;
         private bool mStaticViewEnabled = false;
-        private DataHandler mDataHandler;
+
+        private VertexDataHandler mDataHandler;
+        private TextureHandler mTextureHandler;
 
         private float mCreatureAngle = 0.1f;
         private bool mIsUpOrDown = true;
@@ -96,7 +98,9 @@ namespace Labs.ACW
                 )
         {
             this.VSync = VSyncMode.On;
-            mDataHandler = new DataHandler(ref mVAO_IDs, ref mVBO_IDs);
+
+            mDataHandler = new VertexDataHandler(ref mVAO_IDs, ref mVBO_IDs);
+            mTextureHandler = new TextureHandler();
         }
 
         protected override void OnLoad(EventArgs e)
@@ -115,50 +119,26 @@ namespace Labs.ACW
             int uTextureSamplerLocation = GL.GetUniformLocation(mShader.ShaderProgramID,"uTextureSampler");
             GL.Uniform1(uTextureSamplerLocation, 0);
 
-            string filepath = @"ACW/Textures/texture2.png";
-            if (System.IO.File.Exists(filepath))
-            {
-                Bitmap TextureBitmap = new Bitmap(filepath);
-                BitmapData TextureData = TextureBitmap.LockBits(
-                new System.Drawing.Rectangle(0, 0, TextureBitmap.Width,
-                TextureBitmap.Height), ImageLockMode.ReadOnly,
-                System.Drawing.Imaging.PixelFormat.Format32bppRgb);
+            // Buffer Texture Data:
+            mTextureHandler.BindTextureData("ACW/Textures/texture2.png", ref mTexture_IDs);
 
-                GL.ActiveTexture(TextureUnit.Texture0);
-                GL.GenTextures(1, out mTexture_IDs[0]);
-                GL.BindTexture(TextureTarget.Texture2D, mTexture_IDs[0]);
-                GL.TexImage2D(TextureTarget.Texture2D,
-                0, PixelInternalFormat.Rgba, TextureData.Width, TextureData.Height,
-                0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
-                PixelType.UnsignedByte, TextureData.Scan0);
-                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter,
-                (int)TextureMinFilter.Linear);
-                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter,
-                (int)TextureMagFilter.Linear);
-                TextureBitmap.UnlockBits(TextureData);
-                TextureBitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
-            }
-            else
-            {
-                throw new Exception("Could not find file " + filepath);
-            }
-
+            // Buffer Vertex Data:
             // Floor
-            mDataHandler.BufferVertexData(ref mVAO_IDs, ref mVBO_IDs, mFloorVertices, mFloorIndices, vPositionLocation, vNormalLocation, vTexCoordsLocation);
+            mDataHandler.BindVertexData(ref mVAO_IDs, ref mVBO_IDs, mFloorVertices, mFloorIndices, vPositionLocation, vNormalLocation, vTexCoordsLocation);
 
             // Creature
             mCreature = ModelUtility.LoadModel(@"Utility/Models/model.bin");
-            mDataHandler.BufferVertexData(ref mVAO_IDs, ref mVBO_IDs, mCreature.Vertices, mCreature.Indices, vPositionLocation, vNormalLocation, -1);
+            mDataHandler.BindVertexData(ref mVAO_IDs, ref mVBO_IDs, mCreature.Vertices, mCreature.Indices, vPositionLocation, vNormalLocation, -1);
 
             // Cylinder
             mCylinder = ModelUtility.LoadModel(@"Utility/Models/cylinder.bin");
-            mDataHandler.BufferVertexData(ref mVAO_IDs, ref mVBO_IDs, mCylinder.Vertices, mCylinder.Indices, vPositionLocation, vNormalLocation, -1);
+            mDataHandler.BindVertexData(ref mVAO_IDs, ref mVBO_IDs, mCylinder.Vertices, mCylinder.Indices, vPositionLocation, vNormalLocation, -1);
            
             // Cube
-            mDataHandler.BufferVertexData(ref mVAO_IDs, ref mVBO_IDs, mCubeVertices, mCubeIndices, vPositionLocation, vNormalLocation, -1);
+            mDataHandler.BindVertexData(ref mVAO_IDs, ref mVBO_IDs, mCubeVertices, mCubeIndices, vPositionLocation, vNormalLocation, -1);
 
             // Back wall
-            mDataHandler.BufferVertexData(ref mVAO_IDs, ref mVBO_IDs, mBackWallVertices, mBackWallIndices, vPositionLocation, vNormalLocation, vTexCoordsLocation);
+            mDataHandler.BindVertexData(ref mVAO_IDs, ref mVBO_IDs, mBackWallVertices, mBackWallIndices, vPositionLocation, vNormalLocation, vTexCoordsLocation);
 
             mView = Matrix4.CreateTranslation(0, -1.5f, 0);
             int uView = GL.GetUniformLocation(mShader.ShaderProgramID, "uView");
