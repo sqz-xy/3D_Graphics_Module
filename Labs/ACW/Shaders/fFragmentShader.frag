@@ -18,7 +18,7 @@ void main()
 	else
 		// Check the current texture index
 		if (uTextureIndex == 0)
-			FragColour = texture(uTextureSampler1, oTexCoords);
+			FragColour = texture(uTextureSampler1, oTexCoords) * oColour;
 		else if (uTextureIndex == 1)
-		    FragColour = texture(uTextureSampler2, oTexCoords);		
+		    FragColour = texture(uTextureSampler2, oTexCoords) * oColour;		
 }
