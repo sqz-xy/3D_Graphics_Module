@@ -10,17 +10,33 @@ namespace Labs.ACW
 {
 	public class VertexDataHandler
 	{
-		private int mVBOIndex;
+        private int[] mVBO_IDs;
+        private int[] mVAO_IDs;
+
+        private int mVBOIndex;
 		private int mVAOIndex;
 
-		public VertexDataHandler(ref int[] pVAO_IDs, ref int[] pVBO_IDs)
+		public VertexDataHandler(int pVBOSize, int pVAOSize)
 		{
-			mVBOIndex = 0;
+            mVBO_IDs = new int[pVBOSize];
+            mVAO_IDs = new int[pVAOSize];
+
+            mVBOIndex = 0;
 			mVAOIndex = 0;
 
             // Generates the Vertex arrays and buffers on handler initialization
-            GL.GenVertexArrays(pVAO_IDs.Length, pVAO_IDs);
-            GL.GenBuffers(pVBO_IDs.Length, pVBO_IDs);
+            GL.GenVertexArrays(mVAO_IDs.Length, mVAO_IDs);
+            GL.GenBuffers(mVBO_IDs.Length, mVBO_IDs);
+        }
+
+        /// <summary>
+        /// Returns the VAO At a specified Index
+        /// </summary>
+        /// <param name="pVAOIndex">The index to return</param>
+        /// <returns>An integer Value</returns>
+        public int GetVAOAtIndex(int pVAOIndex)
+        {
+            return mVAO_IDs[pVAOIndex];
         }
 
         /// <summary>
@@ -32,17 +48,17 @@ namespace Labs.ACW
         /// <param name="pIndices">The indices to bind</param>
         /// <param name="pPositionLocation">The vertex position information from the shader</param>
         /// <param name="pNormalLocation">The vertex normal information from the shader</param>
-		public void BindVertexData(ref int[] pVAO_IDs, ref int[] pVBO_IDs, float[] pVertices, int[] pIndices, int pPositionLocation, int pNormalLocation, int pTextureLocation)
+		public void BindVertexData(float[] pVertices, int[] pIndices, int pPositionLocation, int pNormalLocation, int pTextureLocation)
         {
             // Bind data to the VAO and VBO
-            GL.BindVertexArray(pVAO_IDs[mVAOIndex]);
+            GL.BindVertexArray(mVAO_IDs[mVAOIndex]);
             mVAOIndex++;
 
-            GL.BindBuffer(BufferTarget.ArrayBuffer, pVBO_IDs[mVBOIndex]);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, mVBO_IDs[mVBOIndex]);
             GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(pVertices.Length * sizeof(float)), pVertices, BufferUsageHint.StaticDraw);
             mVBOIndex++;
 
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, pVBO_IDs[mVBOIndex]);
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, mVBO_IDs[mVBOIndex]);
             GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(pIndices.Length * sizeof(float)), pIndices, BufferUsageHint.StaticDraw);
             mVBOIndex++;
 
@@ -104,13 +120,13 @@ namespace Labs.ACW
         /// </summary>
         /// <param name="pVAO_IDs">The VAOs to clear</param>
         /// <param name="pVBO_IDs">The VBOs to clear</param>
-        public void DeleteBuffers(ref int[] pVAO_IDs, ref int[] pVBO_IDs)
+        public void DeleteBuffers()
         {
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
             GL.BindVertexArray(0);
-            GL.DeleteBuffers(mVBOIndex, pVBO_IDs);
-            GL.DeleteVertexArrays(mVAOIndex, pVAO_IDs);
+            GL.DeleteBuffers(mVBOIndex, mVBO_IDs);
+            GL.DeleteVertexArrays(mVAOIndex, mVAO_IDs);
         }
 	}
 }

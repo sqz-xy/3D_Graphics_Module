@@ -14,13 +14,11 @@ namespace Labs.ACW
     public class ACWWindow : GameWindow
     {
         // TODO,
-        // Extend the data handler to handle textures
-        // add second texture for back wall and seperate the textures
+        // Extend the data handler to handle textures // DONE
+        // add second texture for back wall and seperate the textures // DONE
+
         // Upgrade lighting
         // Add a final primitive
-
-        private int[] mVBO_IDs = new int[10];
-        private int[] mVAO_IDs = new int[5];
 
         private ShaderUtility mShader;
         private ModelUtility mCylinder;
@@ -28,7 +26,7 @@ namespace Labs.ACW
         private Matrix4 mView, mStaticView, mCreatureModel, mGroundModel, mLeftCylinder, mMiddleCylinder, mRightCylinder, mCubeModel;
         private bool mStaticViewEnabled = false;
 
-        private VertexDataHandler mDataHandler;
+        private VertexDataHandler mVertexDataHandler;
         private TextureHandler mTextureHandler;
 
         private float mCreatureAngle = 0.1f;
@@ -96,7 +94,7 @@ namespace Labs.ACW
                 GraphicsContextFlags.ForwardCompatible
                 )
         {
-            mDataHandler = new VertexDataHandler(ref mVAO_IDs, ref mVBO_IDs);
+            mVertexDataHandler = new VertexDataHandler(10, 5);
             mTextureHandler = new TextureHandler(2);
         }
 
@@ -128,21 +126,21 @@ namespace Labs.ACW
 
             // Bind Vertex Data:
             // Floor
-            mDataHandler.BindVertexData(ref mVAO_IDs, ref mVBO_IDs, mFloorVertices, mFloorIndices, vPositionLocation, vNormalLocation, vTexCoordsLocation);
+            mVertexDataHandler.BindVertexData(mFloorVertices, mFloorIndices, vPositionLocation, vNormalLocation, vTexCoordsLocation);
 
             // Creature
             mCreature = ModelUtility.LoadModel(@"Utility/Models/model.bin");
-            mDataHandler.BindVertexData(ref mVAO_IDs, ref mVBO_IDs, mCreature.Vertices, mCreature.Indices, vPositionLocation, vNormalLocation, -1);
+            mVertexDataHandler.BindVertexData(mCreature.Vertices, mCreature.Indices, vPositionLocation, vNormalLocation, -1);
 
             // Cylinder
             mCylinder = ModelUtility.LoadModel(@"Utility/Models/cylinder.bin");
-            mDataHandler.BindVertexData(ref mVAO_IDs, ref mVBO_IDs, mCylinder.Vertices, mCylinder.Indices, vPositionLocation, vNormalLocation, -1);
+            mVertexDataHandler.BindVertexData(mCylinder.Vertices, mCylinder.Indices, vPositionLocation, vNormalLocation, -1);
            
             // Cube
-            mDataHandler.BindVertexData(ref mVAO_IDs, ref mVBO_IDs, mCubeVertices, mCubeIndices, vPositionLocation, vNormalLocation, -1);
+            mVertexDataHandler.BindVertexData(mCubeVertices, mCubeIndices, vPositionLocation, vNormalLocation, -1);
 
             // Back wall
-            mDataHandler.BindVertexData(ref mVAO_IDs, ref mVBO_IDs, mBackWallVertices, mBackWallIndices, vPositionLocation, vNormalLocation, vTexCoordsLocation);
+            mVertexDataHandler.BindVertexData(mBackWallVertices, mBackWallIndices, vPositionLocation, vNormalLocation, vTexCoordsLocation);
 
             mView = Matrix4.CreateTranslation(0, -1.5f, 0);
             int uView = GL.GetUniformLocation(mShader.ShaderProgramID, "uView");
@@ -301,12 +299,14 @@ namespace Labs.ACW
             
             // Floor
             GL.Uniform1(uTextureIndexLocation, 0);
-            GL.BindVertexArray(mVAO_IDs[0]);
+            //GL.BindVertexArray(mVAO_IDs[0]);
+            GL.BindVertexArray(mVertexDataHandler.GetVAOAtIndex(0));
             GL.DrawElements(PrimitiveType.TriangleFan, mFloorIndices.Length, DrawElementsType.UnsignedInt, 0);
 
             // Back wall
             GL.Uniform1(uTextureIndexLocation, 1);
-            GL.BindVertexArray(mVAO_IDs[4]);
+            //GL.BindVertexArray(mVAO_IDs[4]);
+            GL.BindVertexArray(mVertexDataHandler.GetVAOAtIndex(4));
             GL.DrawElements(PrimitiveType.TriangleFan, mBackWallIndices.Length, DrawElementsType.UnsignedInt, 0);
 
             // Creature
@@ -314,7 +314,7 @@ namespace Labs.ACW
             uModel = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
             GL.UniformMatrix4(uModel, true, ref m);
 
-            GL.BindVertexArray(mVAO_IDs[1]);
+            GL.BindVertexArray(mVertexDataHandler.GetVAOAtIndex(1));
             GL.DrawElements(PrimitiveType.Triangles, mCreature.Indices.Length, DrawElementsType.UnsignedInt, 0);
 
             // Left Cylinder
@@ -322,7 +322,7 @@ namespace Labs.ACW
             uModel = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
             GL.UniformMatrix4(uModel, true, ref m2);
 
-            GL.BindVertexArray(mVAO_IDs[2]);
+            GL.BindVertexArray(mVertexDataHandler.GetVAOAtIndex(2));
             GL.DrawElements(PrimitiveType.Triangles, mCylinder.Indices.Length, DrawElementsType.UnsignedInt, 0);
 
             // Middle Cylinder
@@ -330,7 +330,7 @@ namespace Labs.ACW
             uModel = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
             GL.UniformMatrix4(uModel, true, ref m3);
 
-            GL.BindVertexArray(mVAO_IDs[2]);
+            GL.BindVertexArray(mVertexDataHandler.GetVAOAtIndex(2));
             GL.DrawElements(PrimitiveType.Triangles, mCylinder.Indices.Length, DrawElementsType.UnsignedInt, 0);
 
             // Right Cylinder
@@ -338,7 +338,7 @@ namespace Labs.ACW
             uModel = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
             GL.UniformMatrix4(uModel, true, ref m4);
 
-            GL.BindVertexArray(mVAO_IDs[2]);
+            GL.BindVertexArray(mVertexDataHandler.GetVAOAtIndex(2));
             GL.DrawElements(PrimitiveType.Triangles, mCylinder.Indices.Length, DrawElementsType.UnsignedInt, 0);
 
             // Cube
@@ -346,7 +346,7 @@ namespace Labs.ACW
             uModel = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
             GL.UniformMatrix4(uModel, true, ref m5);
 
-            GL.BindVertexArray(mVAO_IDs[3]);
+            GL.BindVertexArray(mVertexDataHandler.GetVAOAtIndex(3));
             GL.DrawElements(PrimitiveType.Triangles, mCubeIndices.Length, DrawElementsType.UnsignedInt, 0);
 
             GL.BindVertexArray(0);
@@ -356,7 +356,7 @@ namespace Labs.ACW
         protected override void OnUnload(EventArgs e)
         {
             // Delete buffered vertex data and textures
-            mDataHandler.DeleteBuffers(ref mVAO_IDs, ref mVBO_IDs);
+            mVertexDataHandler.DeleteBuffers();
             mTextureHandler.DeleteTextures();
             mShader.Delete();
             base.OnUnload(e);
