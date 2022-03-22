@@ -240,7 +240,7 @@ namespace Labs.ACW
             mCubeModel = Matrix4.CreateTranslation(-5, 2, -5f);
             mConeModel = Matrix4.CreateTranslation(5, 2, -5f);
 
-            // Lighting, Currently up to directional
+            // Lighting, Need to move lighting to the fragment shader
 
             // Directional Lighting
             int uLightDirectionLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLightDirection");
