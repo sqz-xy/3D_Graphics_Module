@@ -242,11 +242,18 @@ namespace Labs.ACW
 
             // Lighting, Currently up to directional
 
+            // Directional Lighting
             int uLightDirectionLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLightDirection");
             Vector3 normalisedLightDirection, lightDirection = new Vector3(-1, -1, -1);
             Vector3.Normalize(ref lightDirection, out normalisedLightDirection);
             GL.Uniform3(uLightDirectionLocation, normalisedLightDirection);
 
+            // Positional Lighting
+            Vector4 lightPosition = new Vector4(0, 10, 0, 1);
+            lightPosition = Vector4.Transform(lightPosition, mNonStaticView);
+
+            int uLightPositionLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLightPosition");
+            GL.Uniform4(uLightPositionLocation, lightPosition);
         }
 
         protected override void OnKeyPress(KeyPressEventArgs e)
