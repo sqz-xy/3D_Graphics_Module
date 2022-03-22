@@ -15,11 +15,13 @@ namespace Labs.ACW
     class TextureHandler
     {
         private int mTextureIndex;
+        private int[] mTexture_IDs;
         private TextureUnit mCurrentTextureUnit;
         private List<string> mTextureUnitsAsString;
 
-        public TextureHandler()
+        public TextureHandler(int pTextureCount)
         {
+            mTexture_IDs = new int[pTextureCount];
             mTextureIndex = 0;
             mCurrentTextureUnit = TextureUnit.Texture0;
             mTextureUnitsAsString = TextureUnitsToString();
@@ -30,7 +32,7 @@ namespace Labs.ACW
         /// </summary>
         /// <param name="pFilePath">The path of the texture to bind</param>
         /// <param name="pTexture_IDs">The array of texture IDs</param>
-        public void BindTextureData(string pFilePath, ref int[] pTexture_IDs)
+        public void BindTextureData(string pFilePath)
         {
             string filepath = @pFilePath;
             if (System.IO.File.Exists(filepath))
@@ -42,8 +44,8 @@ namespace Labs.ACW
                 System.Drawing.Imaging.PixelFormat.Format32bppRgb);
 
                 GL.ActiveTexture(mCurrentTextureUnit);
-                GL.GenTextures(1, out pTexture_IDs[mTextureIndex]);
-                GL.BindTexture(TextureTarget.Texture2D, pTexture_IDs[mTextureIndex]);
+                GL.GenTextures(1, out mTexture_IDs[mTextureIndex]);
+                GL.BindTexture(TextureTarget.Texture2D, mTexture_IDs[mTextureIndex]);
                 mTextureIndex++;
                 IncrementTextureUnit();
 
@@ -93,9 +95,9 @@ namespace Labs.ACW
         /// Deletes the textures
         /// </summary>
         /// <param name="pTexture_IDs">The array of texture ids</param>
-        public void DeleteTextures(ref int[] pTexture_IDs)
+        public void DeleteTextures()
         {
-            foreach (int Texture in pTexture_IDs)
+            foreach (int Texture in mTexture_IDs)
             {
                 GL.DeleteTexture(Texture);
             }

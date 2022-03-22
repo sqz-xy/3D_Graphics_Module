@@ -21,7 +21,6 @@ namespace Labs.ACW
 
         private int[] mVBO_IDs = new int[10];
         private int[] mVAO_IDs = new int[5];
-        private int[] mTexture_IDs = new int[2];
 
         private ShaderUtility mShader;
         private ModelUtility mCylinder;
@@ -97,10 +96,8 @@ namespace Labs.ACW
                 GraphicsContextFlags.ForwardCompatible
                 )
         {
-            this.VSync = VSyncMode.On;
-
             mDataHandler = new VertexDataHandler(ref mVAO_IDs, ref mVBO_IDs);
-            mTextureHandler = new TextureHandler();
+            mTextureHandler = new TextureHandler(2);
         }
 
         protected override void OnLoad(EventArgs e)
@@ -124,10 +121,10 @@ namespace Labs.ACW
 
             // Bind Texture Data:
             // Floor
-            mTextureHandler.BindTextureData("ACW/Textures/texture.png", ref mTexture_IDs);
+            mTextureHandler.BindTextureData("ACW/Textures/texture.png");
 
             // Wall
-            mTextureHandler.BindTextureData("ACW/Textures/texture2.png", ref mTexture_IDs);
+            mTextureHandler.BindTextureData("ACW/Textures/texture2.png");
 
             // Bind Vertex Data:
             // Floor
@@ -257,8 +254,10 @@ namespace Labs.ACW
 
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
+            // Delta time for accurate updates, independent of framerate
             float deltaTime = (float)e.Time;
 
+            // Cube moving up and down
             Matrix4 cubeTranslationUp = Matrix4.CreateTranslation(0 , 4f * deltaTime, 0);
             Matrix4 cubeTranslationDown = Matrix4.CreateTranslation(0, -4f * deltaTime, 0);
 
@@ -282,13 +281,11 @@ namespace Labs.ACW
                 mIsUpOrDown = true;
             }
 
+            // Creature rotating
             Matrix4 creatureRotation = Matrix4.CreateRotationY(mCreatureAngle);
             mCreatureModel = creatureRotation;
             mCreatureModel *= Matrix4.CreateTranslation(0f, 2f, -5f);
             mCreatureAngle += (4f * deltaTime);
-
-
-            //GL.UniformMatrix4(uModelLocation, true, ref creatureRotation);
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
@@ -358,7 +355,9 @@ namespace Labs.ACW
 
         protected override void OnUnload(EventArgs e)
         {
+            // Delete buffered vertex data and textures
             mDataHandler.DeleteBuffers(ref mVAO_IDs, ref mVBO_IDs);
+            mTextureHandler.DeleteTextures();
             mShader.Delete();
             base.OnUnload(e);
         }
