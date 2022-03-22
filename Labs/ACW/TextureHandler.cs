@@ -16,8 +16,12 @@ namespace Labs.ACW
     {
         private int mTextureIndex;
         private int[] mTexture_IDs;
+
         private TextureUnit mCurrentTextureUnit;
         private List<string> mTextureUnitsAsString;
+
+        // FBOs not fully implemented
+        private int[] mFBO_IDs;
 
         public TextureHandler(int pTextureCount)
         {
@@ -25,6 +29,8 @@ namespace Labs.ACW
             mTextureIndex = 0;
             mCurrentTextureUnit = TextureUnit.Texture0;
             mTextureUnitsAsString = TextureUnitsToString();
+
+            GL.GenFramebuffers(pTextureCount, mFBO_IDs);
         }
 
         /// <summary>
@@ -36,7 +42,7 @@ namespace Labs.ACW
         {
             string filepath = @pFilePath;
             if (System.IO.File.Exists(filepath))
-            {
+            {            
                 Bitmap TextureBitmap = new Bitmap(filepath);
                 BitmapData TextureData = TextureBitmap.LockBits(
                 new System.Drawing.Rectangle(0, 0, TextureBitmap.Width,
