@@ -48,7 +48,8 @@ namespace Labs.ACW
         /// <param name="pIndices">The indices to bind</param>
         /// <param name="pPositionLocation">The vertex position information from the shader</param>
         /// <param name="pNormalLocation">The vertex normal information from the shader</param>
-		public void BindVertexData(float[] pVertices, int[] pIndices, int pPositionLocation, int pNormalLocation, int pTextureLocation)
+        /// <returns>The VAO index of the bound vertices</returns>
+        public int BindVertexData(float[] pVertices, int[] pIndices, int pPositionLocation, int pNormalLocation, int pTextureLocation)
         {
             // Bind data to the VAO and VBO
             GL.BindVertexArray(mVAO_IDs[mVAOIndex]);
@@ -82,6 +83,9 @@ namespace Labs.ACW
             
             // Unbind buffer for cleanup purposes
             GL.BindVertexArray(0);
+
+            // Returns the index of the VAO That was just bound 2, -1 due to previous increments
+            return mVAOIndex - 1;
         }
 
         /// <summary>

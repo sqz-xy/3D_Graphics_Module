@@ -13,6 +13,11 @@ namespace Labs.ACW
 {
     public class ACWWindow : GameWindow
     {
+        // It now takes 3 Lines to draw an object:
+            // Buffer using Vertex Data handler and retain the VAO index
+            // Bind to the VAO index of the object
+            // Draw Elements
+
         // TODO,
         // Extend the data handler to handle textures // DONE
         // add second texture for back wall and seperate the textures // DONE
@@ -31,6 +36,8 @@ namespace Labs.ACW
 
         private float mCreatureAngle = 0.1f;
         private bool mIsUpOrDown = true;
+
+        private int mFloorIndex, mWallIndex, mCreatureIndex, mCylinderIndex, mCubeIndex;
 
         // Removed tex coords from cube as they dont work due to reduced number of triangles
         float[] mCubeVertices = new float[]
@@ -126,21 +133,21 @@ namespace Labs.ACW
 
             // Bind Vertex Data:
             // Floor
-            mVertexDataHandler.BindVertexData(mFloorVertices, mFloorIndices, vPositionLocation, vNormalLocation, vTexCoordsLocation);
+            mFloorIndex = mVertexDataHandler.BindVertexData(mFloorVertices, mFloorIndices, vPositionLocation, vNormalLocation, vTexCoordsLocation);
 
             // Creature
             mCreature = ModelUtility.LoadModel(@"Utility/Models/model.bin");
-            mVertexDataHandler.BindVertexData(mCreature.Vertices, mCreature.Indices, vPositionLocation, vNormalLocation, -1);
+            mCreatureIndex = mVertexDataHandler.BindVertexData(mCreature.Vertices, mCreature.Indices, vPositionLocation, vNormalLocation, -1);
 
             // Cylinder
             mCylinder = ModelUtility.LoadModel(@"Utility/Models/cylinder.bin");
-            mVertexDataHandler.BindVertexData(mCylinder.Vertices, mCylinder.Indices, vPositionLocation, vNormalLocation, -1);
+            mCylinderIndex = mVertexDataHandler.BindVertexData(mCylinder.Vertices, mCylinder.Indices, vPositionLocation, vNormalLocation, -1);
            
             // Cube
-            mVertexDataHandler.BindVertexData(mCubeVertices, mCubeIndices, vPositionLocation, vNormalLocation, -1);
+            mCubeIndex = mVertexDataHandler.BindVertexData(mCubeVertices, mCubeIndices, vPositionLocation, vNormalLocation, -1);
 
             // Back wall
-            mVertexDataHandler.BindVertexData(mBackWallVertices, mBackWallIndices, vPositionLocation, vNormalLocation, vTexCoordsLocation);
+            mWallIndex = mVertexDataHandler.BindVertexData(mBackWallVertices, mBackWallIndices, vPositionLocation, vNormalLocation, vTexCoordsLocation);
 
             mView = Matrix4.CreateTranslation(0, -1.5f, 0);
             int uView = GL.GetUniformLocation(mShader.ShaderProgramID, "uView");
@@ -299,14 +306,12 @@ namespace Labs.ACW
             
             // Floor
             GL.Uniform1(uTextureIndexLocation, 0);
-            //GL.BindVertexArray(mVAO_IDs[0]);
-            GL.BindVertexArray(mVertexDataHandler.GetVAOAtIndex(0));
+            GL.BindVertexArray(mVertexDataHandler.GetVAOAtIndex(mFloorIndex));
             GL.DrawElements(PrimitiveType.TriangleFan, mFloorIndices.Length, DrawElementsType.UnsignedInt, 0);
 
             // Back wall
             GL.Uniform1(uTextureIndexLocation, 1);
-            //GL.BindVertexArray(mVAO_IDs[4]);
-            GL.BindVertexArray(mVertexDataHandler.GetVAOAtIndex(4));
+            GL.BindVertexArray(mVertexDataHandler.GetVAOAtIndex(mWallIndex));
             GL.DrawElements(PrimitiveType.TriangleFan, mBackWallIndices.Length, DrawElementsType.UnsignedInt, 0);
 
             // Creature
@@ -314,7 +319,7 @@ namespace Labs.ACW
             uModel = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
             GL.UniformMatrix4(uModel, true, ref m);
 
-            GL.BindVertexArray(mVertexDataHandler.GetVAOAtIndex(1));
+            GL.BindVertexArray(mVertexDataHandler.GetVAOAtIndex(mCreatureIndex));
             GL.DrawElements(PrimitiveType.Triangles, mCreature.Indices.Length, DrawElementsType.UnsignedInt, 0);
 
             // Left Cylinder
@@ -322,7 +327,7 @@ namespace Labs.ACW
             uModel = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
             GL.UniformMatrix4(uModel, true, ref m2);
 
-            GL.BindVertexArray(mVertexDataHandler.GetVAOAtIndex(2));
+            GL.BindVertexArray(mVertexDataHandler.GetVAOAtIndex(mCylinderIndex));
             GL.DrawElements(PrimitiveType.Triangles, mCylinder.Indices.Length, DrawElementsType.UnsignedInt, 0);
 
             // Middle Cylinder
@@ -330,7 +335,7 @@ namespace Labs.ACW
             uModel = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
             GL.UniformMatrix4(uModel, true, ref m3);
 
-            GL.BindVertexArray(mVertexDataHandler.GetVAOAtIndex(2));
+            GL.BindVertexArray(mVertexDataHandler.GetVAOAtIndex(mCylinderIndex));
             GL.DrawElements(PrimitiveType.Triangles, mCylinder.Indices.Length, DrawElementsType.UnsignedInt, 0);
 
             // Right Cylinder
@@ -338,7 +343,7 @@ namespace Labs.ACW
             uModel = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
             GL.UniformMatrix4(uModel, true, ref m4);
 
-            GL.BindVertexArray(mVertexDataHandler.GetVAOAtIndex(2));
+            GL.BindVertexArray(mVertexDataHandler.GetVAOAtIndex(mCylinderIndex));
             GL.DrawElements(PrimitiveType.Triangles, mCylinder.Indices.Length, DrawElementsType.UnsignedInt, 0);
 
             // Cube
@@ -346,7 +351,7 @@ namespace Labs.ACW
             uModel = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
             GL.UniformMatrix4(uModel, true, ref m5);
 
-            GL.BindVertexArray(mVertexDataHandler.GetVAOAtIndex(3));
+            GL.BindVertexArray(mVertexDataHandler.GetVAOAtIndex(mCubeIndex));
             GL.DrawElements(PrimitiveType.Triangles, mCubeIndices.Length, DrawElementsType.UnsignedInt, 0);
 
             GL.BindVertexArray(0);
