@@ -256,8 +256,24 @@ namespace Labs.ACW
             Vector4 lightPosition = new Vector4(0, 10, 0, 1);
             mLightPosition = Vector4.Transform(lightPosition, mNonStaticView);
 
-            int uLightPositionLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLightPosition");
-            GL.Uniform4(uLightPositionLocation, mLightPosition);
+            int uLightPositionLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLight.Position");
+            GL.Uniform4(uLightPositionLocation, lightPosition);
+
+            int uAmbientReflectivity = GL.GetUniformLocation(mShader.ShaderProgramID, "uMaterial.AmbientReflectivity");
+            Vector3 colour4 = new Vector3(0.5f, 0.5f, 0.5f);
+            GL.Uniform3(uAmbientReflectivity, colour4);
+
+            int uDiffuseReflectivity = GL.GetUniformLocation(mShader.ShaderProgramID, "uMaterial.DiffuseReflectivity");
+            Vector3 colour5 = new Vector3(0.5f, 0.5f, 0.5f);
+            GL.Uniform3(uDiffuseReflectivity, colour5);
+
+            int uSpecularReflectivity = GL.GetUniformLocation(mShader.ShaderProgramID, "uMaterial.SpecularReflectivity");
+            Vector3 colour6 = new Vector3(0.5f, 0.5f, 0.5f);
+            GL.Uniform3(uSpecularReflectivity, colour6);
+
+            int uShininess = GL.GetUniformLocation(mShader.ShaderProgramID, "uMaterial.Shininess");
+            float shininess = 0.25f;
+            GL.Uniform1(uShininess, shininess);
         }
 
         protected override void OnKeyPress(KeyPressEventArgs e)
@@ -321,6 +337,25 @@ namespace Labs.ACW
             mShader.Delete();
             base.OnUnload(e);
         }
+
+        #region Lighting Utility Functions
+
+        private void ChangeLightColour(Vector3 pAmbientColour, Vector3 pDiffuseColour, Vector3 pSpecularColour)
+        {
+            int uAmbientLightLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLight.AmbientLight");
+            Vector3 colour = new Vector3(pAmbientColour);
+            GL.Uniform3(uAmbientLightLocation, colour);
+
+            int uDiffuseLightLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLight.DiffuseLight");
+            Vector3 colour2 = new Vector3(pDiffuseColour);
+            GL.Uniform3(uDiffuseLightLocation, colour2);
+
+            int uSpecularLightLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLight.SpecularLight");
+            Vector3 colour3 = new Vector3(pSpecularColour);
+            GL.Uniform3(uSpecularLightLocation, colour3);
+        }
+
+        #endregion
 
         #region Update Utility Functions
 
@@ -412,6 +447,7 @@ namespace Labs.ACW
             // Floor
             GL.Uniform1(uTextureIndexLocation, mTexture1Index);
             GL.BindVertexArray(mVertexDataHandler.GetVAOAtIndex(mFloorIndex));
+            ChangeLightColour(new Vector3(0.0f, 0.0f, 0.0f), new Vector3(0.55f, 0.55f, 0.55f), new Vector3(0.7f, 0.7f, 0.7f));
             GL.DrawElements(PrimitiveType.TriangleFan, mFloorIndices.Length, DrawElementsType.UnsignedInt, 0);
 
             // Back wall
@@ -553,7 +589,7 @@ namespace Labs.ACW
             GL.UniformMatrix4(uViewLocation, true, ref mNonStaticView);
 
             mLightPosition = Vector4.Transform(new Vector4(0, 10, 0, 1), mNonStaticView);
-            int uLightPositionLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLightPosition");
+            int uLightPositionLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLight.Position");
             GL.Uniform4(uLightPositionLocation, mLightPosition);
 
             int uEyePosition = GL.GetUniformLocation(mShader.ShaderProgramID, "uEyePosition");
