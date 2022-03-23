@@ -124,31 +124,29 @@ namespace Labs.ACW
             0, 1, 2, 3
         };
 
-        // Temporarily a cube
         readonly float[] mConeVertices = new float[]
         {
-            -0.5f,  0.5f,  0.5f, 0, 0, 1,
-             0.5f,  0.5f,  0.5f, 1, 0, 1,
-            -0.5f, -0.5f,  0.5f, 0, 1, 1,
-             0.5f, -0.5f,  0.5f, 1, 1, 1,
-            -0.5f, -0.5f, -0.5f, 0, 0, 1,
-             0.5f, -0.5f, -0.5f, 1, 0, 1,
-            -0.5f,  0.5f, -0.5f, 0, 1, 1,
-             0.5f,  0.5f, -0.5f, 1, 1, 1,
-            -0.5f,  0.5f,  0.5f, 1, 1, 1,
-            -0.5f,  0.5f, -0.5f, 1, 0, 1,
-             0.5f,  0.5f,  0.5f, 0, 1, 1,
-             0.5f,  0.5f, -0.5f, 0, 0, 1
+             0f,  2f,  0f, 0, 0, 1,
+             0.5f,  0f,  1f, 1, 0, 1,
+            1f, 0f,  0.5f, 0, 1, 1,
+             1f, 0f,  -0.5f, 1, 1, 1,
+            0.5f, 0f, -1f, 0, 0, 1,
+             -0.5f, 0f, -1f, 1, 0, 1,
+            -1f,  0f, 0.5f, 0, 1, 1,
+             -1f,  0f, 0.5f, 1, 1, 1,
+            -0.5f,  0f,  1f, 1, 1, 1,
         };
 
         readonly int[] mConeIndices = new int[]
         {
-            0, 2, 1, 2, 3, 1,
-            8, 9, 2, 9, 4, 2,
-            2, 4, 3, 4, 5, 3,
-            3, 5, 10, 5, 11, 10,
-            4, 6, 5, 6, 7, 5,
-            6, 0, 7, 0, 1, 7
+            0, 1, 2, 
+            0, 2, 3,
+            0, 3, 4,
+            0, 4, 5,
+            0, 5, 6,
+            0, 6, 7,
+            0, 7, 8,
+            0, 8, 1
         };
 
         #endregion
@@ -242,9 +240,13 @@ namespace Labs.ACW
             mCubeModel = Matrix4.CreateTranslation(-5, 2, -5f);
             mConeModel = Matrix4.CreateTranslation(5, 2, -5f);
 
+            int uEyePosition = GL.GetUniformLocation(mShader.ShaderProgramID, "uEyePosition");
+            Vector4 EyePosition = new Vector4(mNonStaticView.ExtractTranslation(), 1);
+            GL.Uniform4(uEyePosition, EyePosition);
+
             // Lighting, Need to move lighting to the fragment shader
 
-            // Directional Lighting
+            // Old, per vertex, Directional Lighting
             //int uLightDirectionLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLightDirection");
             //Vector3 normalisedLightDirection, lightDirection = new Vector3(-1, -1, -1);
             //Vector3.Normalize(ref lightDirection, out normalisedLightDirection);
@@ -457,7 +459,7 @@ namespace Labs.ACW
             GL.UniformMatrix4(uModel, true, ref m6);
 
             GL.BindVertexArray(mVertexDataHandler.GetVAOAtIndex(mConeIndex));
-            GL.DrawElements(PrimitiveType.Triangles, mCubeIndices.Length, DrawElementsType.UnsignedInt, 0);
+            GL.DrawElements(PrimitiveType.TriangleFan, mCubeIndices.Length, DrawElementsType.UnsignedInt, 0);
         }
 
         #endregion
@@ -480,11 +482,19 @@ namespace Labs.ACW
                 {
                     int uView = GL.GetUniformLocation(mShader.ShaderProgramID, "uView");
                     GL.UniformMatrix4(uView, true, ref mStaticView);
+
+                    int uEyePosition = GL.GetUniformLocation(mShader.ShaderProgramID, "uEyePosition");
+                    Vector4 EyePosition = new Vector4(mStaticView.ExtractTranslation(), 1);
+                    GL.Uniform4(uEyePosition, EyePosition);
                 }
                 else
                 {
                     int uView = GL.GetUniformLocation(mShader.ShaderProgramID, "uView");
                     GL.UniformMatrix4(uView, true, ref mNonStaticView);
+
+                    int uEyePosition = GL.GetUniformLocation(mShader.ShaderProgramID, "uEyePosition");
+                    Vector4 EyePosition = new Vector4(mNonStaticView.ExtractTranslation(), 1);
+                    GL.Uniform4(uEyePosition, EyePosition);
                 }
 
             }
@@ -545,6 +555,10 @@ namespace Labs.ACW
             mLightPosition = Vector4.Transform(new Vector4(0, 10, 0, 1), mNonStaticView);
             int uLightPositionLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLightPosition");
             GL.Uniform4(uLightPositionLocation, mLightPosition);
+
+            int uEyePosition = GL.GetUniformLocation(mShader.ShaderProgramID, "uEyePosition");
+            Vector4 EyePosition = new Vector4(mNonStaticView.ExtractTranslation(), 1);
+            GL.Uniform4(uEyePosition, EyePosition);
         }
 
         #endregion
