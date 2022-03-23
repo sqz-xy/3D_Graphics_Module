@@ -35,6 +35,8 @@ namespace Labs.ACW
         // Transformation Matrices for models
         private Matrix4 mNonStaticView, mStaticView, mCreatureModel, mGroundModel, mLeftCylinder, mMiddleCylinder, mRightCylinder, mCubeModel, mConeModel;
 
+        private Vector4 mLightPosition;
+
         // Bool to indicate which view type is enabled
         private bool mStaticViewEnabled = false;
 
@@ -243,17 +245,17 @@ namespace Labs.ACW
             // Lighting, Need to move lighting to the fragment shader
 
             // Directional Lighting
-            int uLightDirectionLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLightDirection");
-            Vector3 normalisedLightDirection, lightDirection = new Vector3(-1, -1, -1);
-            Vector3.Normalize(ref lightDirection, out normalisedLightDirection);
-            GL.Uniform3(uLightDirectionLocation, normalisedLightDirection);
+            //int uLightDirectionLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLightDirection");
+            //Vector3 normalisedLightDirection, lightDirection = new Vector3(-1, -1, -1);
+            //Vector3.Normalize(ref lightDirection, out normalisedLightDirection);
+            //GL.Uniform3(uLightDirectionLocation, normalisedLightDirection);
 
             // Positional Lighting
             Vector4 lightPosition = new Vector4(0, 10, 0, 1);
-            lightPosition = Vector4.Transform(lightPosition, mNonStaticView);
+            mLightPosition = Vector4.Transform(lightPosition, mNonStaticView);
 
             int uLightPositionLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLightPosition");
-            GL.Uniform4(uLightPositionLocation, lightPosition);
+            GL.Uniform4(uLightPositionLocation, mLightPosition);
         }
 
         protected override void OnKeyPress(KeyPressEventArgs e)
@@ -539,6 +541,10 @@ namespace Labs.ACW
         {
             int uViewLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uView");
             GL.UniformMatrix4(uViewLocation, true, ref mNonStaticView);
+
+            mLightPosition = Vector4.Transform(new Vector4(0, 10, 0, 1), mNonStaticView);
+            int uLightPositionLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLightPosition");
+            GL.Uniform4(uLightPositionLocation, mLightPosition);
         }
 
         #endregion
