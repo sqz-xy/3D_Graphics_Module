@@ -56,4 +56,5 @@ void main()
 			FragColour = texture(uTextureSampler1, oTexCoords) * totalLight;
 		else if (uTextureIndex == 1)
 		    FragColour = texture(uTextureSampler2, oTexCoords) * totalLight;
+			
 }

@@ -3,7 +3,8 @@
 // Bind to the VAO index of the object
 // Draw Elements
 
-// TODO,
+// TODO:
+
 // Extend the data handler to handle textures // DONE
 // add second texture for back wall and seperate the textures // DONE
 
@@ -334,6 +335,10 @@ namespace Labs.ACW
             this.SwapBuffers();
         }
     
+        /// <summary>
+        /// On unload, when the window is closed, the code executes
+        /// </summary>
+        /// <param name="e">The unload event args</param>
         protected override void OnUnload(EventArgs e)
         {
             // Delete buffered vertex data and textures

@@ -11,8 +11,6 @@ namespace Labs.Lab1
         private int[] mVertexBufferObjectIDArray = new int[2];
         private ShaderUtility mShader;
 
-        //TODO: TAKE NOTE OF CULLING, WINDING 
-
         public Lab1Window()
             : base(
                 800, // Width
