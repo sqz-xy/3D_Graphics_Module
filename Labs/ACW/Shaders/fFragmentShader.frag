@@ -4,7 +4,6 @@ uniform sampler2D uTextureSampler1;
 uniform sampler2D uTextureSampler2;
 uniform vec4 uLightPosition;
 uniform vec4 uEyePosition;
-uniform int uLightCount;
 
 uniform int uTextureIndex;
 
