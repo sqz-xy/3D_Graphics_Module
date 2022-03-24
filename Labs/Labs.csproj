@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ACW\ACWWindow.cs" />
+    <Compile Include="ACW\LightingProperties.cs" />
     <Compile Include="ACW\TextureHandler.cs" />
     <Compile Include="ACW\VertexDataHandler.cs" />
     <Compile Include="Challenge\ChallengeWindow.cs" />

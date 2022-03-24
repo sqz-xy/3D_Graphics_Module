@@ -36,11 +36,11 @@ namespace Labs.ACW
 
         private Vector4 mTransformedLightPos;
 
-        private Vector4[] mLightPositions;
-        private Vector3[] mLightColours;
-
         // Bool to indicate which view type is enabled
         private bool mStaticViewEnabled = false;
+
+        // Lighting Properties
+        private LightingProperties mLightingProperties;
 
         // Handlers
         private VertexDataHandler mVertexDataHandler;
@@ -176,16 +176,8 @@ namespace Labs.ACW
             mVertexDataHandler = new VertexDataHandler(mVBOSize, mVAOSize);
             mTextureHandler = new TextureHandler(mTextureSize);
 
-            mLightPositions = new Vector4[3];
-            mLightColours = new Vector3[3];
-
-            mLightPositions[0] = new Vector4(2, 1f, -8.5f, 1);
-            mLightPositions[1] = new Vector4(-2, 1f, -8.5f, 1);
-            mLightPositions[2] = new Vector4(0, 1f, -12.5f, 1);
-
-            mLightColours[0] = new Vector3(0.5f, 0, 0);
-            mLightColours[1] = new Vector3(0, 0.5f, 0);
-            mLightColours[2] = new Vector3(0, 0, 0.5f);
+            // Light properties struct
+            mLightingProperties = new LightingProperties(3);
         }
 
         /// <summary>
@@ -217,13 +209,6 @@ namespace Labs.ACW
             // Wall
             mTexture2Index = mTextureHandler.BindTextureData("ACW/Textures/texture2.png");
 
-            // Send them to the fragment shader using their indexes
-            int uTextureSamplerLocation1 = GL.GetUniformLocation(mLightingShader.ShaderProgramID,"uTextureSampler1");
-            GL.Uniform1(uTextureSamplerLocation1, mTexture1Index);
-
-            int uTextureSamplerLocation2 = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uTextureSampler2");
-            GL.Uniform1(uTextureSamplerLocation2, mTexture2Index);
-
             // Bind Vertex Data:
             // Floor
             mFloorIndex = mVertexDataHandler.BindVertexData(mFloorVertices, mFloorIndices, vPositionLocation, vNormalLocation, -1);
@@ -248,8 +233,13 @@ namespace Labs.ACW
             // Initialize the matrixes for the models
             InitializeMatrices();
 
+            // Initialize light properties
+            InitializeLightProperties();
+
+            // Bind the light properties and other values to the fragment shader
             InitializeFragValues();
 
+            // Transform the light positions relative to the camera on initial launch
             TransformLightPos(mNonStaticView);
         }
 
@@ -338,6 +328,29 @@ namespace Labs.ACW
         #region Loading Utility Functions
 
         /// <summary>
+        /// Initializes values for the light properties struct
+        /// </summary>
+        private void InitializeLightProperties()
+        {
+            // The three light positions
+            mLightingProperties.LightPositions[0] = new Vector4(2, 1f, -8.5f, 1);
+            mLightingProperties.LightPositions[1] = new Vector4(-2, 1f, -8.5f, 1);
+            mLightingProperties.LightPositions[2] = new Vector4(0, 1f, -12.5f, 1);
+
+            // The three light colours
+            mLightingProperties.LightColours[0] = new Vector3(0.5f, 0, 0);
+            mLightingProperties.LightColours[1] = new Vector3(0, 0.5f, 0);
+            mLightingProperties.LightColours[2] = new Vector3(0, 0, 0.5f);
+
+            // The three light reflectivity pro
+            mLightingProperties.AmbientReflectivity = new Vector3(0.1f, 0.1f, 0.1f);
+            mLightingProperties.DiffuseReflectivity = new Vector3(0.5f, 0.5f, 0.5f);
+            mLightingProperties.SpecularReflectivity = new Vector3(0.7f, 0.7f, 0.7f);
+
+            mLightingProperties.Shininess = 12.8f;
+        }
+
+        /// <summary>
         /// Initializes the view matrices and translation matrices for models
         /// </summary>
         private void InitializeMatrices()
@@ -370,23 +383,25 @@ namespace Labs.ACW
             Vector4 eyePosition = new Vector4(mNonStaticView.ExtractTranslation(), 1);
             GL.Uniform4(uEyePosition, eyePosition);
 
+            // Sets texure indexes in the fragment shader
+            int uTextureSamplerLocation1 = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uTextureSampler1");
+            GL.Uniform1(uTextureSamplerLocation1, mTexture1Index);
+
+            int uTextureSamplerLocation2 = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uTextureSampler2");
+            GL.Uniform1(uTextureSamplerLocation2, mTexture2Index);
+
             // Positional Lighting, per fragment
             int uAmbientReflectivity = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.AmbientReflectivity");
-            Vector3 ambientColour = new Vector3(0.1f, 0.1f, 0.1f);
-            GL.Uniform3(uAmbientReflectivity, ambientColour);
+            GL.Uniform3(uAmbientReflectivity, mLightingProperties.AmbientReflectivity);
 
             int uDiffuseReflectivity = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.DiffuseReflectivity");
-            Vector3 diffuseColour = new Vector3(0.5f, 0.5f, 0.5f);
-            GL.Uniform3(uDiffuseReflectivity, diffuseColour);
+            GL.Uniform3(uDiffuseReflectivity, mLightingProperties.DiffuseReflectivity);
 
-            int uSpecularReflectivity =
-                GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.SpecularReflectivity");
-            Vector3 specularColour = new Vector3(0.7f, 0.7f, 0.7f);
-            GL.Uniform3(uSpecularReflectivity, specularColour);
+            int uSpecularReflectivity = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.SpecularReflectivity");
+            GL.Uniform3(uSpecularReflectivity, mLightingProperties.SpecularReflectivity);
 
             int uShininess = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.Shininess");
-            float shininess = 0.1f * 128;
-            GL.Uniform1(uShininess, shininess);
+            GL.Uniform1(uShininess, mLightingProperties.Shininess);
         }
 
         #endregion
@@ -480,13 +495,13 @@ namespace Labs.ACW
             for (int lightIndex = 0; lightIndex < 3; lightIndex++)
             {
                 int uAmbientLightLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].AmbientLight");
-                GL.Uniform3(uAmbientLightLocation, mLightColours[lightIndex]);
+                GL.Uniform3(uAmbientLightLocation, mLightingProperties.LightColours[lightIndex]);
 
                 int uDiffuseLightLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].DiffuseLight");
-                GL.Uniform3(uDiffuseLightLocation, mLightColours[lightIndex]);
+                GL.Uniform3(uDiffuseLightLocation, mLightingProperties.LightColours[lightIndex]);
 
                 int uSpecularLightLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].SpecularLight");
-                GL.Uniform3(uSpecularLightLocation, mLightColours[lightIndex]);
+                GL.Uniform3(uSpecularLightLocation, mLightingProperties.LightColours[lightIndex]);
             }
         }
 
@@ -564,7 +579,7 @@ namespace Labs.ACW
         {
             for (int lightIndex = 0; lightIndex < 3; lightIndex++)
             {
-                mTransformedLightPos = Vector4.Transform(mLightPositions[lightIndex], pView);
+                mTransformedLightPos = Vector4.Transform(mLightingProperties.LightPositions[lightIndex], pView);
                 int uLightPositionLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].Position");
                 GL.Uniform4(uLightPositionLocation, mTransformedLightPos);
             }
