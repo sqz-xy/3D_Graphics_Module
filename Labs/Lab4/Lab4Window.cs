@@ -25,7 +25,7 @@ namespace Labs.Lab4
         {
         }
 
-        private int[] mVBO_IDs = new int[2];
+        private readonly int[] mVBO_IDs = new int[2];
         private int mVAO_ID;
         private ShaderUtility mShader;
         private int mTexture_ID;
@@ -79,16 +79,16 @@ namespace Labs.Lab4
 
             mShader = new ShaderUtility(@"Lab4/Shaders/vTexture.vert", @"Lab4/Shaders/fTexture.frag");
             GL.UseProgram(mShader.ShaderProgramID);
-            int vPositionLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vPosition");
+            var vPositionLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vPosition");
 
-            int uThresholdLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uThreshold");
+            var uThresholdLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uThreshold");
             GL.Uniform1(uThresholdLocation, 0.05f);
 
-            string filepath = @"Lab4/Textures/texture.png";
+            var filepath = @"Lab4/Textures/texture.png";
             if (System.IO.File.Exists(filepath))
             {
-                Bitmap TextureBitmap = new Bitmap(filepath);
-                BitmapData TextureData = TextureBitmap.LockBits(
+                var TextureBitmap = new Bitmap(filepath);
+                var TextureData = TextureBitmap.LockBits(
                 new System.Drawing.Rectangle(0, 0, TextureBitmap.Width,
                 TextureBitmap.Height), ImageLockMode.ReadOnly,
                 System.Drawing.Imaging.PixelFormat.Format32bppRgb);
@@ -115,8 +115,8 @@ namespace Labs.Lab4
             filepath = @"Lab4/Textures/texture2.png";
             if (System.IO.File.Exists(filepath))
             {
-                Bitmap TextureBitmap = new Bitmap(filepath);
-                BitmapData TextureData = TextureBitmap.LockBits(
+                var TextureBitmap = new Bitmap(filepath);
+                var TextureData = TextureBitmap.LockBits(
                 new System.Drawing.Rectangle(0, 0, TextureBitmap.Width,
                 TextureBitmap.Height), ImageLockMode.ReadOnly,
                 System.Drawing.Imaging.PixelFormat.Format32bppRgb);
@@ -140,15 +140,15 @@ namespace Labs.Lab4
                 throw new Exception("Could not find file " + filepath);
             }
 
-            int vTexCoordsLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vTexCoords");
+            var vTexCoordsLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vTexCoords");
 
-            int uTextureSamplerLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uTextureSampler");
+            var uTextureSamplerLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uTextureSampler");
             GL.Uniform1(uTextureSamplerLocation, 0);
 
-            int uTextureSamplerLocation2 = GL.GetUniformLocation(mShader.ShaderProgramID, "uTextureSampler2");
+            var uTextureSamplerLocation2 = GL.GetUniformLocation(mShader.ShaderProgramID, "uTextureSampler2");
             GL.Uniform1(uTextureSamplerLocation2, 0);
 
-            int uTextureIndexLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uTextureIndex");
+            var uTextureIndexLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uTextureIndex");
             GL.Uniform1(uTextureIndexLocation, 0);
          
             mVAO_ID = GL.GenVertexArray();
@@ -160,8 +160,7 @@ namespace Labs.Lab4
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, mVBO_IDs[1]);
             GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indices.Length * sizeof(uint)), indices, BufferUsageHint.StaticDraw);
 
-            int size;
-            GL.GetBufferParameter(BufferTarget.ArrayBuffer, BufferParameterName.BufferSize, out size);
+            GL.GetBufferParameter(BufferTarget.ArrayBuffer, BufferParameterName.BufferSize, out int size);
             if (vertices.Length * sizeof(float) != size)
             {
                 throw new ApplicationException("Vertex data not loaded onto graphics card correctly");
@@ -199,14 +198,14 @@ namespace Labs.Lab4
 
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
-            float timestep = (float)e.Time;
-            float thresholdChange = mRateOfDissolve * timestep;
+            var timestep = (float)e.Time;
+            var thresholdChange = mRateOfDissolve * timestep;
             if (mThreshold + thresholdChange < 0 || mThreshold + thresholdChange > 1)
             {
                 mRateOfDissolve = -mRateOfDissolve;
             }
             mThreshold += mRateOfDissolve * timestep;
-            int uThresholdLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uThreshold");
+            var uThresholdLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uThreshold");
             GL.Uniform1(uThresholdLocation, mThreshold);
         }
 

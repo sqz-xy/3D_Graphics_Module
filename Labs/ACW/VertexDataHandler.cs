@@ -10,8 +10,8 @@ namespace Labs.ACW
 {
 	public class VertexDataHandler
 	{
-        private int[] mVBO_IDs;
-        private int[] mVAO_IDs;
+        private readonly int[] mVBO_IDs;
+        private readonly int[] mVAO_IDs;
 
         private int mVBOIndex;
 		private int mVAOIndex;
@@ -42,8 +42,6 @@ namespace Labs.ACW
         /// <summary>
         /// Binds and Buffers data to the graphics card
         /// </summary>
-        /// <param name="pVAO_IDs">A reference to the VAOs</param>
-        /// <param name="pVBO_IDs">A reference to the VBOs</param>
         /// <param name="pVertices">The vertices to bind</param>
         /// <param name="pIndices">The indices to bind</param>
         /// <param name="pPositionLocation">The vertex position information from the shader</param>
@@ -64,8 +62,7 @@ namespace Labs.ACW
             mVBOIndex++;
 
             // Make sure data is buffered correctly
-            int size;
-            GL.GetBufferParameter(BufferTarget.ArrayBuffer, BufferParameterName.BufferSize, out size);
+            GL.GetBufferParameter(BufferTarget.ArrayBuffer, BufferParameterName.BufferSize, out int size);
             if (pVertices.Length * sizeof(float) != size)
             {
                 throw new ApplicationException("Vertex data not loaded onto graphics card correctly");
@@ -78,7 +75,7 @@ namespace Labs.ACW
             }
 
             // Enable Position, Normal and Texture coordinate vertex attributes for the shader
-            // Issue with stride, models dont have tex coords, thats causing issues with the models
+            // Issue with stride, models don't have tex coords, that's causing issues with the models
             EnableVertexAttributes(pPositionLocation, pNormalLocation, pTextureLocation);
             
             // Unbind buffer for cleanup purposes
@@ -122,8 +119,6 @@ namespace Labs.ACW
         /// <summary>
         /// Deletes all buffered data
         /// </summary>
-        /// <param name="pVAO_IDs">The VAOs to clear</param>
-        /// <param name="pVBO_IDs">The VBOs to clear</param>
         public void DeleteBuffers()
         {
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);

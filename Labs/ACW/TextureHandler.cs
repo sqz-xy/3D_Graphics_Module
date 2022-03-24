@@ -15,13 +15,13 @@ namespace Labs.ACW
     class TextureHandler
     {
         private int mTextureIndex;
-        private int[] mTexture_IDs;
+        private readonly int[] mTexture_IDs;
 
         private TextureUnit mCurrentTextureUnit;
-        private List<string> mTextureUnitsAsString;
+        private readonly List<string> mTextureUnitsAsString;
 
         // FBOs not fully implemented
-        private int[] mFBO_IDs;
+        private readonly int[] mFBO_IDs;
 
         public TextureHandler(int pTextureCount)
         {

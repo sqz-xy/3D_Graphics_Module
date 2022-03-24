@@ -4,6 +4,7 @@ uniform sampler2D uTextureSampler1;
 uniform sampler2D uTextureSampler2;
 uniform vec4 uLightPosition;
 uniform vec4 uEyePosition;
+uniform int uLightCount;
 
 uniform int uTextureIndex;
 
@@ -20,7 +21,7 @@ struct LightProperties {
 	vec3 SpecularLight;
 };
 
-uniform LightProperties uLight[3];
+uniform LightProperties uLight[4];
 
 struct MaterialProperties {
 	vec3 AmbientReflectivity;
@@ -35,7 +36,7 @@ void main()
 {
 	FragColour = vec4(0.0);
 	// Inefficient as you are constantly iterating through per fragment
-	for(int i = 0; i < 3; ++i)
+	for(int i = 0; i < uLight.length; ++i)
 	{
 		vec4 eyeDirection = normalize(uEyePosition - oSurfacePosition);
 		vec4 lightDir = normalize(uLight[i].Position - oSurfacePosition);

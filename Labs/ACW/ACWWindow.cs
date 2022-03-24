@@ -164,7 +164,7 @@ namespace Labs.ACW
             mTextureHandler = new TextureHandler(mTextureSize);
 
             // Light properties struct
-            mLightingProperties = new LightingProperties(3);
+            mLightingProperties = new LightingProperties(4);
         }
 
         /// <summary>
@@ -177,7 +177,8 @@ namespace Labs.ACW
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.CullFace);
 
-            /* Didn't implement a second shader because I didn't need too.
+            /*
+            * Didn't implement a second shader because I didn't need too.
             * In order to do it and use it, I would declare a ShaderUtility
             * similar to below, then call GL.UseProgram();
             * between draw calls where I want to use the different shader
@@ -218,7 +219,7 @@ namespace Labs.ACW
             // Cone
             mConeIndex = mVertexDataHandler.BindVertexData(mConeVertices, mConeIndices, vPositionLocation, vNormalLocation, -1);
 
-            // Initialize the matrices for the models
+            // Initialize the matrices for the models and view
             InitializeMatrices();
 
             // Initialize light properties
@@ -321,14 +322,16 @@ namespace Labs.ACW
         private void InitializeLightProperties()
         {
             // The three light positions
-            mLightingProperties.LightPositions[0] = new Vector4(2, 1f, -8.5f, 1);
-            mLightingProperties.LightPositions[1] = new Vector4(-2, 1f, -8.5f, 1);
-            mLightingProperties.LightPositions[2] = new Vector4(0, 1f, -12.5f, 1);
+            mLightingProperties.LightPositions[0] = new Vector4(3, 0.5f, -9.5f, 1);
+            mLightingProperties.LightPositions[1] = new Vector4(-3, 0.5f, -9.5f, 1);
+            mLightingProperties.LightPositions[2] = new Vector4(0, 0.5f, -12.5f, 1);
+            mLightingProperties.LightPositions[3] = new Vector4(0, 0.5f, -6.5f, 1);
 
             // The three light colours
-            mLightingProperties.LightColours[0] = new Vector3(0.5f, 0, 0);
-            mLightingProperties.LightColours[1] = new Vector3(0, 0.5f, 0);
-            mLightingProperties.LightColours[2] = new Vector3(0, 0, 0.5f);
+            mLightingProperties.LightColours[0] = new Vector3(1f, 0, 0);
+            mLightingProperties.LightColours[1] = new Vector3(0, 1f, 0);
+            mLightingProperties.LightColours[2] = new Vector3(0, 0, 1f);
+            mLightingProperties.LightColours[3] = new Vector3(0.5f, 0, 0.5f);
 
             // The three light reflectivity pro
             mLightingProperties.AmbientReflectivity = new Vector3(0.1f, 0.1f, 0.1f);
@@ -480,7 +483,7 @@ namespace Labs.ACW
         /// </summary>
         private void SetLightColours()
         {
-            for (var lightIndex = 0; lightIndex < 3; lightIndex++)
+            for (var lightIndex = 0; lightIndex < mLightingProperties.LightCount; lightIndex++)
             {
                 var uAmbientLightLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].AmbientLight");
                 GL.Uniform3(uAmbientLightLocation, mLightingProperties.LightColours[lightIndex]);
@@ -565,7 +568,7 @@ namespace Labs.ACW
         /// <param name="pView"></param>
         private void TransformLightPos(Matrix4 pView)
         {
-            for (var lightIndex = 0; lightIndex < 3; lightIndex++)
+            for (var lightIndex = 0; lightIndex < mLightingProperties.LightCount; lightIndex++)
             {
                 mTransformedLightPos = Vector4.Transform(mLightingProperties.LightPositions[lightIndex], pView);
                 var uLightPositionLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].Position");
@@ -604,42 +607,42 @@ namespace Labs.ACW
             {
                 if (e.KeyChar == 'a')
                 {
-                    mNonStaticView = mNonStaticView * Matrix4.CreateTranslation(mDirectionalSpeed, 0, 0);
+                    mNonStaticView *= Matrix4.CreateTranslation(mDirectionalSpeed, 0, 0);
                     MoveCamera();
                 }
                 if (e.KeyChar == 'd')
                 {
-                    mNonStaticView = mNonStaticView * Matrix4.CreateTranslation(-mDirectionalSpeed, 0, 0);
+                    mNonStaticView *= Matrix4.CreateTranslation(-mDirectionalSpeed, 0, 0);
                     MoveCamera();
                 }
                 if (e.KeyChar == 'w')
                 {
-                    mNonStaticView = mNonStaticView * Matrix4.CreateTranslation(0, 0, mDirectionalSpeed);
+                    mNonStaticView *= Matrix4.CreateTranslation(0, 0, mDirectionalSpeed);
                     MoveCamera();
                 }
                 if (e.KeyChar == 's')
                 {
-                    mNonStaticView = mNonStaticView * Matrix4.CreateTranslation(0, 0, -mDirectionalSpeed);
+                    mNonStaticView *= Matrix4.CreateTranslation(0, 0, -mDirectionalSpeed);
                     MoveCamera();
                 }
                 if (e.KeyChar == ' ')
                 {
-                    mNonStaticView = mNonStaticView * Matrix4.CreateTranslation(0, -mDirectionalSpeed, 0);
+                    mNonStaticView *= Matrix4.CreateTranslation(0, -mDirectionalSpeed, 0);
                     MoveCamera();
                 }
                 if (e.KeyChar == 'c')
                 {
-                    mNonStaticView = mNonStaticView * Matrix4.CreateTranslation(0, mDirectionalSpeed, 0);
+                    mNonStaticView *= Matrix4.CreateTranslation(0, mDirectionalSpeed, 0);
                     MoveCamera();
                 }
                 if (e.KeyChar == 'q')
                 {
-                    mNonStaticView = mNonStaticView * Matrix4.CreateRotationY(-mRotationalSpeed);
+                    mNonStaticView *= Matrix4.CreateRotationY(-mRotationalSpeed);
                     MoveCamera();
                 }
                 if (e.KeyChar == 'e')
                 {
-                    mNonStaticView = mNonStaticView * Matrix4.CreateRotationY(mRotationalSpeed);
+                    mNonStaticView *= Matrix4.CreateRotationY(mRotationalSpeed);
                     MoveCamera();
                 }
             }
