@@ -422,13 +422,14 @@ namespace Labs.ACW
 
             var cubePos = mCubeModel.ExtractTranslation();
 
-            if (mCubeUpOrDown)
+            switch (mCubeUpOrDown)
             {
-                mCubeModel *= cubeTranslationUp;
-            }
-            if (!mCubeUpOrDown)
-            {
-                mCubeModel *= cubeTranslationDown;
+                case true:
+                    mCubeModel *= cubeTranslationUp;
+                    break;
+                case false:
+                    mCubeModel *= cubeTranslationDown;
+                    break;
             }
 
             if (cubePos.Y > 8)
@@ -450,17 +451,18 @@ namespace Labs.ACW
             var newConeScale = Matrix4.CreateScale(mConeScale);
             var currentConeScale = mConeModel.ExtractScale();
 
-            if (mConeBigOrSmall)
+            switch (mConeBigOrSmall)
             {
-                mConeModel = newConeScale;
-                mConeModel *= Matrix4.CreateTranslation(5, 1, -5f);
-                mConeScale += mConeScaleRate * pDeltaTime;
-            }
-            if (!mConeBigOrSmall)
-            {
-                mConeModel = newConeScale;
-                mConeModel *= Matrix4.CreateTranslation(5, 1, -5f);
-                mConeScale -= mConeScaleRate * pDeltaTime;
+                case true:
+                    mConeModel = newConeScale;
+                    mConeModel *= Matrix4.CreateTranslation(5, 1, -5f);
+                    mConeScale += mConeScaleRate * pDeltaTime;
+                    break;
+                case false:
+                    mConeModel = newConeScale;
+                    mConeModel *= Matrix4.CreateTranslation(5, 1, -5f);
+                    mConeScale -= mConeScaleRate * pDeltaTime;
+                    break;
             }
 
             if (currentConeScale.Y > 2)
@@ -598,53 +600,45 @@ namespace Labs.ACW
                     var uView = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uView");
                     GL.UniformMatrix4(uView, true, ref mNonStaticView);
                     MoveCamera(mNonStaticView);
-
                 }
 
             }
 
-            if (!mStaticViewEnabled)
+            if (mStaticViewEnabled) return;
+            switch (e.KeyChar)
             {
-                if (e.KeyChar == 'a')
-                {
+                case 'a':
                     mNonStaticView *= Matrix4.CreateTranslation(mDirectionalSpeed, 0, 0);
                     MoveCamera(mNonStaticView);
-                }
-                if (e.KeyChar == 'd')
-                {
+                    break;
+                case 'd':
                     mNonStaticView *= Matrix4.CreateTranslation(-mDirectionalSpeed, 0, 0);
                     MoveCamera(mNonStaticView);
-                }
-                if (e.KeyChar == 'w')
-                {
+                    break;
+                case 'w':
                     mNonStaticView *= Matrix4.CreateTranslation(0, 0, mDirectionalSpeed);
                     MoveCamera(mNonStaticView);
-                }
-                if (e.KeyChar == 's')
-                {
+                    break;
+                case 's':
                     mNonStaticView *= Matrix4.CreateTranslation(0, 0, -mDirectionalSpeed);
                     MoveCamera(mNonStaticView);
-                }
-                if (e.KeyChar == ' ')
-                {
+                    break;
+                case ' ':
                     mNonStaticView *= Matrix4.CreateTranslation(0, -mDirectionalSpeed, 0);
                     MoveCamera(mNonStaticView);
-                }
-                if (e.KeyChar == 'c')
-                {
+                    break;
+                case 'c':
                     mNonStaticView *= Matrix4.CreateTranslation(0, mDirectionalSpeed, 0);
                     MoveCamera(mNonStaticView);
-                }
-                if (e.KeyChar == 'q')
-                {
+                    break;
+                case 'q':
                     mNonStaticView *= Matrix4.CreateRotationY(-mRotationalSpeed);
                     MoveCamera(mNonStaticView);
-                }
-                if (e.KeyChar == 'e')
-                {
+                    break;
+                case 'e':
                     mNonStaticView *= Matrix4.CreateRotationY(mRotationalSpeed);
                     MoveCamera(mNonStaticView);
-                }
+                    break;
             }
         }
 
