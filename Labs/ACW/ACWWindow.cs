@@ -73,35 +73,31 @@ namespace Labs.ACW
         #region Vertices and Indices Initialization
 
         // Removed tex coords from cube as they dont work due to reduced number of triangles
-        readonly float[] mCubeVertices = new float[] { 
-            -1f, 1f, 0f, 0f, 0f, 1f,
-            -1f, -1f, 0f,  0f, 0f, 1f,
-            1f, -1f, 0f,  0f, 1f, 1f,
-            1f, 1f, 0f, 0f, 1f, 1f,
+        readonly float[] mCubeVertices = new float[]
+        {
+            -0.5f,  0.5f,  0.5f, 0, 0, 0,
+            0.5f,  0.5f,  0.5f, 1, 0, 1,
+            -0.5f, -0.5f,  0.5f, 0, 1, 0,
+            0.5f, -0.5f,  0.5f, 1, 1, 0,
+            -0.5f, -0.5f, -0.5f, 0, 0, 1,
+            0.5f, -0.5f, -0.5f, 1, 0, 0,
+            -0.5f,  0.5f, -0.5f, 0, 1, 1,
+            0.5f,  0.5f, -0.5f, 1, 1, 0,
+            -0.5f,  0.5f,  0.5f, 1, 1, 1,
+            -0.5f,  0.5f, -0.5f, 1, 0, 0,
+            0.5f,  0.5f,  0.5f, 0, 1, 1,
+            0.5f,  0.5f, -0.5f, 0, 0, 0
+        };
 
-            -1f, 1f, -2f, -1f, 1f, 0f,
-            -1f, -1f, -2f, -1f, 1f, 0f,
-
-            1f, 1f, -2f, 1f, 0f, 0f,
-            1f, -1f, -2f, 1f, 0f, 0f};
-
-        readonly int[] mCubeIndices = new int[] { 0, 1, 2,
-            0, 2, 3,
-
-            0, 5, 1,
-            0, 4, 5,
-
-            2, 7, 6,
-            2, 6, 3,
-
-            6, 7, 5,
-            6, 5, 4,
-
-            0, 3, 6,
-            6, 4, 0,
-
-            1, 7, 2,
-            1, 5, 7};
+        readonly int[] mCubeIndices = new int[]
+        {
+            0, 2, 1, 2, 3, 1,
+            8, 9, 2, 9, 4, 2,
+            2, 4, 3, 4, 5, 3,
+            3, 5, 10, 5, 11, 10,
+            4, 6, 5, 6, 7, 5,
+            6, 0, 7, 0, 1, 7
+        };
 
         readonly float[] mFloorVertices = new float[] 
         {
@@ -132,14 +128,14 @@ namespace Labs.ACW
         readonly float[] mConeVertices = new float[]
         {
              0f,  2f,  0f, 0, 0, 1,
-             0.5f,  0f,  1f, 1, 0, 1,
-            1f, 0f,  0.5f, 0, 1, 1,
-             1f, 0f,  -0.5f, 1, 1, 1,
-            0.5f, 0f, -1f, 0, 0, 1,
-             -0.5f, 0f, -1f, 1, 0, 1,
-            -1f,  0f, 0.5f, 0, 1, 1,
-             -1f,  0f, 0.5f, 1, 1, 1,
-            -0.5f,  0f,  1f, 1, 1, 1,
+             0.25f,  0f,  0.75f, 1, 0, 1,
+            0.75f, 0f,  0.25f, 0, 1, 1,
+             1f, 0f,  -0.25f, 1, 1, 1,
+            0.25f, 0f, -0.75f, 0, 0, 1,
+             -0.25f, 0f, -0.75f, 1, 0, 1,
+            -0.75f,  0f, 0.25f, 0, 1, 1,
+             -0.75f,  0f, 0.25f, 1, 1, 1,
+            -0.25f,  0f,  0.75f, 1, 1, 1,
         };
 
         readonly int[] mConeIndices = new int[]
@@ -378,8 +374,8 @@ namespace Labs.ACW
             mLeftCylinder = Matrix4.CreateTranslation(-5, 0, -5f);
             mMiddleCylinder = Matrix4.CreateTranslation(0, 0, -5f);
             mRightCylinder = Matrix4.CreateTranslation(5, 0, -5f);
-            mCubeModel = Matrix4.CreateTranslation(-5, 2, -4f);
-            mConeModel = Matrix4.CreateTranslation(5, 2, -5f);
+            mCubeModel = Matrix4.CreateTranslation(-4.82f, 2, -4.82f);
+            mConeModel = Matrix4.CreateTranslation(5, 0.25f, -5f);
         }
 
         #endregion
@@ -401,6 +397,20 @@ namespace Labs.ACW
 
                 int uSpecularLightLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].SpecularLight");
                 GL.Uniform3(uSpecularLightLocation, mLightColours[lightIndex]);
+            }
+        }
+
+        /// <summary>
+        /// Transforms the light positions so they stay stationary relative to the current view
+        /// </summary>
+        /// <param name="pView"></param>
+        private void TransformLightPos(Matrix4 pView)
+        {
+            for (int lightIndex = 0; lightIndex < 3; lightIndex++)
+            {
+                mTransformedLightPos = Vector4.Transform(mLightPositions[lightIndex], pView);
+                int uLightPositionLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].Position");
+                GL.Uniform4(uLightPositionLocation, mTransformedLightPos);
             }
         }
 
@@ -462,13 +472,13 @@ namespace Labs.ACW
             if (mConeBigOrSmall)
             {
                 mConeModel = newConeScale;
-                mConeModel *= Matrix4.CreateTranslation(5, 2, -5f);
+                mConeModel *= Matrix4.CreateTranslation(5, 1, -5f);
                 mConeScale += mConeScaleRate * pDeltaTime;
             }
             if (!mConeBigOrSmall)
             {
                 mConeModel = newConeScale;
-                mConeModel *= Matrix4.CreateTranslation(5, 2, -5f);
+                mConeModel *= Matrix4.CreateTranslation(5, 1, -5f);
                 mConeScale -= mConeScaleRate * pDeltaTime;
             }
 
@@ -639,20 +649,6 @@ namespace Labs.ACW
             GL.Uniform4(uEyePosition, EyePosition);
 
             TransformLightPos(mNonStaticView);
-        }
-
-        /// <summary>
-        /// Transforms the light positions so they stay stationary relative to the current view
-        /// </summary>
-        /// <param name="pView"></param>
-        private void TransformLightPos(Matrix4 pView)
-        {
-            for (int lightIndex = 0; lightIndex < 3; lightIndex++)
-            {
-                mTransformedLightPos = Vector4.Transform(mLightPositions[lightIndex], pView);
-                int uLightPositionLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].Position");
-                GL.Uniform4(uLightPositionLocation, mTransformedLightPos);
-            }
         }
 
         #endregion
