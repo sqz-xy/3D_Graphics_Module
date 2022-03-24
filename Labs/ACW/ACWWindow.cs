@@ -3,13 +3,11 @@
 // Bind to the VAO index of the object
 // Draw Elements
 
-// TODO:
+// TODO: Add triple lighting, Add frame buffer objects
 
 // Extend the data handler to handle textures // DONE
 // add second texture for back wall and seperate the textures // DONE
-
-// Upgrade lighting
-// Add a final primitive
+// Add a final primitive // DONE
 
 using Labs.Utility;
 
