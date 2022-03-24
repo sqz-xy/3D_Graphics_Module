@@ -42,11 +42,11 @@ namespace Labs.ACW
         /// <param name="pTexture_IDs">The array of texture IDs</param>
         public int BindTextureData(string pFilePath)
         {
-            string filepath = @pFilePath;
+            var filepath = @pFilePath;
             if (System.IO.File.Exists(filepath))
             {            
-                Bitmap TextureBitmap = new Bitmap(filepath);
-                BitmapData TextureData = TextureBitmap.LockBits(
+                var TextureBitmap = new Bitmap(filepath);
+                var TextureData = TextureBitmap.LockBits(
                 new System.Drawing.Rectangle(0, 0, TextureBitmap.Width,
                 TextureBitmap.Height), ImageLockMode.ReadOnly,
                 System.Drawing.Imaging.PixelFormat.Format32bppRgb);
@@ -82,8 +82,8 @@ namespace Labs.ACW
         /// </summary>
         private void IncrementTextureUnit()
         {
-            string nextUnitString = mTextureUnitsAsString[mTextureIndex];
-            Enum.TryParse<TextureUnit>(nextUnitString, out TextureUnit nextUnit);
+            var nextUnitString = mTextureUnitsAsString[mTextureIndex];
+            Enum.TryParse<TextureUnit>(nextUnitString, out var nextUnit);
             mCurrentTextureUnit = nextUnit;
         }
 
@@ -93,7 +93,7 @@ namespace Labs.ACW
         /// <returns>A list of strings</returns>
         private List<string> TextureUnitsToString()
         {
-            List<string> textureUnits = new List<string>();
+            var textureUnits = new List<string>();
             foreach (TextureUnit textureUnit in Enum.GetValues(typeof(TextureUnit)))
             {
                 textureUnits.Add(textureUnit.ToString());
@@ -107,7 +107,7 @@ namespace Labs.ACW
         /// <param name="pTexture_IDs">The array of texture ids</param>
         public void DeleteTextures()
         {
-            foreach (int Texture in mTexture_IDs)
+            foreach (var Texture in mTexture_IDs)
             {
                 GL.DeleteTexture(Texture);
             }

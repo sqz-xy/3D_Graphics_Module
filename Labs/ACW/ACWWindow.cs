@@ -1,25 +1,10 @@
-﻿// It now takes 3 Lines to draw an object:
-// Buffer using Vertex Data handler and retain the VAO index
-// Bind to the VAO index of the object
-// Draw Elements
-
-// TODO: Add triple lighting, Add frame buffer objects
-
-// Extend the data handler to handle textures // DONE
-// add second texture for back wall and seperate the textures // DONE
-// Add a final primitive // DONE
+﻿// TODO: Get Lighting working with textures, Add frame buffer objects, Add spotlights
 
 using Labs.Utility;
-
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
-
 using System;
-using System.Drawing.Imaging;
-using System.Drawing;
-using System.Linq;
-
 
 namespace Labs.ACW
 {
@@ -37,14 +22,14 @@ namespace Labs.ACW
         private Vector4 mTransformedLightPos;
 
         // Bool to indicate which view type is enabled
-        private bool mStaticViewEnabled = false;
+        private bool mStaticViewEnabled;
 
         // Lighting Properties
         private LightingProperties mLightingProperties;
 
         // Handlers
-        private VertexDataHandler mVertexDataHandler;
-        private TextureHandler mTextureHandler;
+        private readonly VertexDataHandler mVertexDataHandler;
+        private readonly TextureHandler mTextureHandler;
 
         // Constants
         private const int mVAOSize = 6;
@@ -72,8 +57,8 @@ namespace Labs.ACW
         // Vertices and Indices
         #region Vertices and Indices Initialization
 
-        // Removed tex coords from cube as they dont work due to reduced number of triangles
-        readonly float[] mCubeVertices = new float[]
+        // Removed tex coords from cube as they don't work due to reduced number of triangles
+        private readonly float[] mCubeVertices = new float[]
         {
             -0.5f,  0.5f,  0.5f, 0, 0, 0,
             0.5f,  0.5f,  0.5f, 1, 0, 1,
@@ -89,7 +74,7 @@ namespace Labs.ACW
             0.5f,  0.5f, -0.5f, 0, 0, 0
         };
 
-        readonly int[] mCubeIndices = new int[]
+        private readonly int[] mCubeIndices = new int[]
         {
             0, 2, 1, 2, 3, 1,
             8, 9, 2, 9, 4, 2,
@@ -99,7 +84,7 @@ namespace Labs.ACW
             6, 0, 7, 0, 1, 7
         };
 
-        readonly float[] mFloorVertices = new float[] 
+        private readonly float[] mFloorVertices = new float[] 
         {
             -10, 0,-10, 0, 1, 0, //0.0f, 0.0f, 1.0f,
             -10, 0, 10, 0, 1, 0, //0.0f, 1.0f, 1.0f,
@@ -107,12 +92,12 @@ namespace Labs.ACW
              10, 0,-10, 0, 1, 0, //1.0f, 0.0f, 1.0f
         };
 
-        readonly int[] mFloorIndices = new int[]
+        private readonly int[] mFloorIndices = new int[]
         {
             0, 1, 2, 3
         };
 
-        readonly float[] mBackWallVertices = new float[]
+        private readonly float[] mBackWallVertices = new float[]
         {
             -10, 10,-10, 0, 0, 1, //0.0f, 0.0f, 1.0f,
             -10, 0, -10, 0, 0, 1, //0.0f, 1.0f, 1.0f,
@@ -120,12 +105,12 @@ namespace Labs.ACW
              10, 10,-10, 0, 0, 1, //1.0f, 0.0f, 1.0f
         };
 
-        readonly int[] mBackWallIndices = new int[]
+        private readonly int[] mBackWallIndices = new int[]
         {
             0, 1, 2, 3
         };
 
-        readonly float[] mConeVertices = new float[]
+        private readonly float[] mConeVertices = new float[]
         {
              0f,  2f,  0f, 0, 0, 1,
              0.25f,  0f,  0.75f, 1, 0, 1,
@@ -138,7 +123,7 @@ namespace Labs.ACW
             -0.25f,  0f,  0.75f, 1, 1, 1,
         };
 
-        readonly int[] mConeIndices = new int[]
+        private readonly int[] mConeIndices = new int[]
         {
             0, 1, 2, 
             0, 2, 3,
@@ -165,12 +150,14 @@ namespace Labs.ACW
                 GraphicsContextFlags.ForwardCompatible
                 )
         {
-            mCubeUpOrDown = true;
-            mConeBigOrSmall = true;
+            // Static view is off by default
+            mStaticViewEnabled = false;
 
-            // Default Values
+            // Default Values for transformations
             mCreatureAngle = 0.1f;
             mConeScale = 0.1f;
+            mCubeUpOrDown = true;
+            mConeBigOrSmall = true;
 
             // Handlers
             mVertexDataHandler = new VertexDataHandler(mVBOSize, mVAOSize);
@@ -195,12 +182,13 @@ namespace Labs.ACW
             * similar to below, then call GL.UseProgram();
             * between draw calls where I want to use the different shader
             */
+
             mLightingShader = new ShaderUtility(@"ACW/Shaders/vVertexShader.vert", @"ACW/Shaders/fFragmentShader.frag");
             GL.UseProgram(mLightingShader.ShaderProgramID);
 
-            int vPositionLocation = GL.GetAttribLocation(mLightingShader.ShaderProgramID, "vPosition");
-            int vNormalLocation = GL.GetAttribLocation(mLightingShader.ShaderProgramID, "vNormal");
-            int vTexCoordsLocation = GL.GetAttribLocation(mLightingShader.ShaderProgramID, "vTexCoords");
+            var vPositionLocation = GL.GetAttribLocation(mLightingShader.ShaderProgramID, "vPosition");
+            var vNormalLocation = GL.GetAttribLocation(mLightingShader.ShaderProgramID, "vNormal");
+            var vTexCoordsLocation = GL.GetAttribLocation(mLightingShader.ShaderProgramID, "vTexCoords");
 
             // Bind Texture Data:
             // Floor
@@ -230,7 +218,7 @@ namespace Labs.ACW
             // Cone
             mConeIndex = mVertexDataHandler.BindVertexData(mConeVertices, mConeIndices, vPositionLocation, vNormalLocation, -1);
 
-            // Initialize the matrixes for the models
+            // Initialize the matrices for the models
             InitializeMatrices();
 
             // Initialize light properties
@@ -264,8 +252,8 @@ namespace Labs.ACW
             GL.Viewport(this.ClientRectangle);
             if (mLightingShader != null)
             {
-                int uProjectionLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uProjection");
-                Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(1, (float)ClientRectangle.Width / ClientRectangle.Height, 0.5f, 25);
+                var uProjectionLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uProjection");
+                var projection = Matrix4.CreatePerspectiveFieldOfView(1, (float)ClientRectangle.Width / ClientRectangle.Height, 0.5f, 25);
                 GL.UniformMatrix4(uProjectionLocation, true, ref projection);
             }
         }
@@ -277,7 +265,7 @@ namespace Labs.ACW
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
             // Delta time for accurate updates, independent of frame rate
-            float deltaTime = (float)e.Time;
+            var deltaTime = (float)e.Time;
 
             // Cube moving up and down
             TransformCube(deltaTime);
@@ -299,11 +287,11 @@ namespace Labs.ACW
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             // For the models
-            int uModel = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uModel");
+            var uModel = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uModel");
             GL.UniformMatrix4(uModel, true, ref mGroundModel);
 
             // For multiple textures
-            int uTextureIndexLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uTextureIndex");
+            var uTextureIndexLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uTextureIndex");
 
             // Handles geometry drawing
             DrawGeometry(uModel, uTextureIndexLocation);
@@ -356,12 +344,12 @@ namespace Labs.ACW
         private void InitializeMatrices()
         {
             mNonStaticView = Matrix4.CreateTranslation(0, -1.5f, 0);
-            int uView = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uView");
+            var uView = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uView");
             GL.UniformMatrix4(uView, true, ref mNonStaticView);
 
-            Vector3 eye = new Vector3(0f, 5f, 5f);
-            Vector3 lookAt = new Vector3(0, 0, -5f);
-            Vector3 up = new Vector3(0, 1, 0);
+            var eye = new Vector3(0f, 5f, 5f);
+            var lookAt = new Vector3(0, 0, -5f);
+            var up = new Vector3(0, 1, 0);
             mStaticView = Matrix4.LookAt(eye, lookAt, up);
 
             mGroundModel = Matrix4.CreateTranslation(0, 0, -5f);
@@ -379,28 +367,28 @@ namespace Labs.ACW
         private void InitializeFragValues()
         {
             // Sets the eye position in the fragment shader using the views
-            int uEyePosition = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uEyePosition");
-            Vector4 eyePosition = new Vector4(mNonStaticView.ExtractTranslation(), 1);
+            var uEyePosition = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uEyePosition");
+            var eyePosition = new Vector4(mNonStaticView.ExtractTranslation(), 1);
             GL.Uniform4(uEyePosition, eyePosition);
 
-            // Sets texure indexes in the fragment shader
-            int uTextureSamplerLocation1 = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uTextureSampler1");
+            // Sets texture indexes in the fragment shader
+            var uTextureSamplerLocation1 = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uTextureSampler1");
             GL.Uniform1(uTextureSamplerLocation1, mTexture1Index);
 
-            int uTextureSamplerLocation2 = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uTextureSampler2");
+            var uTextureSamplerLocation2 = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uTextureSampler2");
             GL.Uniform1(uTextureSamplerLocation2, mTexture2Index);
 
             // Positional Lighting, per fragment
-            int uAmbientReflectivity = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.AmbientReflectivity");
+            var uAmbientReflectivity = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.AmbientReflectivity");
             GL.Uniform3(uAmbientReflectivity, mLightingProperties.AmbientReflectivity);
 
-            int uDiffuseReflectivity = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.DiffuseReflectivity");
+            var uDiffuseReflectivity = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.DiffuseReflectivity");
             GL.Uniform3(uDiffuseReflectivity, mLightingProperties.DiffuseReflectivity);
 
-            int uSpecularReflectivity = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.SpecularReflectivity");
+            var uSpecularReflectivity = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.SpecularReflectivity");
             GL.Uniform3(uSpecularReflectivity, mLightingProperties.SpecularReflectivity);
 
-            int uShininess = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.Shininess");
+            var uShininess = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.Shininess");
             GL.Uniform1(uShininess, mLightingProperties.Shininess);
         }
 
@@ -411,10 +399,10 @@ namespace Labs.ACW
         /// <summary>
         /// Transforms the creature, rotates constantly
         /// </summary>
-        /// <param name="deltaTime">The current timestep</param>
+        /// <param name="deltaTime">The current time step</param>
         private void TransformCreature(float deltaTime)
         {
-            Matrix4 creatureRotation = Matrix4.CreateRotationY(mCreatureAngle);
+            var creatureRotation = Matrix4.CreateRotationY(mCreatureAngle);
             mCreatureModel = creatureRotation;
             mCreatureModel *= Matrix4.CreateTranslation(0f, 2f, -5f);
             mCreatureAngle += mCreatureRotationRate * deltaTime;
@@ -423,13 +411,13 @@ namespace Labs.ACW
         /// <summary>
         /// Transforms the Cube, it moves up and then down depending on the bounds
         /// </summary>
-        /// <param name="deltaTime">The current timestep</param>
+        /// <param name="deltaTime">The current time step</param>
         private void TransformCube(float deltaTime)
         {
-            Matrix4 cubeTranslationUp = Matrix4.CreateTranslation(0, mCubeTranslationRate * deltaTime, 0);
-            Matrix4 cubeTranslationDown = Matrix4.CreateTranslation(0, -mCubeTranslationRate * deltaTime, 0);
+            var cubeTranslationUp = Matrix4.CreateTranslation(0, mCubeTranslationRate * deltaTime, 0);
+            var cubeTranslationDown = Matrix4.CreateTranslation(0, -mCubeTranslationRate * deltaTime, 0);
 
-            Vector3 cubePos = mCubeModel.ExtractTranslation();
+            var cubePos = mCubeModel.ExtractTranslation();
 
             if (mCubeUpOrDown)
             {
@@ -453,11 +441,11 @@ namespace Labs.ACW
         /// <summary>
         /// Transforms the Cone, scales up and down depending on the bounds
         /// </summary>
-        /// <param name="pDeltaTime">The current timestep</param>
+        /// <param name="pDeltaTime">The current time step</param>
         private void TransformCone(float pDeltaTime)
         {
-            Matrix4 newConeScale = Matrix4.CreateScale(mConeScale);
-            Vector3 currentConeScale = mConeModel.ExtractScale();
+            var newConeScale = Matrix4.CreateScale(mConeScale);
+            var currentConeScale = mConeModel.ExtractScale();
 
             if (mConeBigOrSmall)
             {
@@ -492,15 +480,15 @@ namespace Labs.ACW
         /// </summary>
         private void SetLightColours()
         {
-            for (int lightIndex = 0; lightIndex < 3; lightIndex++)
+            for (var lightIndex = 0; lightIndex < 3; lightIndex++)
             {
-                int uAmbientLightLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].AmbientLight");
+                var uAmbientLightLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].AmbientLight");
                 GL.Uniform3(uAmbientLightLocation, mLightingProperties.LightColours[lightIndex]);
 
-                int uDiffuseLightLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].DiffuseLight");
+                var uDiffuseLightLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].DiffuseLight");
                 GL.Uniform3(uDiffuseLightLocation, mLightingProperties.LightColours[lightIndex]);
 
-                int uSpecularLightLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].SpecularLight");
+                var uSpecularLightLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].SpecularLight");
                 GL.Uniform3(uSpecularLightLocation, mLightingProperties.LightColours[lightIndex]);
             }
         }
@@ -525,42 +513,42 @@ namespace Labs.ACW
             GL.DrawElements(PrimitiveType.TriangleFan, mBackWallIndices.Length, DrawElementsType.UnsignedInt, 0);
 
             // Creature
-            Matrix4 m = mCreatureModel * mGroundModel;
+            var m = mCreatureModel * mGroundModel;
             GL.UniformMatrix4(uModel, true, ref m);
 
             GL.BindVertexArray(mVertexDataHandler.GetVAOAtIndex(mCreatureIndex));
             GL.DrawElements(PrimitiveType.Triangles, mCreature.Indices.Length, DrawElementsType.UnsignedInt, 0);
 
             // Left Cylinder
-            Matrix4 m2 = mLeftCylinder * mGroundModel;
+            var m2 = mLeftCylinder * mGroundModel;
             GL.UniformMatrix4(uModel, true, ref m2);
 
             GL.BindVertexArray(mVertexDataHandler.GetVAOAtIndex(mCylinderIndex));
             GL.DrawElements(PrimitiveType.Triangles, mCylinder.Indices.Length, DrawElementsType.UnsignedInt, 0);
 
             // Middle Cylinder
-            Matrix4 m3 = mMiddleCylinder * mGroundModel;
+            var m3 = mMiddleCylinder * mGroundModel;
             GL.UniformMatrix4(uModel, true, ref m3);
 
             GL.BindVertexArray(mVertexDataHandler.GetVAOAtIndex(mCylinderIndex));
             GL.DrawElements(PrimitiveType.Triangles, mCylinder.Indices.Length, DrawElementsType.UnsignedInt, 0);
 
             // Right Cylinder
-            Matrix4 m4 = mRightCylinder * mGroundModel;
+            var m4 = mRightCylinder * mGroundModel;
             GL.UniformMatrix4(uModel, true, ref m4);
 
             GL.BindVertexArray(mVertexDataHandler.GetVAOAtIndex(mCylinderIndex));
             GL.DrawElements(PrimitiveType.Triangles, mCylinder.Indices.Length, DrawElementsType.UnsignedInt, 0);
 
             // Cube
-            Matrix4 m5 = mCubeModel * mGroundModel;
+            var m5 = mCubeModel * mGroundModel;
             GL.UniformMatrix4(uModel, true, ref m5);
 
             GL.BindVertexArray(mVertexDataHandler.GetVAOAtIndex(mCubeIndex));
             GL.DrawElements(PrimitiveType.Triangles, mCubeIndices.Length, DrawElementsType.UnsignedInt, 0);
 
             // Cone
-            Matrix4 m6 = mConeModel * mGroundModel;
+            var m6 = mConeModel * mGroundModel;
             GL.UniformMatrix4(uModel, true, ref m6);
 
             GL.BindVertexArray(mVertexDataHandler.GetVAOAtIndex(mConeIndex));
@@ -577,10 +565,10 @@ namespace Labs.ACW
         /// <param name="pView"></param>
         private void TransformLightPos(Matrix4 pView)
         {
-            for (int lightIndex = 0; lightIndex < 3; lightIndex++)
+            for (var lightIndex = 0; lightIndex < 3; lightIndex++)
             {
                 mTransformedLightPos = Vector4.Transform(mLightingProperties.LightPositions[lightIndex], pView);
-                int uLightPositionLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].Position");
+                var uLightPositionLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].Position");
                 GL.Uniform4(uLightPositionLocation, mTransformedLightPos);
             }
         }
@@ -589,8 +577,6 @@ namespace Labs.ACW
         /// Manages camera movement based on key press
         /// </summary>
         /// <param name="e">Key press event arguments</param>
-        /// <param name="pDirectionalSpeed">The speed of cardinal movement</param>
-        /// <param name="pRotationalSpeed">The speed of rotational movement</param>
         private void CameraMovementOnPress(KeyPressEventArgs e)
         {
             if (e.KeyChar == 'p')
@@ -599,14 +585,14 @@ namespace Labs.ACW
 
                 if (mStaticViewEnabled)
                 {
-                    int uView = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uView");
+                    var uView = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uView");
                     GL.UniformMatrix4(uView, true, ref mStaticView);
                     TransformLightPos(mStaticView);
 
                 }
                 else
                 {
-                    int uView = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uView");
+                    var uView = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uView");
                     GL.UniformMatrix4(uView, true, ref mNonStaticView);
                     TransformLightPos(mNonStaticView);
 
@@ -664,12 +650,12 @@ namespace Labs.ACW
         /// </summary>
         private void MoveCamera()
         {
-            int uViewLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uView");
+            var uViewLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uView");
             GL.UniformMatrix4(uViewLocation, true, ref mNonStaticView);
 
-            int uEyePosition = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uEyePosition");
-            Vector4 EyePosition = new Vector4(mNonStaticView.ExtractTranslation(), 1);
-            GL.Uniform4(uEyePosition, EyePosition);
+            var uEyePosition = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uEyePosition");
+            var eyePosition = new Vector4(mNonStaticView.ExtractTranslation(), 1);
+            GL.Uniform4(uEyePosition, eyePosition);
 
             TransformLightPos(mNonStaticView);
         }

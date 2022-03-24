@@ -21,7 +21,6 @@ struct LightProperties {
 };
 
 uniform LightProperties uLight[3];
-//uniform LightProperties uLight;
 
 struct MaterialProperties {
 	vec3 AmbientReflectivity;
