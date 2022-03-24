@@ -118,10 +118,10 @@ namespace Labs.ACW
 
         readonly float[] mBackWallVertices = new float[]
         {
-            -10, 10,-10, 0, 1, 0, //0.0f, 0.0f, 1.0f,
+            -10, 10,-10, 0, 1, 0,// 0.0f, 0.0f, 1.0f,
             -10, 0, -10, 0, 1, 0, //0.0f, 1.0f, 1.0f,
              10, 0, -10, 0, 1, 0, //1.0f, 1.0f, 1.0f,
-             10, 10,-10, 0, 1, 0, //1.0f, 0.0f, 1.0f
+             10, 10,-10, 0, 1, 0,// 1.0f, 0.0f, 1.0f
         };
 
         readonly int[] mBackWallIndices = new int[]
@@ -377,7 +377,7 @@ namespace Labs.ACW
             mLeftCylinder = Matrix4.CreateTranslation(-5, 0, -5f);
             mMiddleCylinder = Matrix4.CreateTranslation(0, 0, -5f);
             mRightCylinder = Matrix4.CreateTranslation(5, 0, -5f);
-            mCubeModel = Matrix4.CreateTranslation(-5, 2, -5f);
+            mCubeModel = Matrix4.CreateTranslation(-5, 2, -4f);
             mConeModel = Matrix4.CreateTranslation(5, 2, -5f);
         }
 
