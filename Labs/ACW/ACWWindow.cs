@@ -266,7 +266,7 @@ namespace Labs.ACW
             GL.Uniform3(uSpecularReflectivity, specularColour);
 
             int uShininess = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.Shininess");
-            float shininess = 0.1f;
+            float shininess = 0.1f * 128;
             GL.Uniform1(uShininess, shininess);
 
             TransformLightPos(mNonStaticView);
