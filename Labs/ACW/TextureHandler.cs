@@ -30,6 +30,8 @@ namespace Labs.ACW
             mCurrentTextureUnit = TextureUnit.Texture0;
             mTextureUnitsAsString = TextureUnitsToString();
 
+            mFBO_IDs = new int[pTextureCount];
+
             GL.GenFramebuffers(pTextureCount, mFBO_IDs);
         }
 
@@ -52,9 +54,7 @@ namespace Labs.ACW
                 GL.ActiveTexture(mCurrentTextureUnit);
                 GL.GenTextures(1, out mTexture_IDs[mTextureIndex]);
                 GL.BindTexture(TextureTarget.Texture2D, mTexture_IDs[mTextureIndex]);
-                mTextureIndex++;
-                IncrementTextureUnit();
-
+  
                 GL.TexImage2D(TextureTarget.Texture2D,
                 0, PixelInternalFormat.Rgba, TextureData.Width, TextureData.Height,
                 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
@@ -65,6 +65,9 @@ namespace Labs.ACW
                 (int)TextureMagFilter.Linear);
                 TextureBitmap.UnlockBits(TextureData);
                 TextureBitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
+
+                mTextureIndex++;
+                IncrementTextureUnit();
 
                 return mTextureIndex - 1;
             }
@@ -80,8 +83,7 @@ namespace Labs.ACW
         private void IncrementTextureUnit()
         {
             string nextUnitString = mTextureUnitsAsString[mTextureIndex];
-            TextureUnit nextUnit;
-            Enum.TryParse<TextureUnit>(nextUnitString, out nextUnit);
+            Enum.TryParse<TextureUnit>(nextUnitString, out TextureUnit nextUnit);
             mCurrentTextureUnit = nextUnit;
         }
 

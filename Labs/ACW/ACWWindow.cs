@@ -27,7 +27,7 @@ namespace Labs.ACW
     public class ACWWindow : GameWindow
     {
         // Shader and model Utility
-        private ShaderUtility mShader;
+        private ShaderUtility mLightingShader;
 
         private ModelUtility mCylinder;
         private ModelUtility mCreature;
@@ -35,7 +35,8 @@ namespace Labs.ACW
         // Transformation Matrices for models
         private Matrix4 mNonStaticView, mStaticView, mCreatureModel, mGroundModel, mLeftCylinder, mMiddleCylinder, mRightCylinder, mCubeModel, mConeModel;
 
-        private Vector4 mLightPosition;
+        private Vector4 mTransformedLightPos;
+        private Vector4 mLightPos;
 
         // Bool to indicate which view type is enabled
         private bool mStaticViewEnabled = false;
@@ -171,22 +172,34 @@ namespace Labs.ACW
             mCreatureAngle = 0.1f;
             mConeScale = 0.1f;
 
+            mLightPos = new Vector4(0, 10, 0, 1);
+
+            // Handlers
             mVertexDataHandler = new VertexDataHandler(mVBOSize, mVAOSize);
             mTextureHandler = new TextureHandler(mTextureSize);
         }
 
+        /// <summary>
+        /// Called once when the program is run
+        /// </summary>
+        /// <param name="e">The on load event arguments</param>
         protected override void OnLoad(EventArgs e)
         {
             GL.ClearColor(Color4.Black);
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.CullFace);
 
-            mShader = new ShaderUtility(@"ACW/Shaders/vVertexShader.vert", @"ACW/Shaders/fFragmentShader.frag");
-            GL.UseProgram(mShader.ShaderProgramID);
+            /* Didn't implement a second shader because I didn't need too.
+            * In order to do it and use it, I would declare a ShaderUtility
+            * similar to below, then call GL.UseProgram();
+            * between draw calls where I want to use the different shader
+            */
+            mLightingShader = new ShaderUtility(@"ACW/Shaders/vVertexShader.vert", @"ACW/Shaders/fFragmentShader.frag");
+            GL.UseProgram(mLightingShader.ShaderProgramID);
 
-            int vPositionLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vPosition");
-            int vNormalLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vNormal");
-            int vTexCoordsLocation = GL.GetAttribLocation(mShader.ShaderProgramID, "vTexCoords");
+            int vPositionLocation = GL.GetAttribLocation(mLightingShader.ShaderProgramID, "vPosition");
+            int vNormalLocation = GL.GetAttribLocation(mLightingShader.ShaderProgramID, "vNormal");
+            int vTexCoordsLocation = GL.GetAttribLocation(mLightingShader.ShaderProgramID, "vTexCoords");
 
             // Bind Texture Data:
             // Floor
@@ -196,10 +209,10 @@ namespace Labs.ACW
             mTexture2Index = mTextureHandler.BindTextureData("ACW/Textures/texture2.png");
 
             // Send them to the fragment shader using their indexes
-            int uTextureSamplerLocation1 = GL.GetUniformLocation(mShader.ShaderProgramID,"uTextureSampler1");
+            int uTextureSamplerLocation1 = GL.GetUniformLocation(mLightingShader.ShaderProgramID,"uTextureSampler1");
             GL.Uniform1(uTextureSamplerLocation1, mTexture1Index);
 
-            int uTextureSamplerLocation2 = GL.GetUniformLocation(mShader.ShaderProgramID, "uTextureSampler2");
+            int uTextureSamplerLocation2 = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uTextureSampler2");
             GL.Uniform1(uTextureSamplerLocation2, mTexture2Index);
 
             // Bind Vertex Data:
@@ -223,8 +236,122 @@ namespace Labs.ACW
             // Cone
             mConeIndex = mVertexDataHandler.BindVertexData(mConeVertices, mConeIndices, vPositionLocation, vNormalLocation, -1);
 
+            InitializeMatrices();
+
+            int uEyePosition = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uEyePosition");
+            Vector4 eyePosition = new Vector4(mNonStaticView.ExtractTranslation(), 1);
+            GL.Uniform4(uEyePosition, eyePosition);
+
+            // Positional Lighting, per fragment
+            Vector4 lightPosition = mLightPos;
+            mTransformedLightPos = Vector4.Transform(lightPosition, mNonStaticView);
+
+            int uLightPositionLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uLight.Position");
+            GL.Uniform4(uLightPositionLocation, lightPosition);
+
+            int uAmbientReflectivity = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.AmbientReflectivity");
+            Vector3 colour4 = new Vector3(0.5f, 0.5f, 0.5f);
+            GL.Uniform3(uAmbientReflectivity, colour4);
+
+            int uDiffuseReflectivity = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.DiffuseReflectivity");
+            Vector3 colour5 = new Vector3(0.5f, 0.5f, 0.5f);
+            GL.Uniform3(uDiffuseReflectivity, colour5);
+
+            int uSpecularReflectivity = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.SpecularReflectivity");
+            Vector3 colour6 = new Vector3(0.5f, 0.5f, 0.5f);
+            GL.Uniform3(uSpecularReflectivity, colour6);
+
+            int uShininess = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.Shininess");
+            float shininess = 0.25f;
+            GL.Uniform1(uShininess, shininess);
+        }
+
+        /// <summary>
+        /// Called whenever a key is pressed
+        /// </summary>
+        /// <param name="e">The key press event arguments</param>
+        protected override void OnKeyPress(KeyPressEventArgs e)
+        {
+            base.OnKeyPress(e);
+            CameraMovementOnPress(e);
+        }
+
+        /// <summary>
+        /// Called whenever the screen is resized, re-transforms the projection
+        /// </summary>
+        /// <param name="e">The resize event arguments</param>
+        protected override void OnResize(EventArgs e)
+        {
+            base.OnResize(e);
+            GL.Viewport(this.ClientRectangle);
+            if (mLightingShader != null)
+            {
+                int uProjectionLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uProjection");
+                Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(1, (float)ClientRectangle.Width / ClientRectangle.Height, 0.5f, 25);
+                GL.UniformMatrix4(uProjectionLocation, true, ref projection);
+            }
+        }
+
+        /// <summary>
+        /// Called per frame, contains transformations used for animation
+        /// </summary>
+        /// <param name="e">The frame event arguments</param>
+        protected override void OnUpdateFrame(FrameEventArgs e)
+        {
+            // Delta time for accurate updates, independent of frame rate
+            float deltaTime = (float)e.Time;
+
+            // Cube moving up and down
+            TransformCube(deltaTime);
+
+            // Creature rotating
+            TransformCreature(deltaTime);
+
+            // Cone scaling
+            TransformCone(deltaTime);
+        }
+
+        /// <summary>
+        /// Called per frame, renders objects on screen
+        /// </summary>
+        /// <param name="e">The frame event arguments</param>
+        protected override void OnRenderFrame(FrameEventArgs e)
+        {
+            base.OnRenderFrame(e);
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
+            // For the models
+            int uModel = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uModel");
+            GL.UniformMatrix4(uModel, true, ref mGroundModel);
+
+            // For multiple textures
+            int uTextureIndexLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uTextureIndex");
+
+            // Handles geometry drawing
+            DrawGeometry(uModel, uTextureIndexLocation);
+
+            GL.BindVertexArray(0);
+            this.SwapBuffers();
+        }
+    
+        protected override void OnUnload(EventArgs e)
+        {
+            // Delete buffered vertex data and textures
+            mVertexDataHandler.DeleteBuffers();
+            mTextureHandler.DeleteTextures();
+            mLightingShader.Delete();
+            base.OnUnload(e);
+        }
+
+        #region Loading Utility Functions
+
+        /// <summary>
+        /// Initializes the view matrices and translation matrices for models
+        /// </summary>
+        private void InitializeMatrices()
+        {
             mNonStaticView = Matrix4.CreateTranslation(0, -1.5f, 0);
-            int uView = GL.GetUniformLocation(mShader.ShaderProgramID, "uView");
+            int uView = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uView");
             GL.UniformMatrix4(uView, true, ref mNonStaticView);
 
             Vector3 eye = new Vector3(0f, 5f, 5f);
@@ -239,118 +366,23 @@ namespace Labs.ACW
             mRightCylinder = Matrix4.CreateTranslation(5, 0, -5f);
             mCubeModel = Matrix4.CreateTranslation(-5, 2, -5f);
             mConeModel = Matrix4.CreateTranslation(5, 2, -5f);
-
-            int uEyePosition = GL.GetUniformLocation(mShader.ShaderProgramID, "uEyePosition");
-            Vector4 EyePosition = new Vector4(mNonStaticView.ExtractTranslation(), 1);
-            GL.Uniform4(uEyePosition, EyePosition);
-
-            // Lighting, Need to move lighting to the fragment shader
-
-            // Old, per vertex, Directional Lighting
-            //int uLightDirectionLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLightDirection");
-            //Vector3 normalisedLightDirection, lightDirection = new Vector3(-1, -1, -1);
-            //Vector3.Normalize(ref lightDirection, out normalisedLightDirection);
-            //GL.Uniform3(uLightDirectionLocation, normalisedLightDirection);
-
-            // Positional Lighting
-            Vector4 lightPosition = new Vector4(0, 10, 0, 1);
-            mLightPosition = Vector4.Transform(lightPosition, mNonStaticView);
-
-            int uLightPositionLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLight.Position");
-            GL.Uniform4(uLightPositionLocation, lightPosition);
-
-            int uAmbientReflectivity = GL.GetUniformLocation(mShader.ShaderProgramID, "uMaterial.AmbientReflectivity");
-            Vector3 colour4 = new Vector3(0.5f, 0.5f, 0.5f);
-            GL.Uniform3(uAmbientReflectivity, colour4);
-
-            int uDiffuseReflectivity = GL.GetUniformLocation(mShader.ShaderProgramID, "uMaterial.DiffuseReflectivity");
-            Vector3 colour5 = new Vector3(0.5f, 0.5f, 0.5f);
-            GL.Uniform3(uDiffuseReflectivity, colour5);
-
-            int uSpecularReflectivity = GL.GetUniformLocation(mShader.ShaderProgramID, "uMaterial.SpecularReflectivity");
-            Vector3 colour6 = new Vector3(0.5f, 0.5f, 0.5f);
-            GL.Uniform3(uSpecularReflectivity, colour6);
-
-            int uShininess = GL.GetUniformLocation(mShader.ShaderProgramID, "uMaterial.Shininess");
-            float shininess = 0.25f;
-            GL.Uniform1(uShininess, shininess);
         }
 
-        protected override void OnKeyPress(KeyPressEventArgs e)
-        {
-            base.OnKeyPress(e);
-            CameraMovementOnPress(e);
-        }
-
-      
-        protected override void OnResize(EventArgs e)
-        {
-            base.OnResize(e);
-            GL.Viewport(this.ClientRectangle);
-            if (mShader != null)
-            {
-                int uProjectionLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uProjection");
-                Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(1, (float)ClientRectangle.Width / ClientRectangle.Height, 0.5f, 25);
-                GL.UniformMatrix4(uProjectionLocation, true, ref projection);
-            }
-        }
-
-        protected override void OnUpdateFrame(FrameEventArgs e)
-        {
-            // Delta time for accurate updates, independent of framerate
-            float deltaTime = (float)e.Time;
-
-            // Cube moving up and down
-            TransformCube(deltaTime);
-
-            // Creature rotating
-            TransformCreature(deltaTime);
-
-            // Cone scaling
-            TransformCone(deltaTime);
-        }
-
-        protected override void OnRenderFrame(FrameEventArgs e)
-        {
-            base.OnRenderFrame(e);
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-
-            // For the models
-            int uModel = GL.GetUniformLocation(mShader.ShaderProgramID, "uModel");
-            GL.UniformMatrix4(uModel, true, ref mGroundModel);
-
-            // For multiple textures
-            int uTextureIndexLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uTextureIndex");
-
-            // Handles geometry drawing
-            DrawGeometry(uModel, uTextureIndexLocation);
-
-            GL.BindVertexArray(0);
-            this.SwapBuffers();
-        }
-    
-        protected override void OnUnload(EventArgs e)
-        {
-            // Delete buffered vertex data and textures
-            mVertexDataHandler.DeleteBuffers();
-            mTextureHandler.DeleteTextures();
-            mShader.Delete();
-            base.OnUnload(e);
-        }
+        #endregion
 
         #region Lighting Utility Functions
 
         private void ChangeLightColour(Vector3 pAmbientColour, Vector3 pDiffuseColour, Vector3 pSpecularColour)
         {
-            int uAmbientLightLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLight.AmbientLight");
+            int uAmbientLightLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uLight.AmbientLight");
             Vector3 colour = new Vector3(pAmbientColour);
             GL.Uniform3(uAmbientLightLocation, colour);
 
-            int uDiffuseLightLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLight.DiffuseLight");
+            int uDiffuseLightLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uLight.DiffuseLight");
             Vector3 colour2 = new Vector3(pDiffuseColour);
             GL.Uniform3(uDiffuseLightLocation, colour2);
 
-            int uSpecularLightLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLight.SpecularLight");
+            int uSpecularLightLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uLight.SpecularLight");
             Vector3 colour3 = new Vector3(pSpecularColour);
             GL.Uniform3(uSpecularLightLocation, colour3);
         }
@@ -516,19 +548,19 @@ namespace Labs.ACW
 
                 if (mStaticViewEnabled)
                 {
-                    int uView = GL.GetUniformLocation(mShader.ShaderProgramID, "uView");
+                    int uView = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uView");
                     GL.UniformMatrix4(uView, true, ref mStaticView);
 
-                    int uEyePosition = GL.GetUniformLocation(mShader.ShaderProgramID, "uEyePosition");
+                    int uEyePosition = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uEyePosition");
                     Vector4 EyePosition = new Vector4(mStaticView.ExtractTranslation(), 1);
                     GL.Uniform4(uEyePosition, EyePosition);
                 }
                 else
                 {
-                    int uView = GL.GetUniformLocation(mShader.ShaderProgramID, "uView");
+                    int uView = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uView");
                     GL.UniformMatrix4(uView, true, ref mNonStaticView);
 
-                    int uEyePosition = GL.GetUniformLocation(mShader.ShaderProgramID, "uEyePosition");
+                    int uEyePosition = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uEyePosition");
                     Vector4 EyePosition = new Vector4(mNonStaticView.ExtractTranslation(), 1);
                     GL.Uniform4(uEyePosition, EyePosition);
                 }
@@ -585,14 +617,14 @@ namespace Labs.ACW
         /// </summary>
         private void MoveCamera()
         {
-            int uViewLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uView");
+            int uViewLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uView");
             GL.UniformMatrix4(uViewLocation, true, ref mNonStaticView);
 
-            mLightPosition = Vector4.Transform(new Vector4(0, 10, 0, 1), mNonStaticView);
-            int uLightPositionLocation = GL.GetUniformLocation(mShader.ShaderProgramID, "uLight.Position");
-            GL.Uniform4(uLightPositionLocation, mLightPosition);
+            mTransformedLightPos = Vector4.Transform(mLightPos, mNonStaticView);
+            int uLightPositionLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uLight.Position");
+            GL.Uniform4(uLightPositionLocation, mTransformedLightPos);
 
-            int uEyePosition = GL.GetUniformLocation(mShader.ShaderProgramID, "uEyePosition");
+            int uEyePosition = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uEyePosition");
             Vector4 EyePosition = new Vector4(mNonStaticView.ExtractTranslation(), 1);
             GL.Uniform4(uEyePosition, EyePosition);
         }
