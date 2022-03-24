@@ -118,10 +118,10 @@ namespace Labs.ACW
 
         readonly float[] mBackWallVertices = new float[]
         {
-            -10, 10,-10, 0, 1, 0,// 0.0f, 0.0f, 1.0f,
-            -10, 0, -10, 0, 1, 0, //0.0f, 1.0f, 1.0f,
-             10, 0, -10, 0, 1, 0, //1.0f, 1.0f, 1.0f,
-             10, 10,-10, 0, 1, 0,// 1.0f, 0.0f, 1.0f
+            -10, 10,-10, 0, 0, 1, //0.0f, 0.0f, 1.0f,
+            -10, 0, -10, 0, 0, 1, //0.0f, 1.0f, 1.0f,
+             10, 0, -10, 0, 0, 1, //1.0f, 1.0f, 1.0f,
+             10, 10,-10, 0, 0, 1, //1.0f, 0.0f, 1.0f
         };
 
         readonly int[] mBackWallIndices = new int[]
@@ -183,9 +183,9 @@ namespace Labs.ACW
             mLightPositions = new Vector4[3];
             mLightColours = new Vector3[3];
 
-            mLightPositions[0] = new Vector4(2, 1, -8.5f, 1);
-            mLightPositions[1] = new Vector4(-2, 1, -8.5f, 1);
-            mLightPositions[2] = new Vector4(0, 1, -12.5f, 1);
+            mLightPositions[0] = new Vector4(2, 1f, -8.5f, 1);
+            mLightPositions[1] = new Vector4(-2, 1f, -8.5f, 1);
+            mLightPositions[2] = new Vector4(0, 1f, -12.5f, 1);
 
             mLightColours[0] = new Vector3(0.5f, 0, 0);
             mLightColours[1] = new Vector3(0, 0.5f, 0);
@@ -249,6 +249,7 @@ namespace Labs.ACW
             // Cone
             mConeIndex = mVertexDataHandler.BindVertexData(mConeVertices, mConeIndices, vPositionLocation, vNormalLocation, -1);
 
+            // Initialize the matrixes for the models
             InitializeMatrices();
 
             int uEyePosition = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uEyePosition");
@@ -265,11 +266,11 @@ namespace Labs.ACW
             GL.Uniform3(uDiffuseReflectivity, diffuseColour);
 
             int uSpecularReflectivity = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.SpecularReflectivity");
-            Vector3 specularColour = new Vector3(0.5f, 0.5f, 0.5f);
+            Vector3 specularColour = new Vector3(0.7f, 0.7f, 0.7f);
             GL.Uniform3(uSpecularReflectivity, specularColour);
 
             int uShininess = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.Shininess");
-            float shininess = 0.25f;
+            float shininess = 0.1f;
             GL.Uniform1(uShininess, shininess);
 
             TransformLightPos(mNonStaticView);
@@ -385,7 +386,10 @@ namespace Labs.ACW
 
         #region Lighting Utility Functions
 
-        private void ChangeLightColour()
+        /// <summary>
+        /// Iterates through the light colours and sets them in the fragment shader appropriately
+        /// </summary>
+        private void SetLightColours()
         {
             for (int lightIndex = 0; lightIndex < 3; lightIndex++)
             {
@@ -489,7 +493,7 @@ namespace Labs.ACW
         /// <param name="uTextureIndexLocation">The texture index</param>
         private void DrawGeometry(int uModel, int uTextureIndexLocation)
         {
-            ChangeLightColour();
+            SetLightColours();
 
             // Floor
             GL.Uniform1(uTextureIndexLocation, mTexture1Index);

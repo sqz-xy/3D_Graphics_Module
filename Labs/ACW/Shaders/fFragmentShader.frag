@@ -34,32 +34,7 @@ uniform MaterialProperties uMaterial;
 
 void main()
 {
-	/*
-	vec4 lightDir = normalize(uLight.Position - oSurfacePosition);
-	float diffuseFactor = max(dot(oNormal, lightDir), 0);
-
-
-	vec4 reflectedVector = reflect(-lightDir, oNormal);
-
-	float specularFactor = pow(max(dot( reflectedVector, eyeDirection), 0.0), 30);
-	float ambientFactor = 0.05f;
-
-	// Combine the total light
-    vec4 totalLight = vec4(uLight.AmbientLight * uMaterial.AmbientReflectivity +
-						   uLight.DiffuseLight * uMaterial.DiffuseReflectivity * diffuseFactor +
-						   uLight.SpecularLight * uMaterial.SpecularReflectivity * specularFactor, 1);
-
-	// If no Texture Coords are present
-	if (oTexCoords.xy == vec2(0, 0))
-		FragColour = totalLight;
-	else
-		// Check the current texture index
-		if (uTextureIndex == 0)
-			FragColour = texture(uTextureSampler1, oTexCoords) * totalLight;
-		else if (uTextureIndex == 1)
-		    FragColour = texture(uTextureSampler2, oTexCoords) * totalLight;
-	*/
-	
+	FragColour = vec4(0.0);
 	for(int i = 0; i < 3; ++i)
 	{
 		vec4 eyeDirection = normalize(uEyePosition - oSurfacePosition);
