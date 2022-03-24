@@ -248,30 +248,12 @@ namespace Labs.ACW
             // Initialize the matrixes for the models
             InitializeMatrices();
 
-            int uEyePosition = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uEyePosition");
-            Vector4 eyePosition = new Vector4(mNonStaticView.ExtractTranslation(), 1);
-            GL.Uniform4(uEyePosition, eyePosition);
-
-            // Positional Lighting, per fragment
-            int uAmbientReflectivity = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.AmbientReflectivity");
-            Vector3 ambientColour = new Vector3(0.1f, 0.1f, 0.1f);
-            GL.Uniform3(uAmbientReflectivity, ambientColour);
-
-            int uDiffuseReflectivity = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.DiffuseReflectivity");
-            Vector3 diffuseColour = new Vector3(0.5f, 0.5f, 0.5f);
-            GL.Uniform3(uDiffuseReflectivity, diffuseColour);
-
-            int uSpecularReflectivity = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.SpecularReflectivity");
-            Vector3 specularColour = new Vector3(0.7f, 0.7f, 0.7f);
-            GL.Uniform3(uSpecularReflectivity, specularColour);
-
-            int uShininess = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.Shininess");
-            float shininess = 0.1f * 128;
-            GL.Uniform1(uShininess, shininess);
+            InitializeFragValues();
 
             TransformLightPos(mNonStaticView);
         }
 
+        
         /// <summary>
         /// Called whenever a key is pressed
         /// </summary>
@@ -378,40 +360,33 @@ namespace Labs.ACW
             mConeModel = Matrix4.CreateTranslation(5, 0.25f, -5f);
         }
 
-        #endregion
-
-        #region Lighting Utility Functions
-
         /// <summary>
-        /// Iterates through the light colours and sets them in the fragment shader appropriately
+        /// Initializes the lighting values for diffuse, ambient and specular light
         /// </summary>
-        private void SetLightColours()
+        private void InitializeFragValues()
         {
-            for (int lightIndex = 0; lightIndex < 3; lightIndex++)
-            {
-                int uAmbientLightLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].AmbientLight");
-                GL.Uniform3(uAmbientLightLocation, mLightColours[lightIndex]);
+            // Sets the eye position in the fragment shader using the views
+            int uEyePosition = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uEyePosition");
+            Vector4 eyePosition = new Vector4(mNonStaticView.ExtractTranslation(), 1);
+            GL.Uniform4(uEyePosition, eyePosition);
 
-                int uDiffuseLightLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].DiffuseLight");
-                GL.Uniform3(uDiffuseLightLocation, mLightColours[lightIndex]);
+            // Positional Lighting, per fragment
+            int uAmbientReflectivity = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.AmbientReflectivity");
+            Vector3 ambientColour = new Vector3(0.1f, 0.1f, 0.1f);
+            GL.Uniform3(uAmbientReflectivity, ambientColour);
 
-                int uSpecularLightLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].SpecularLight");
-                GL.Uniform3(uSpecularLightLocation, mLightColours[lightIndex]);
-            }
-        }
+            int uDiffuseReflectivity = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.DiffuseReflectivity");
+            Vector3 diffuseColour = new Vector3(0.5f, 0.5f, 0.5f);
+            GL.Uniform3(uDiffuseReflectivity, diffuseColour);
 
-        /// <summary>
-        /// Transforms the light positions so they stay stationary relative to the current view
-        /// </summary>
-        /// <param name="pView"></param>
-        private void TransformLightPos(Matrix4 pView)
-        {
-            for (int lightIndex = 0; lightIndex < 3; lightIndex++)
-            {
-                mTransformedLightPos = Vector4.Transform(mLightPositions[lightIndex], pView);
-                int uLightPositionLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].Position");
-                GL.Uniform4(uLightPositionLocation, mTransformedLightPos);
-            }
+            int uSpecularReflectivity =
+                GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.SpecularReflectivity");
+            Vector3 specularColour = new Vector3(0.7f, 0.7f, 0.7f);
+            GL.Uniform3(uSpecularReflectivity, specularColour);
+
+            int uShininess = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.Shininess");
+            float shininess = 0.1f * 128;
+            GL.Uniform1(uShininess, shininess);
         }
 
         #endregion
@@ -496,6 +471,25 @@ namespace Labs.ACW
 
         #region Drawing Utility Functions
 
+
+        /// <summary>
+        /// Iterates through the light colours and sets them in the fragment shader appropriately, called before drawing
+        /// </summary>
+        private void SetLightColours()
+        {
+            for (int lightIndex = 0; lightIndex < 3; lightIndex++)
+            {
+                int uAmbientLightLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].AmbientLight");
+                GL.Uniform3(uAmbientLightLocation, mLightColours[lightIndex]);
+
+                int uDiffuseLightLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].DiffuseLight");
+                GL.Uniform3(uDiffuseLightLocation, mLightColours[lightIndex]);
+
+                int uSpecularLightLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].SpecularLight");
+                GL.Uniform3(uSpecularLightLocation, mLightColours[lightIndex]);
+            }
+        }
+
         /// <summary>
         /// Handles draw calls to each VAO
         /// </summary>
@@ -561,6 +555,20 @@ namespace Labs.ACW
         #endregion
 
         #region Camera Utility Functions
+
+        /// <summary>
+        /// Transforms the light positions so they stay stationary relative to the current view
+        /// </summary>
+        /// <param name="pView"></param>
+        private void TransformLightPos(Matrix4 pView)
+        {
+            for (int lightIndex = 0; lightIndex < 3; lightIndex++)
+            {
+                mTransformedLightPos = Vector4.Transform(mLightPositions[lightIndex], pView);
+                int uLightPositionLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].Position");
+                GL.Uniform4(uLightPositionLocation, mTransformedLightPos);
+            }
+        }
 
         /// <summary>
         /// Manages camera movement based on key press

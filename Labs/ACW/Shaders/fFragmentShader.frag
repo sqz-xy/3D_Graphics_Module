@@ -35,6 +35,7 @@ uniform MaterialProperties uMaterial;
 void main()
 {
 	FragColour = vec4(0.0);
+	// Inefficient as you are constantly iterating through per fragment
 	for(int i = 0; i < 3; ++i)
 	{
 		vec4 eyeDirection = normalize(uEyePosition - oSurfacePosition);
