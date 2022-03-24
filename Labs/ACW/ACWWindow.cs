@@ -37,6 +37,9 @@ namespace Labs.ACW
         private Vector4 mTransformedLightPos;
         private Vector4 mLightPos;
 
+        private Vector4[] mLightPositions;
+        private Vector3[] mLightColours;
+
         // Bool to indicate which view type is enabled
         private bool mStaticViewEnabled = false;
 
@@ -176,6 +179,17 @@ namespace Labs.ACW
             // Handlers
             mVertexDataHandler = new VertexDataHandler(mVBOSize, mVAOSize);
             mTextureHandler = new TextureHandler(mTextureSize);
+
+            mLightPositions = new Vector4[3];
+            mLightColours = new Vector3[3];
+
+            mLightPositions[0] = new Vector4(2, 1, -8.5f, 1);
+            mLightPositions[1] = new Vector4(-2, 1, -8.5f, 1);
+            mLightPositions[2] = new Vector4(0, 1, -12f, 1);
+
+            mLightColours[0] = new Vector3(0.5f, 0, 0);
+            mLightColours[1] = new Vector3(0, 0.5f, 0);
+            mLightColours[2] = new Vector3(0, 0, 0.5f);
         }
 
         /// <summary>
@@ -241,12 +255,12 @@ namespace Labs.ACW
             Vector4 eyePosition = new Vector4(mNonStaticView.ExtractTranslation(), 1);
             GL.Uniform4(uEyePosition, eyePosition);
 
-            // Positional Lighting, per fragment
-            Vector4 lightPosition = mLightPos;
-            mTransformedLightPos = Vector4.Transform(lightPosition, mNonStaticView);
+            //// Positional Lighting, per fragment
+            //Vector4 lightPosition = mLightPos;
+            //mTransformedLightPos = Vector4.Transform(lightPosition, mNonStaticView);
 
-            int uLightPositionLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uLight.Position");
-            GL.Uniform4(uLightPositionLocation, lightPosition);
+            //int uLightPositionLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uLight.Position");
+            //GL.Uniform4(uLightPositionLocation, lightPosition);
 
             int uAmbientReflectivity = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.AmbientReflectivity");
             Vector3 colour4 = new Vector3(0.5f, 0.5f, 0.5f);
@@ -263,6 +277,15 @@ namespace Labs.ACW
             int uShininess = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.Shininess");
             float shininess = 0.25f;
             GL.Uniform1(uShininess, shininess);
+
+            for (int lightIndex = 0;  lightIndex < 3;  lightIndex++)
+            {
+                Vector4 lightPosition = mLightPos;
+                mTransformedLightPos = Vector4.Transform(lightPosition, mNonStaticView);
+
+                int uLightPositionLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].Position");
+                GL.Uniform4(uLightPositionLocation, mLightPositions[lightIndex]);
+            }
         }
 
         /// <summary>
@@ -375,19 +398,19 @@ namespace Labs.ACW
 
         #region Lighting Utility Functions
 
-        private void ChangeLightColour(Vector3 pAmbientColour, Vector3 pDiffuseColour, Vector3 pSpecularColour)
+        private void ChangeLightColour()
         {
-            int uAmbientLightLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uLight.AmbientLight");
-            Vector3 colour = new Vector3(pAmbientColour);
-            GL.Uniform3(uAmbientLightLocation, colour);
+            for (int lightIndex = 0; lightIndex < 3; lightIndex++)
+            {
+                int uAmbientLightLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].AmbientLight");
+                GL.Uniform3(uAmbientLightLocation, mLightColours[lightIndex]);
 
-            int uDiffuseLightLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uLight.DiffuseLight");
-            Vector3 colour2 = new Vector3(pDiffuseColour);
-            GL.Uniform3(uDiffuseLightLocation, colour2);
+                int uDiffuseLightLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].DiffuseLight");
+                GL.Uniform3(uDiffuseLightLocation, mLightColours[lightIndex]);
 
-            int uSpecularLightLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uLight.SpecularLight");
-            Vector3 colour3 = new Vector3(pSpecularColour);
-            GL.Uniform3(uSpecularLightLocation, colour3);
+                int uSpecularLightLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].SpecularLight");
+                GL.Uniform3(uSpecularLightLocation, mLightColours[lightIndex]);
+            }
         }
 
         #endregion
@@ -479,10 +502,11 @@ namespace Labs.ACW
         /// <param name="uTextureIndexLocation">The texture index</param>
         private void DrawGeometry(int uModel, int uTextureIndexLocation)
         {
+            ChangeLightColour();
+
             // Floor
             GL.Uniform1(uTextureIndexLocation, mTexture1Index);
             GL.BindVertexArray(mVertexDataHandler.GetVAOAtIndex(mFloorIndex));
-            ChangeLightColour(new Vector3(0.0f, 0.0f, 0.0f), new Vector3(0.55f, 0.55f, 0.55f), new Vector3(0.7f, 0.7f, 0.7f));
             GL.DrawElements(PrimitiveType.TriangleFan, mFloorIndices.Length, DrawElementsType.UnsignedInt, 0);
 
             // Back wall
@@ -623,13 +647,19 @@ namespace Labs.ACW
             int uViewLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uView");
             GL.UniformMatrix4(uViewLocation, true, ref mNonStaticView);
 
-            mTransformedLightPos = Vector4.Transform(mLightPos, mNonStaticView);
-            int uLightPositionLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uLight.Position");
-            GL.Uniform4(uLightPositionLocation, mTransformedLightPos);
-
             int uEyePosition = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uEyePosition");
             Vector4 EyePosition = new Vector4(mNonStaticView.ExtractTranslation(), 1);
             GL.Uniform4(uEyePosition, EyePosition);
+
+            for (int lightIndex = 0; lightIndex < 3; lightIndex++)
+            {
+                Vector4 lightPosition = mLightPos;
+                mTransformedLightPos = Vector4.Transform(lightPosition, mNonStaticView);
+
+                mTransformedLightPos = Vector4.Transform(mLightPositions[lightIndex], mNonStaticView);
+                int uLightPositionLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].Position");
+                GL.Uniform4(uLightPositionLocation, mTransformedLightPos);
+            }
         }
 
         #endregion

@@ -20,7 +20,8 @@ struct LightProperties {
 	vec3 SpecularLight;
 };
 
-uniform LightProperties uLight;
+uniform LightProperties uLight[3];
+//uniform LightProperties uLight;
 
 struct MaterialProperties {
 	vec3 AmbientReflectivity;
@@ -33,10 +34,11 @@ uniform MaterialProperties uMaterial;
 
 void main()
 {
+	/*
 	vec4 lightDir = normalize(uLight.Position - oSurfacePosition);
 	float diffuseFactor = max(dot(oNormal, lightDir), 0);
 
-	vec4 eyeDirection = normalize(uEyePosition - oSurfacePosition);
+
 	vec4 reflectedVector = reflect(-lightDir, oNormal);
 
 	float specularFactor = pow(max(dot( reflectedVector, eyeDirection), 0.0), 30);
@@ -56,5 +58,28 @@ void main()
 			FragColour = texture(uTextureSampler1, oTexCoords) * totalLight;
 		else if (uTextureIndex == 1)
 		    FragColour = texture(uTextureSampler2, oTexCoords) * totalLight;
-			
+	*/
+
+	for(int i = 0; i < 3; ++i)
+	{
+		vec4 eyeDirection = normalize(uEyePosition - oSurfacePosition);
+		vec4 lightDir = normalize(uLight[i].Position - oSurfacePosition);
+		vec4 reflectedVector = reflect(-lightDir, oNormal);
+		float diffuseFactor = max(dot(oNormal, lightDir), 0);
+		float specularFactor = pow(max(dot( reflectedVector, eyeDirection), 0.0),
+		uMaterial.Shininess);
+		vec4 totalLight = FragColour + vec4(uLight[i].AmbientLight *
+		uMaterial.AmbientReflectivity + uLight[i].DiffuseLight * uMaterial.DiffuseReflectivity *
+		diffuseFactor + uLight[i].SpecularLight * uMaterial.SpecularReflectivity * specularFactor, 1);
+
+		// If no Texture Coords are present
+	if (oTexCoords.xy == vec2(0, 0))
+		FragColour = totalLight;
+	else
+		// Check the current texture index
+		if (uTextureIndex == 0)
+			FragColour = texture(uTextureSampler1, oTexCoords) * totalLight;
+		else if (uTextureIndex == 1)
+		    FragColour = texture(uTextureSampler2, oTexCoords) * totalLight;
+	}			
 }
