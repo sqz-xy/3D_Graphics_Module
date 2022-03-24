@@ -74,39 +74,42 @@ namespace Labs.ACW
         #region Vertices and Indices Initialization
 
         // Removed tex coords from cube as they dont work due to reduced number of triangles
-        readonly float[] mCubeVertices = new float[]
-        {
-                    -0.5f,  0.5f,  0.5f, 0, 0, 1,
-                     0.5f,  0.5f,  0.5f, 1, 0, 1,
-                    -0.5f, -0.5f,  0.5f, 0, 1, 1,
-                     0.5f, -0.5f,  0.5f, 1, 1, 1,
-                    -0.5f, -0.5f, -0.5f, 0, 0, 1,
-                     0.5f, -0.5f, -0.5f, 1, 0, 1, 
-                    -0.5f,  0.5f, -0.5f, 0, 1, 1, 
-                     0.5f,  0.5f, -0.5f, 1, 1, 1, 
-                    -0.5f,  0.5f,  0.5f, 1, 1, 1, 
-                    -0.5f,  0.5f, -0.5f, 1, 0, 1, 
-                     0.5f,  0.5f,  0.5f, 0, 1, 1, 
-                     0.5f,  0.5f, -0.5f, 0, 0, 1
-        };
+        readonly float[] mCubeVertices = new float[] { 
+            -1f, 1f, 0f, 0f, 0f, 1f,
+            -1f, -1f, 0f,  0f, 0f, 1f,
+            1f, -1f, 0f,  0f, 1f, 1f,
+            1f, 1f, 0f, 0f, 1f, 1f,
 
+            -1f, 1f, -2f, -1f, 1f, 0f,
+            -1f, -1f, -2f, -1f, 1f, 0f,
 
-        readonly int[] mCubeIndices = new int[]
-        {
-            0, 2, 1, 2, 3, 1,
-            8, 9, 2, 9, 4, 2,
-            2, 4, 3, 4, 5, 3,
-            3, 5, 10, 5, 11, 10,
-            4, 6, 5, 6, 7, 5,
-            6, 0, 7, 0, 1, 7
-        };
+            1f, 1f, -2f, 1f, 0f, 0f,
+            1f, -1f, -2f, 1f, 0f, 0f};
+
+        readonly int[] mCubeIndices = new int[] { 0, 1, 2,
+            0, 2, 3,
+
+            0, 5, 1,
+            0, 4, 5,
+
+            2, 7, 6,
+            2, 6, 3,
+
+            6, 7, 5,
+            6, 5, 4,
+
+            0, 3, 6,
+            6, 4, 0,
+
+            1, 7, 2,
+            1, 5, 7};
 
         readonly float[] mFloorVertices = new float[] 
         {
-            -10, 0,-10, 0, 1, 0, 0.0f, 0.0f, 1.0f,
-            -10, 0, 10, 0, 1, 0, 0.0f, 1.0f, 1.0f,
-             10, 0, 10, 0, 1, 0, 1.0f, 1.0f, 1.0f,
-             10, 0,-10, 0, 1, 0, 1.0f, 0.0f, 1.0f
+            -10, 0,-10, 0, 1, 0, //0.0f, 0.0f, 1.0f,
+            -10, 0, 10, 0, 1, 0, //0.0f, 1.0f, 1.0f,
+             10, 0, 10, 0, 1, 0, //1.0f, 1.0f, 1.0f,
+             10, 0,-10, 0, 1, 0, //1.0f, 0.0f, 1.0f
         };
 
         readonly int[] mFloorIndices = new int[]
@@ -116,10 +119,10 @@ namespace Labs.ACW
 
         readonly float[] mBackWallVertices = new float[]
         {
-            -10, 10,-10, 0, 1, 0, 0.0f, 0.0f, 1.0f,
-            -10, 0, -10, 0, 1, 0, 0.0f, 1.0f, 1.0f,
-             10, 0, -10, 0, 1, 0, 1.0f, 1.0f, 1.0f,
-             10, 10,-10, 0, 1, 0, 1.0f, 0.0f, 1.0f
+            -10, 10,-10, 0, 1, 0, //0.0f, 0.0f, 1.0f,
+            -10, 0, -10, 0, 1, 0, //0.0f, 1.0f, 1.0f,
+             10, 0, -10, 0, 1, 0, //1.0f, 1.0f, 1.0f,
+             10, 10,-10, 0, 1, 0, //1.0f, 0.0f, 1.0f
         };
 
         readonly int[] mBackWallIndices = new int[]
@@ -183,9 +186,9 @@ namespace Labs.ACW
             mLightPositions = new Vector4[3];
             mLightColours = new Vector3[3];
 
-            mLightPositions[0] = new Vector4(2, 1, -8.5f, 1);
-            mLightPositions[1] = new Vector4(-2, 1, -8.5f, 1);
-            mLightPositions[2] = new Vector4(0, 1, -12f, 1);
+            mLightPositions[0] = new Vector4(3, 1, -8.5f, 1);
+            mLightPositions[1] = new Vector4(-3, 1, -8.5f, 1);
+            mLightPositions[2] = new Vector4(0, 1, -14f, 1);
 
             mLightColours[0] = new Vector3(0.5f, 0, 0);
             mLightColours[1] = new Vector3(0, 0.5f, 0);
@@ -230,7 +233,7 @@ namespace Labs.ACW
 
             // Bind Vertex Data:
             // Floor
-            mFloorIndex = mVertexDataHandler.BindVertexData(mFloorVertices, mFloorIndices, vPositionLocation, vNormalLocation, vTexCoordsLocation);
+            mFloorIndex = mVertexDataHandler.BindVertexData(mFloorVertices, mFloorIndices, vPositionLocation, vNormalLocation, -1);
 
             // Creature
             mCreature = ModelUtility.LoadModel(@"Utility/Models/model.bin");
@@ -244,7 +247,7 @@ namespace Labs.ACW
             mCubeIndex = mVertexDataHandler.BindVertexData(mCubeVertices, mCubeIndices, vPositionLocation, vNormalLocation, -1);
 
             // Back wall
-            mWallIndex = mVertexDataHandler.BindVertexData(mBackWallVertices, mBackWallIndices, vPositionLocation, vNormalLocation, vTexCoordsLocation);
+            mWallIndex = mVertexDataHandler.BindVertexData(mBackWallVertices, mBackWallIndices, vPositionLocation, vNormalLocation, -1);
 
             // Cone
             mConeIndex = mVertexDataHandler.BindVertexData(mConeVertices, mConeIndices, vPositionLocation, vNormalLocation, -1);
@@ -255,24 +258,18 @@ namespace Labs.ACW
             Vector4 eyePosition = new Vector4(mNonStaticView.ExtractTranslation(), 1);
             GL.Uniform4(uEyePosition, eyePosition);
 
-            //// Positional Lighting, per fragment
-            //Vector4 lightPosition = mLightPos;
-            //mTransformedLightPos = Vector4.Transform(lightPosition, mNonStaticView);
-
-            //int uLightPositionLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uLight.Position");
-            //GL.Uniform4(uLightPositionLocation, lightPosition);
-
+            // Positional Lighting, per fragment
             int uAmbientReflectivity = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.AmbientReflectivity");
-            Vector3 colour4 = new Vector3(0.5f, 0.5f, 0.5f);
-            GL.Uniform3(uAmbientReflectivity, colour4);
+            Vector3 ambientColour = new Vector3(0.1f, 0.1f, 0.1f);
+            GL.Uniform3(uAmbientReflectivity, ambientColour);
 
             int uDiffuseReflectivity = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.DiffuseReflectivity");
-            Vector3 colour5 = new Vector3(0.5f, 0.5f, 0.5f);
-            GL.Uniform3(uDiffuseReflectivity, colour5);
+            Vector3 diffuseColour = new Vector3(0.5f, 0.5f, 0.5f);
+            GL.Uniform3(uDiffuseReflectivity, diffuseColour);
 
             int uSpecularReflectivity = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.SpecularReflectivity");
-            Vector3 colour6 = new Vector3(0.5f, 0.5f, 0.5f);
-            GL.Uniform3(uSpecularReflectivity, colour6);
+            Vector3 specularColour = new Vector3(0.5f, 0.5f, 0.5f);
+            GL.Uniform3(uSpecularReflectivity, specularColour);
 
             int uShininess = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.Shininess");
             float shininess = 0.25f;
@@ -577,19 +574,15 @@ namespace Labs.ACW
                 {
                     int uView = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uView");
                     GL.UniformMatrix4(uView, true, ref mStaticView);
+                    TransformLightPos(mStaticView);
 
-                    int uEyePosition = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uEyePosition");
-                    Vector4 EyePosition = new Vector4(mStaticView.ExtractTranslation(), 1);
-                    GL.Uniform4(uEyePosition, EyePosition);
                 }
                 else
                 {
                     int uView = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uView");
                     GL.UniformMatrix4(uView, true, ref mNonStaticView);
+                    TransformLightPos(mNonStaticView);
 
-                    int uEyePosition = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uEyePosition");
-                    Vector4 EyePosition = new Vector4(mNonStaticView.ExtractTranslation(), 1);
-                    GL.Uniform4(uEyePosition, EyePosition);
                 }
 
             }
@@ -651,12 +644,18 @@ namespace Labs.ACW
             Vector4 EyePosition = new Vector4(mNonStaticView.ExtractTranslation(), 1);
             GL.Uniform4(uEyePosition, EyePosition);
 
+            TransformLightPos(mNonStaticView);
+        }
+
+        /// <summary>
+        /// Transforms the light positions so they stay stationary relative to the current view
+        /// </summary>
+        /// <param name="pView"></param>
+        private void TransformLightPos(Matrix4 pView)
+        {
             for (int lightIndex = 0; lightIndex < 3; lightIndex++)
             {
-                Vector4 lightPosition = mLightPos;
-                mTransformedLightPos = Vector4.Transform(lightPosition, mNonStaticView);
-
-                mTransformedLightPos = Vector4.Transform(mLightPositions[lightIndex], mNonStaticView);
+                mTransformedLightPos = Vector4.Transform(mLightPositions[lightIndex], pView);
                 int uLightPositionLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].Position");
                 GL.Uniform4(uLightPositionLocation, mTransformedLightPos);
             }
