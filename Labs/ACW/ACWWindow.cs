@@ -408,7 +408,7 @@ namespace Labs.ACW
             var creatureRotation = Matrix4.CreateRotationY(mCreatureAngle);
             mCreatureModel = creatureRotation;
             mCreatureModel *= Matrix4.CreateTranslation(0f, 2f, -5f);
-            mCreatureAngle += mCreatureRotationRate * deltaTime;
+            mCreatureAngle -= mCreatureRotationRate * deltaTime;
         }
 
         /// <summary>
@@ -590,14 +590,14 @@ namespace Labs.ACW
                 {
                     var uView = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uView");
                     GL.UniformMatrix4(uView, true, ref mStaticView);
-                    TransformLightPos(mStaticView);
+                    MoveCamera(mStaticView);
 
                 }
                 else
                 {
                     var uView = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uView");
                     GL.UniformMatrix4(uView, true, ref mNonStaticView);
-                    TransformLightPos(mNonStaticView);
+                    MoveCamera(mNonStaticView);
 
                 }
 
@@ -608,42 +608,42 @@ namespace Labs.ACW
                 if (e.KeyChar == 'a')
                 {
                     mNonStaticView *= Matrix4.CreateTranslation(mDirectionalSpeed, 0, 0);
-                    MoveCamera();
+                    MoveCamera(mNonStaticView);
                 }
                 if (e.KeyChar == 'd')
                 {
                     mNonStaticView *= Matrix4.CreateTranslation(-mDirectionalSpeed, 0, 0);
-                    MoveCamera();
+                    MoveCamera(mNonStaticView);
                 }
                 if (e.KeyChar == 'w')
                 {
                     mNonStaticView *= Matrix4.CreateTranslation(0, 0, mDirectionalSpeed);
-                    MoveCamera();
+                    MoveCamera(mNonStaticView);
                 }
                 if (e.KeyChar == 's')
                 {
                     mNonStaticView *= Matrix4.CreateTranslation(0, 0, -mDirectionalSpeed);
-                    MoveCamera();
+                    MoveCamera(mNonStaticView);
                 }
                 if (e.KeyChar == ' ')
                 {
                     mNonStaticView *= Matrix4.CreateTranslation(0, -mDirectionalSpeed, 0);
-                    MoveCamera();
+                    MoveCamera(mNonStaticView);
                 }
                 if (e.KeyChar == 'c')
                 {
                     mNonStaticView *= Matrix4.CreateTranslation(0, mDirectionalSpeed, 0);
-                    MoveCamera();
+                    MoveCamera(mNonStaticView);
                 }
                 if (e.KeyChar == 'q')
                 {
                     mNonStaticView *= Matrix4.CreateRotationY(-mRotationalSpeed);
-                    MoveCamera();
+                    MoveCamera(mNonStaticView);
                 }
                 if (e.KeyChar == 'e')
                 {
                     mNonStaticView *= Matrix4.CreateRotationY(mRotationalSpeed);
-                    MoveCamera();
+                    MoveCamera(mNonStaticView);
                 }
             }
         }
@@ -651,16 +651,16 @@ namespace Labs.ACW
         /// <summary>
         /// Updates the view matrix when the camera is moved
         /// </summary>
-        private void MoveCamera()
+        private void MoveCamera(Matrix4 pView)
         {
             var uViewLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uView");
-            GL.UniformMatrix4(uViewLocation, true, ref mNonStaticView);
+            GL.UniformMatrix4(uViewLocation, true, ref pView);
 
             var uEyePosition = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uEyePosition");
-            var eyePosition = new Vector4(mNonStaticView.ExtractTranslation(), 1);
+            var eyePosition = new Vector4(pView.ExtractTranslation(), 1);
             GL.Uniform4(uEyePosition, eyePosition);
 
-            TransformLightPos(mNonStaticView);
+            TransformLightPos(pView);
         }
 
         #endregion
