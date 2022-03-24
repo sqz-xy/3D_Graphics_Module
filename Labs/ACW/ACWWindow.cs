@@ -35,7 +35,6 @@ namespace Labs.ACW
         private Matrix4 mNonStaticView, mStaticView, mCreatureModel, mGroundModel, mLeftCylinder, mMiddleCylinder, mRightCylinder, mCubeModel, mConeModel;
 
         private Vector4 mTransformedLightPos;
-        private Vector4 mLightPos;
 
         private Vector4[] mLightPositions;
         private Vector3[] mLightColours;
@@ -177,8 +176,6 @@ namespace Labs.ACW
             mCreatureAngle = 0.1f;
             mConeScale = 0.1f;
 
-            mLightPos = new Vector4(0, 10, 0, 1);
-
             // Handlers
             mVertexDataHandler = new VertexDataHandler(mVBOSize, mVAOSize);
             mTextureHandler = new TextureHandler(mTextureSize);
@@ -186,9 +183,9 @@ namespace Labs.ACW
             mLightPositions = new Vector4[3];
             mLightColours = new Vector3[3];
 
-            mLightPositions[0] = new Vector4(3, 1, -8.5f, 1);
-            mLightPositions[1] = new Vector4(-3, 1, -8.5f, 1);
-            mLightPositions[2] = new Vector4(0, 1, -14f, 1);
+            mLightPositions[0] = new Vector4(2, 1, -8.5f, 1);
+            mLightPositions[1] = new Vector4(-2, 1, -8.5f, 1);
+            mLightPositions[2] = new Vector4(0, 1, -12.5f, 1);
 
             mLightColours[0] = new Vector3(0.5f, 0, 0);
             mLightColours[1] = new Vector3(0, 0.5f, 0);
@@ -275,14 +272,7 @@ namespace Labs.ACW
             float shininess = 0.25f;
             GL.Uniform1(uShininess, shininess);
 
-            for (int lightIndex = 0;  lightIndex < 3;  lightIndex++)
-            {
-                Vector4 lightPosition = mLightPos;
-                mTransformedLightPos = Vector4.Transform(lightPosition, mNonStaticView);
-
-                int uLightPositionLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].Position");
-                GL.Uniform4(uLightPositionLocation, mLightPositions[lightIndex]);
-            }
+            TransformLightPos(mNonStaticView);
         }
 
         /// <summary>
