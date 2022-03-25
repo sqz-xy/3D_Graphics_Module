@@ -40,19 +40,19 @@ namespace Labs.ACW
         private const float mDirectionalSpeed = 0.4f;
         private const float mRotationalSpeed = 0.1f;
 
-        private const float mCreatureRotationRate = 10f;
+        private const float mCubeRotationRate = 10f;
         private const float mConeScaleRate = 1f;
-        private const float mCubeTranslationRate = 4f;
+        private const float mCreatureMoveRate = 4f;
 
         // Indexes for VAOs and Textures
         private int mFloorIndex, mWallIndex, mCreatureIndex, mCylinderIndex, mCubeIndex, mConeIndex;
         private int mTexture1Index, mTexture2Index;
 
         // Misc Variables
-        private float mCreatureAngle;
+        private float mCubeAngle;
         private float mConeScale;
 
-        private bool mCubeUpOrDown;
+        private bool mCreatureUp;
         private bool mConeBigOrSmall;
 
         // Vertices and Indices
@@ -61,18 +61,18 @@ namespace Labs.ACW
         // Removed tex coords from cube as they don't work due to reduced number of triangles
         private readonly float[] mCubeVertices = new float[]
         {
-            -0.5f,  0.5f,  0.5f, 0, 0, 0,
-            0.5f,  0.5f,  0.5f, 1, 0, 1,
-            -0.5f, -0.5f,  0.5f, 0, 1, 0,
-            0.5f, -0.5f,  0.5f, 1, 1, 0,
-            -0.5f, -0.5f, -0.5f, 0, 0, 1,
-            0.5f, -0.5f, -0.5f, 1, 0, 0,
-            -0.5f,  0.5f, -0.5f, 0, 1, 1,
-            0.5f,  0.5f, -0.5f, 1, 1, 0,
-            -0.5f,  0.5f,  0.5f, 1, 1, 1,
-            -0.5f,  0.5f, -0.5f, 1, 0, 0,
-            0.5f,  0.5f,  0.5f, 0, 1, 1,
-            0.5f,  0.5f, -0.5f, 0, 0, 0
+            -0.5f,  0.5f,  0.5f, 1, 0, 0,
+            0.5f,  0.5f,  0.5f, 1, 0, 0,
+            -0.5f, -0.5f,  0.5f, 1, 0, 0,
+            0.5f, -0.5f,  0.5f, 1, 0, 0,
+            -0.5f, -0.5f, -0.5f, 0, 0, -1,
+            0.5f, -0.5f, -0.5f, 0, 0, -1,
+            -0.5f,  0.5f, -0.5f, 0, 0, -1,
+            0.5f,  0.5f, -0.5f, 0, 0, -1,
+            -0.5f,  0.5f,  0.5f, 1, 1, 0,
+            -0.5f,  0.5f, -0.5f, 0, 1, -1,
+            0.5f,  0.5f,  0.5f, 1, 1, 0,
+            0.5f,  0.5f, -0.5f, 0, 1, -1
         };
 
         private readonly int[] mCubeIndices = new int[]
@@ -113,15 +113,15 @@ namespace Labs.ACW
 
         private readonly float[] mConeVertices = new float[]
         {
-             0f,  2f,  0f, 0, 0, 1,
+             0f,  2f,  0f,       0, 1, 0,
              0.25f,  0f,  0.75f, 1, 0, 1,
-            0.75f, 0f,  0.25f, 0, 1, 1,
-             1f, 0f,  -0.25f, 1, 1, 1,
-            0.25f, 0f, -0.75f, 0, 0, 1,
-             -0.25f, 0f, -0.75f, 1, 0, 1,
-            -0.75f,  0f, 0.25f, 0, 1, 1,
-             -0.75f,  0f, 0.25f, 1, 1, 1,
-            -0.25f,  0f,  0.75f, 1, 1, 1,
+            0.75f, 0f,  0.25f,   1, 0, 1,
+             1f, 0f,  -0.25f,    1, 0, -1,
+            0.25f, 0f, -0.75f,   1, 0, -1,
+             -0.25f, 0f, -0.75f, 1, 0, -1,
+            -0.75f,  0f, 0.25f,  -1, 0, -1,
+             -0.75f,  0f, 0.25f, -1, 0, 1,
+            -0.25f,  0f,  0.75f, -1, 0, 1,
         };
 
         private readonly int[] mConeIndices = new int[]
@@ -155,9 +155,9 @@ namespace Labs.ACW
             mStaticViewEnabled = false;
 
             // Default Values for transformations
-            mCreatureAngle = 0.1f;
+            mCubeAngle = 0.1f;
             mConeScale = 0.1f;
-            mCubeUpOrDown = true;
+            mCreatureUp = true;
             mConeBigOrSmall = true;
 
             // Handlers
@@ -269,11 +269,11 @@ namespace Labs.ACW
             // Delta time for accurate updates, independent of frame rate
             var deltaTime = (float)e.Time;
 
-            // Cube moving up and down
-            TransformCube(deltaTime);
-
-            // Creature rotating
+            // Creature moving up and down
             TransformCreature(deltaTime);
+
+            // Cube rotating
+            TransformCube(deltaTime);
 
             // Cone scaling
             TransformCone(deltaTime);
@@ -401,45 +401,45 @@ namespace Labs.ACW
         #region Update Utility Functions
 
         /// <summary>
-        /// Transforms the creature, rotates constantly
-        /// </summary>
-        /// <param name="deltaTime">The current time step</param>
-        private void TransformCreature(float deltaTime)
-        {
-            var creatureRotation = Matrix4.CreateRotationY(mCreatureAngle);
-            mCreatureModel = creatureRotation;
-            mCreatureModel *= Matrix4.CreateTranslation(0f, 2f, -5f);
-            mCreatureAngle -= mCreatureRotationRate * deltaTime;
-        }
-
-        /// <summary>
-        /// Transforms the Cube, it moves up and then down depending on the bounds
+        /// Transforms the cube, rotates constantly
         /// </summary>
         /// <param name="deltaTime">The current time step</param>
         private void TransformCube(float deltaTime)
         {
-            var cubeTranslationUp = Matrix4.CreateTranslation(0, mCubeTranslationRate * deltaTime, 0);
-            var cubeTranslationDown = Matrix4.CreateTranslation(0, -mCubeTranslationRate * deltaTime, 0);
+            var cubeRotation = Matrix4.CreateRotationY(mCubeAngle);
+            mCubeModel = cubeRotation;
+            mCubeModel *= Matrix4.CreateTranslation(-4.92f, 2f, -4.92f);
+            mCubeAngle -= mCubeRotationRate * deltaTime;
+        }
 
-            var cubePos = mCubeModel.ExtractTranslation();
+        /// <summary>
+        /// Transforms the creature, it moves up and then down depending on the bounds
+        /// </summary>
+        /// <param name="deltaTime">The current time step</param>
+        private void TransformCreature(float deltaTime)
+        {
+            var cubeTranslationUp = Matrix4.CreateTranslation(0, mCreatureMoveRate * deltaTime, 0);
+            var cubeTranslationDown = Matrix4.CreateTranslation(0, -mCreatureMoveRate * deltaTime, 0);
 
-            switch (mCubeUpOrDown)
+            var creaturePos = mCreatureModel.ExtractTranslation();
+
+            switch (mCreatureUp)
             {
                 case true:
-                    mCubeModel *= cubeTranslationUp;
+                    mCreatureModel *= cubeTranslationUp;
                     break;
                 case false:
-                    mCubeModel *= cubeTranslationDown;
+                    mCreatureModel *= cubeTranslationDown;
                     break;
             }
 
-            if (cubePos.Y > 8)
+            if (creaturePos.Y > 5)
             {
-                mCubeUpOrDown = false;
+                mCreatureUp = false;
             }
-            if (cubePos.Y < 2)
+            if (creaturePos.Y < 2)
             {
-                mCubeUpOrDown = true;
+                mCreatureUp = true;
             }
         }
 
