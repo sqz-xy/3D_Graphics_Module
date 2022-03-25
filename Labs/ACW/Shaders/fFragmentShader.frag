@@ -35,7 +35,7 @@ void main()
 {
 	FragColour = vec4(0.0);
 	// Inefficient as you are constantly iterating through per fragment
-	for(int i = 0; i < uLight.length; ++i)
+	for(int i = 0; i < uLight.length(); ++i)
 	{
 		vec4 eyeDirection = normalize(uEyePosition - oSurfacePosition);
 		vec4 lightDir = normalize(uLight[i].Position - oSurfacePosition);

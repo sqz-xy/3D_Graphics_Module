@@ -5,6 +5,7 @@ using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using System;
+using System.Threading;
 
 namespace Labs.ACW
 {
@@ -180,7 +181,7 @@ namespace Labs.ACW
             /*
             * Didn't implement a second shader because I didn't need too.
             * In order to do it and use it, I would declare a ShaderUtility
-            * similar to below, then call GL.UseProgram();
+            * similar to below, then call GL.UseProgram(shader);
             * between draw calls where I want to use the different shader
             */
 
@@ -565,20 +566,6 @@ namespace Labs.ACW
         #region Camera Utility Functions
 
         /// <summary>
-        /// Transforms the light positions so they stay stationary relative to the current view
-        /// </summary>
-        /// <param name="pView"></param>
-        private void TransformLightPos(Matrix4 pView)
-        {
-            for (var lightIndex = 0; lightIndex < mLightingProperties.LightCount; lightIndex++)
-            {
-                mTransformedLightPos = Vector4.Transform(mLightingProperties.LightPositions[lightIndex], pView);
-                var uLightPositionLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].Position");
-                GL.Uniform4(uLightPositionLocation, mTransformedLightPos);
-            }
-        }
-
-        /// <summary>
         /// Manages camera movement based on key press
         /// </summary>
         /// <param name="e">Key press event arguments</param>
@@ -655,6 +642,21 @@ namespace Labs.ACW
             GL.Uniform4(uEyePosition, eyePosition);
 
             TransformLightPos(pView);
+        }
+
+
+        /// <summary>
+        /// Transforms the light positions so they stay stationary relative to the current view
+        /// </summary>
+        /// <param name="pView"></param>
+        private void TransformLightPos(Matrix4 pView)
+        {
+            for (var lightIndex = 0; lightIndex < mLightingProperties.LightCount; lightIndex++)
+            {
+                mTransformedLightPos = Vector4.Transform(mLightingProperties.LightPositions[lightIndex], pView);
+                var uLightPositionLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].Position");
+                GL.Uniform4(uLightPositionLocation, mTransformedLightPos);
+            }
         }
 
         #endregion
