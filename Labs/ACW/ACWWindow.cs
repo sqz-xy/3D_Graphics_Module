@@ -113,9 +113,9 @@ namespace Labs.ACW
 
         private readonly float[] mConeVertices = new float[]
         {
-             0f,  2f,  0f,       0, 1, 0,
+             0f,  4f,  0f,       0, 1, 0,
              0.25f,  0f,  0.75f, 1, 0, 1,
-            0.75f, 0f,  0.25f,   1, 0, 1,
+             0.75f, 0f,  0.25f,   1, 0, 1,
              1f, 0f,  -0.25f,    1, 0, -1,
             0.25f, 0f, -0.75f,   1, 0, -1,
              -0.25f, 0f, -0.75f, 1, 0, -1,
@@ -329,10 +329,10 @@ namespace Labs.ACW
             mLightingProperties.LightPositions[3] = new Vector4(0, 0.5f, -6.5f, 1);
 
             // The three light colours
-            mLightingProperties.LightColours[0] = new Vector3(1f, 0, 0);
-            mLightingProperties.LightColours[1] = new Vector3(0, 1f, 0);
-            mLightingProperties.LightColours[2] = new Vector3(0, 0, 1f);
-            mLightingProperties.LightColours[3] = new Vector3(0.5f, 0, 0.5f);
+            mLightingProperties.LightColours[0] = new Vector3(0.5f, 0, 0);
+            mLightingProperties.LightColours[1] = new Vector3(0, 0.5f, 0);
+            mLightingProperties.LightColours[2] = new Vector3(0, 0, 0.5f);
+            mLightingProperties.LightColours[3] = new Vector3(0.25f, 0, 0.25f);
 
             // The three light reflectivity pro
             mLightingProperties.AmbientReflectivity = new Vector3(0.1f, 0.1f, 0.1f);

@@ -31,6 +31,7 @@ struct MaterialProperties {
 
 uniform MaterialProperties uMaterial;
 
+// Combines lighting values with texture colours
 vec4 calculateTextureLight(vec4 pTexture, vec3 pAmbient, vec3 pDiffuse, vec3 pSpecular)
 {
 	vec4 totalAmbient = vec4(pAmbient, 1) * pTexture;
