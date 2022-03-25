@@ -87,10 +87,10 @@ namespace Labs.ACW
 
         private readonly float[] mFloorVertices = new float[] 
         {
-            -10, 0,-10, 0, 1, 0, 0.0f, 0.0f, 1.0f,
-            -10, 0, 10, 0, 1, 0, 0.0f, 1.0f, 1.0f,
-             10, 0, 10, 0, 1, 0, 1.0f, 1.0f, 1.0f,
-             10, 0,-10, 0, 1, 0, 1.0f, 0.0f, 1.0f
+            -10, 0,-10, 0, 1, 0, 0.0f, 0.0f,
+            -10, 0, 10, 0, 1, 0, 0.0f, 1.0f,
+             10, 0, 10, 0, 1, 0, 1.0f, 1.0f,
+             10, 0,-10, 0, 1, 0, 1.0f, 0.0f
         };
 
         private readonly int[] mFloorIndices = new int[]
@@ -100,10 +100,10 @@ namespace Labs.ACW
 
         private readonly float[] mBackWallVertices = new float[]
         {
-            -10, 10,-10, 0, 0, 1, 0.0f, 0.0f, 1.0f,
-            -10, 0, -10, 0, 0, 1, 0.0f, 1.0f, 1.0f,
-             10, 0, -10, 0, 0, 1, 1.0f, 1.0f, 1.0f,
-             10, 10,-10, 0, 0, 1, 1.0f, 0.0f, 1.0f
+            -10, 10,-10, 0, 0, 1, 0.0f, 0.0f,
+            -10, 0, -10, 0, 0, 1, 0.0f, 1.0f,
+             10, 0, -10, 0, 0, 1, 1.0f, 1.0f,
+             10, 10,-10, 0, 0, 1, 1.0f, 0.0f
         };
 
         private readonly int[] mBackWallIndices = new int[]
@@ -194,10 +194,10 @@ namespace Labs.ACW
 
             // Bind Texture Data:
             // Floor
-            mTexture1Index = mTextureHandler.BindTextureData("ACW/Textures/texture.png");
+            mTexture1Index = mTextureHandler.BindTextureData("ACW/Textures/FloorTexture.jpg");
 
             // Wall
-            mTexture2Index = mTextureHandler.BindTextureData("ACW/Textures/texture2.png");
+            mTexture2Index = mTextureHandler.BindTextureData("ACW/Textures/WallTexture.jpg");
 
             // Bind Vertex Data:
             // Floor

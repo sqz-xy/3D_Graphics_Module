@@ -119,18 +119,13 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Challenge\Shaders\" />
+    <Folder Include="Lab4\Textures\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ACW\Textures\texture.png">
+    <Content Include="ACW\Textures\FloorTexture.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="ACW\Textures\texture2.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Lab4\Textures\texture.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Lab4\Textures\texture2.png">
+    <Content Include="ACW\Textures\WallTexture.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

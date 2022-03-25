@@ -97,13 +97,13 @@ namespace Labs.ACW
             if (pTextureLocation != -1)
             {
                 GL.EnableVertexAttribArray(pPositionLocation);
-                GL.VertexAttribPointer(pPositionLocation, 3, VertexAttribPointerType.Float, false, 9 * sizeof(float), 0);
+                GL.VertexAttribPointer(pPositionLocation, 3, VertexAttribPointerType.Float, false, 8 * sizeof(float), 0);
 
                 GL.EnableVertexAttribArray(pNormalLocation);
-                GL.VertexAttribPointer(pNormalLocation, 3, VertexAttribPointerType.Float, true, 9 * sizeof(float), 3 * sizeof(float));
+                GL.VertexAttribPointer(pNormalLocation, 3, VertexAttribPointerType.Float, true, 8 * sizeof(float), 3 * sizeof(float));
 
                 GL.EnableVertexAttribArray(pTextureLocation);
-                GL.VertexAttribPointer(pTextureLocation, 3, VertexAttribPointerType.Float, false, 9 * sizeof(float), 6 * sizeof(float));
+                GL.VertexAttribPointer(pTextureLocation, 2, VertexAttribPointerType.Float, false, 8 * sizeof(float), 6 * sizeof(float));
             }
             // No texture coordinates available
             else
