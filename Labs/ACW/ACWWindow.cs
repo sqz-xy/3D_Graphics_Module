@@ -114,14 +114,14 @@ namespace Labs.ACW
         private readonly float[] mConeVertices = new float[]
         {
              0f,  4f,  0f,       0, 1, 0,
-             0.25f,  0f,  0.75f, 1, 0, 1,
-             0.75f, 0f,  0.25f,   1, 0, 1,
-             1f, 0f,  -0.25f,    1, 0, -1,
-            0.25f, 0f, -0.75f,   1, 0, -1,
-             -0.25f, 0f, -0.75f, 1, 0, -1,
-            -0.75f,  0f, 0.25f,  -1, 0, -1,
-             -0.75f,  0f, 0.25f, -1, 0, 1,
-            -0.25f,  0f,  0.75f, -1, 0, 1,
+             0.25f,  -0.25f,  0.75f, 1, 0, 1,
+             0.75f, -0.25f,  0.25f,   1, 0, 1,
+             1f, -0.25f,  -0.25f,    1, 0, -1,
+             0.25f, -0.25f, -0.75f,   1, 0, -1,
+             -0.25f, -0.25f, -0.75f, 1, 0, -1,
+            -0.75f,  -0.25f, 0.25f,  -1, 0, -1,
+             -0.75f,  -0.25f, 0.25f, -1, 0, 1,
+            -0.25f,  -0.25f,  0.75f, -1, 0, 1,
         };
 
         private readonly int[] mConeIndices = new int[]
@@ -362,7 +362,7 @@ namespace Labs.ACW
             mMiddleCylinder = Matrix4.CreateTranslation(0, 0, -5f);
             mRightCylinder = Matrix4.CreateTranslation(5, 0, -5f);
             mCubeModel = Matrix4.CreateTranslation(-4.82f, 2, -4.82f);
-            mConeModel = Matrix4.CreateTranslation(5, 0.25f, -5f);
+            mConeModel = Matrix4.CreateTranslation(5, 1f, -5f);
         }
 
         /// <summary>
@@ -456,12 +456,12 @@ namespace Labs.ACW
             {
                 case true:
                     mConeModel = newConeScale;
-                    mConeModel *= Matrix4.CreateTranslation(5, 1, -5f);
+                    mConeModel *= Matrix4.CreateTranslation(5, 1.25f, -5f);
                     mConeScale += mConeScaleRate * pDeltaTime;
                     break;
                 case false:
                     mConeModel = newConeScale;
-                    mConeModel *= Matrix4.CreateTranslation(5, 1, -5f);
+                    mConeModel *= Matrix4.CreateTranslation(5, 1.25f, -5f);
                     mConeScale -= mConeScaleRate * pDeltaTime;
                     break;
             }
