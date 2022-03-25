@@ -228,7 +228,7 @@ namespace Labs.ACW
             InitializeLightProperties();
 
             // Bind the light properties and other values to the fragment shader
-            InitializeFragValues();
+            InitializeShaderValues();
 
             // Transform the light positions relative to the camera on initial launch
             MoveLightPos(mNonStaticView);
@@ -369,7 +369,7 @@ namespace Labs.ACW
         /// <summary>
         /// Initializes the lighting values for diffuse, ambient and specular light
         /// </summary>
-        private void InitializeFragValues()
+        private void InitializeShaderValues()
         {
             // Sets the eye position in the fragment shader using the views
             var uEyePosition = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uEyePosition");
@@ -395,6 +395,12 @@ namespace Labs.ACW
 
             var uShininess = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.Shininess");
             GL.Uniform1(uShininess, mLightingProperties.Shininess);
+
+            // Directional Lighting, per vertex
+            var uLightDirectionLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uLightDirection");
+            Vector3 normalisedLightDirection, lightDirection = new Vector3(-1, -1, -1);
+            Vector3.Normalize(ref lightDirection, out normalisedLightDirection);
+            GL.Uniform3(uLightDirectionLocation, normalisedLightDirection);
         }
 
         #endregion
