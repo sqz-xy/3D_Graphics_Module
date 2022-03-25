@@ -578,6 +578,10 @@ namespace Labs.ACW
 
                 if (mStaticViewEnabled)
                 {
+                    var uEyePosition = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uEyePosition");
+                    var eyePosition = new Vector4(mStaticView.ExtractTranslation(), 1);
+                    GL.Uniform4(uEyePosition, eyePosition);
+
                     var uView = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uView");
                     GL.UniformMatrix4(uView, true, ref mStaticView);
                     MoveView(mStaticView);
@@ -585,6 +589,10 @@ namespace Labs.ACW
                 }
                 else
                 {
+                    var uEyePosition = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uEyePosition");
+                    var eyePosition = new Vector4(mNonStaticView.ExtractTranslation(), 1);
+                    GL.Uniform4(uEyePosition, eyePosition);
+
                     var uView = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uView");
                     GL.UniformMatrix4(uView, true, ref mNonStaticView);
                     MoveView(mNonStaticView);
