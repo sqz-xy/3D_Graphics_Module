@@ -87,10 +87,10 @@ namespace Labs.ACW
 
         private readonly float[] mFloorVertices = new float[] 
         {
-            -10, 0,-10, 0, 1, 0, //0.0f, 0.0f, 1.0f,
-            -10, 0, 10, 0, 1, 0, //0.0f, 1.0f, 1.0f,
-             10, 0, 10, 0, 1, 0, //1.0f, 1.0f, 1.0f,
-             10, 0,-10, 0, 1, 0, //1.0f, 0.0f, 1.0f
+            -10, 0,-10, 0, 1, 0, 0.0f, 0.0f, 1.0f,
+            -10, 0, 10, 0, 1, 0, 0.0f, 1.0f, 1.0f,
+             10, 0, 10, 0, 1, 0, 1.0f, 1.0f, 1.0f,
+             10, 0,-10, 0, 1, 0, 1.0f, 0.0f, 1.0f
         };
 
         private readonly int[] mFloorIndices = new int[]
@@ -100,10 +100,10 @@ namespace Labs.ACW
 
         private readonly float[] mBackWallVertices = new float[]
         {
-            -10, 10,-10, 0, 0, 1, //0.0f, 0.0f, 1.0f,
-            -10, 0, -10, 0, 0, 1, //0.0f, 1.0f, 1.0f,
-             10, 0, -10, 0, 0, 1, //1.0f, 1.0f, 1.0f,
-             10, 10,-10, 0, 0, 1, //1.0f, 0.0f, 1.0f
+            -10, 10,-10, 0, 0, 1, 0.0f, 0.0f, 1.0f,
+            -10, 0, -10, 0, 0, 1, 0.0f, 1.0f, 1.0f,
+             10, 0, -10, 0, 0, 1, 1.0f, 1.0f, 1.0f,
+             10, 10,-10, 0, 0, 1, 1.0f, 0.0f, 1.0f
         };
 
         private readonly int[] mBackWallIndices = new int[]
@@ -201,7 +201,7 @@ namespace Labs.ACW
 
             // Bind Vertex Data:
             // Floor
-            mFloorIndex = mVertexDataHandler.BindVertexData(mFloorVertices, mFloorIndices, vPositionLocation, vNormalLocation, -1);
+            mFloorIndex = mVertexDataHandler.BindVertexData(mFloorVertices, mFloorIndices, vPositionLocation, vNormalLocation, vTexCoordsLocation);
 
             // Creature
             mCreature = ModelUtility.LoadModel(@"Utility/Models/model.bin");
@@ -215,7 +215,7 @@ namespace Labs.ACW
             mCubeIndex = mVertexDataHandler.BindVertexData(mCubeVertices, mCubeIndices, vPositionLocation, vNormalLocation, -1);
 
             // Back wall
-            mWallIndex = mVertexDataHandler.BindVertexData(mBackWallVertices, mBackWallIndices, vPositionLocation, vNormalLocation, -1);
+            mWallIndex = mVertexDataHandler.BindVertexData(mBackWallVertices, mBackWallIndices, vPositionLocation, vNormalLocation, vTexCoordsLocation);
 
             // Cone
             mConeIndex = mVertexDataHandler.BindVertexData(mConeVertices, mConeIndices, vPositionLocation, vNormalLocation, -1);

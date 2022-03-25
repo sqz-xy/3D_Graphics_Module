@@ -31,6 +31,14 @@ struct MaterialProperties {
 
 uniform MaterialProperties uMaterial;
 
+vec4 calculateTextureLight(vec4 pTexture, vec3 pAmbient, vec3 pDiffuse, vec3 pSpecular)
+{
+	vec4 totalAmbient = vec4(pAmbient, 1) * pTexture;
+	vec4 totalDiffuse = vec4(pDiffuse, 1) * pTexture;
+	vec4 totalSpecular = vec4(pSpecular, 1);
+	return totalAmbient + totalDiffuse + totalSpecular;
+}
+
 void main()
 {
 	FragColour = vec4(0.0);
@@ -60,8 +68,8 @@ void main()
 	else
 		// Check the current texture index
 		if (uTextureIndex == 0)
-			FragColour = texture(uTextureSampler1, oTexCoords) * totalLightAtten;
+			FragColour = FragColour + calculateTextureLight(texture(uTextureSampler1, oTexCoords), ambientLight, diffuseLight, specularLight) * attenuation;
 		else if (uTextureIndex == 1)
-		    FragColour = texture(uTextureSampler2, oTexCoords) * totalLightAtten;
+		    FragColour = FragColour + calculateTextureLight(texture(uTextureSampler2, oTexCoords), ambientLight, diffuseLight, specularLight) * attenuation;
 	}			
 }

@@ -39,7 +39,6 @@ namespace Labs.ACW
         /// Buffers and Binds texture data
         /// </summary>
         /// <param name="pFilePath">The path of the texture to bind</param>
-        /// <param name="pTexture_IDs">The array of texture IDs</param>
         public int BindTextureData(string pFilePath)
         {
             var filepath = @pFilePath;
@@ -104,12 +103,11 @@ namespace Labs.ACW
         /// <summary>
         /// Deletes the textures
         /// </summary>
-        /// <param name="pTexture_IDs">The array of texture ids</param>
         public void DeleteTextures()
         {
-            foreach (var Texture in mTexture_IDs)
+            foreach (var texture in mTexture_IDs)
             {
-                GL.DeleteTexture(Texture);
+                GL.DeleteTexture(texture);
             }
         }
 
