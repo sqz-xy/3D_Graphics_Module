@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Labs.ACW
 {
-    struct LightingProperties
+    struct PointLightProperties
     {
         /// <summary>
         /// The light positions
@@ -49,7 +49,7 @@ namespace Labs.ACW
         /// Struct must be initialized with a count pertaining to the number of lights and colours
         /// </summary>
         /// <param name="pLightCount">The number of desired lights</param>
-        public LightingProperties(int pLightCount)
+        public PointLightProperties(int pLightCount)
         {
             LightCount = pLightCount;
             LightPositions = new Vector4[pLightCount];

@@ -27,7 +27,7 @@ namespace Labs.ACW
         private bool mStaticViewEnabled;
 
         // Lighting Properties
-        private LightingProperties mLightingProperties;
+        private PointLightProperties mPointLightProperties;
 
         // Handlers
         private readonly VertexDataHandler mVertexDataHandler;
@@ -166,7 +166,7 @@ namespace Labs.ACW
             mTextureHandler = new TextureHandler(mTextureSize);
 
             // Light properties struct
-            mLightingProperties = new LightingProperties(4);
+            mPointLightProperties = new PointLightProperties(4);
         }
 
         /// <summary>
@@ -324,23 +324,23 @@ namespace Labs.ACW
         private void InitializeLightProperties()
         {
             // The three light positions
-            mLightingProperties.LightPositions[0] = new Vector4(3, 0.5f, -9.5f, 1);
-            mLightingProperties.LightPositions[1] = new Vector4(-3, 0.5f, -9.5f, 1);
-            mLightingProperties.LightPositions[2] = new Vector4(0, 0.5f, -12.5f, 1);
-            mLightingProperties.LightPositions[3] = new Vector4(0, 0.5f, -6.5f, 1);
+            mPointLightProperties.LightPositions[0] = new Vector4(3, 0.5f, -9.5f, 1);
+            mPointLightProperties.LightPositions[1] = new Vector4(-3, 0.5f, -9.5f, 1);
+            mPointLightProperties.LightPositions[2] = new Vector4(0, 0.5f, -12.5f, 1);
+            mPointLightProperties.LightPositions[3] = new Vector4(0, 0.5f, -6.5f, 1);
 
             // The three light colours
-            mLightingProperties.LightColours[0] = new Vector3(0.5f, 0, 0);
-            mLightingProperties.LightColours[1] = new Vector3(0, 0.5f, 0);
-            mLightingProperties.LightColours[2] = new Vector3(0, 0, 0.5f);
-            mLightingProperties.LightColours[3] = new Vector3(0.25f, 0, 0.25f);
+            mPointLightProperties.LightColours[0] = new Vector3(0.5f, 0, 0);
+            mPointLightProperties.LightColours[1] = new Vector3(0, 0.5f, 0);
+            mPointLightProperties.LightColours[2] = new Vector3(0, 0, 0.5f);
+            mPointLightProperties.LightColours[3] = new Vector3(0.25f, 0, 0.25f);
 
             // The three light reflectivity pro
-            mLightingProperties.AmbientReflectivity = new Vector3(0.1f, 0.1f, 0.1f);
-            mLightingProperties.DiffuseReflectivity = new Vector3(0.5f, 0.5f, 0.5f);
-            mLightingProperties.SpecularReflectivity = new Vector3(0.7f, 0.7f, 0.7f);
+            mPointLightProperties.AmbientReflectivity = new Vector3(0.1f, 0.1f, 0.1f);
+            mPointLightProperties.DiffuseReflectivity = new Vector3(0.5f, 0.5f, 0.5f);
+            mPointLightProperties.SpecularReflectivity = new Vector3(0.7f, 0.7f, 0.7f);
 
-            mLightingProperties.Shininess = 15f;
+            mPointLightProperties.Shininess = 15f;
         }
 
         /// <summary>
@@ -385,16 +385,16 @@ namespace Labs.ACW
 
             // Positional Lighting, per fragment
             var uAmbientReflectivity = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.AmbientReflectivity");
-            GL.Uniform3(uAmbientReflectivity, mLightingProperties.AmbientReflectivity);
+            GL.Uniform3(uAmbientReflectivity, mPointLightProperties.AmbientReflectivity);
 
             var uDiffuseReflectivity = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.DiffuseReflectivity");
-            GL.Uniform3(uDiffuseReflectivity, mLightingProperties.DiffuseReflectivity);
+            GL.Uniform3(uDiffuseReflectivity, mPointLightProperties.DiffuseReflectivity);
 
             var uSpecularReflectivity = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.SpecularReflectivity");
-            GL.Uniform3(uSpecularReflectivity, mLightingProperties.SpecularReflectivity);
+            GL.Uniform3(uSpecularReflectivity, mPointLightProperties.SpecularReflectivity);
 
             var uShininess = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.Shininess");
-            GL.Uniform1(uShininess, mLightingProperties.Shininess);
+            GL.Uniform1(uShininess, mPointLightProperties.Shininess);
 
             // Directional Lighting, per vertex
             var uLightDirectionLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uLightDirection");
@@ -493,16 +493,16 @@ namespace Labs.ACW
         /// </summary>
         private void SetLightColours()
         {
-            for (var lightIndex = 0; lightIndex < mLightingProperties.LightCount; lightIndex++)
+            for (var lightIndex = 0; lightIndex < mPointLightProperties.LightCount; lightIndex++)
             {
                 var uAmbientLightLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].AmbientLight");
-                GL.Uniform3(uAmbientLightLocation, mLightingProperties.LightColours[lightIndex]);
+                GL.Uniform3(uAmbientLightLocation, mPointLightProperties.LightColours[lightIndex]);
 
                 var uDiffuseLightLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].DiffuseLight");
-                GL.Uniform3(uDiffuseLightLocation, mLightingProperties.LightColours[lightIndex]);
+                GL.Uniform3(uDiffuseLightLocation, mPointLightProperties.LightColours[lightIndex]);
 
                 var uSpecularLightLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].SpecularLight");
-                GL.Uniform3(uSpecularLightLocation, mLightingProperties.LightColours[lightIndex]);
+                GL.Uniform3(uSpecularLightLocation, mPointLightProperties.LightColours[lightIndex]);
             }
         }
 
@@ -662,9 +662,9 @@ namespace Labs.ACW
         /// <param name="pView"></param>
         private void MoveLightPos(Matrix4 pView)
         {
-            for (var lightIndex = 0; lightIndex < mLightingProperties.LightCount; lightIndex++)
+            for (var lightIndex = 0; lightIndex < mPointLightProperties.LightCount; lightIndex++)
             {
-                mTransformedLightPos = Vector4.Transform(mLightingProperties.LightPositions[lightIndex], pView);
+                mTransformedLightPos = Vector4.Transform(mPointLightProperties.LightPositions[lightIndex], pView);
                 var uLightPositionLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, $"uLight[{lightIndex}].Position");
                 GL.Uniform4(uLightPositionLocation, mTransformedLightPos);
             }

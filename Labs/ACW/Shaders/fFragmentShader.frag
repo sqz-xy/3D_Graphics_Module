@@ -69,11 +69,11 @@ void main()
 		vec3 diffuseLight = uLight[i].DiffuseLight * uMaterial.DiffuseReflectivity * diffuseFactor;
 		vec3 specularLight = uLight[i].SpecularLight * uMaterial.SpecularReflectivity * specularFactor;
 
-		// Calculate the directional Light
-		vec4 diectionalLight = CalculateDirectionalLight(oNormal, uEyePosition, specularLight, uMaterial.Shininess);
+		// Calculate the directional Light // DOESNT WORK
+		vec4 directionalLight = CalculateDirectionalLight(oNormal, uEyePosition, specularLight, uMaterial.Shininess);
 
 		// Total the light
-		vec4 totalLight = vec4(ambientLight + diffuseLight + specularLight, 1) + diectionalLight;
+		vec4 totalLight = vec4(ambientLight + diffuseLight + specularLight, 1);
 		vec4 totalLightAtten = totalLight * attenuation;
 
 		// If no Texture Coords are present
