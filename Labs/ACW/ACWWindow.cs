@@ -231,7 +231,7 @@ namespace Labs.ACW
             InitializeFragValues();
 
             // Transform the light positions relative to the camera on initial launch
-            TransformLightPos(mNonStaticView);
+            MoveLightPos(mNonStaticView);
         }
 
         
@@ -580,14 +580,14 @@ namespace Labs.ACW
                 {
                     var uView = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uView");
                     GL.UniformMatrix4(uView, true, ref mStaticView);
-                    MoveCamera(mStaticView);
+                    MoveView(mStaticView);
 
                 }
                 else
                 {
                     var uView = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uView");
                     GL.UniformMatrix4(uView, true, ref mNonStaticView);
-                    MoveCamera(mNonStaticView);
+                    MoveView(mNonStaticView);
                 }
 
             }
@@ -597,35 +597,35 @@ namespace Labs.ACW
             {
                 case 'a':
                     mNonStaticView *= Matrix4.CreateTranslation(mDirectionalSpeed, 0, 0);
-                    MoveCamera(mNonStaticView);
+                    MoveView(mNonStaticView);
                     break;
                 case 'd':
                     mNonStaticView *= Matrix4.CreateTranslation(-mDirectionalSpeed, 0, 0);
-                    MoveCamera(mNonStaticView);
+                    MoveView(mNonStaticView);
                     break;
                 case 'w':
                     mNonStaticView *= Matrix4.CreateTranslation(0, 0, mDirectionalSpeed);
-                    MoveCamera(mNonStaticView);
+                    MoveView(mNonStaticView);
                     break;
                 case 's':
                     mNonStaticView *= Matrix4.CreateTranslation(0, 0, -mDirectionalSpeed);
-                    MoveCamera(mNonStaticView);
+                    MoveView(mNonStaticView);
                     break;
                 case ' ':
                     mNonStaticView *= Matrix4.CreateTranslation(0, -mDirectionalSpeed, 0);
-                    MoveCamera(mNonStaticView);
+                    MoveView(mNonStaticView);
                     break;
                 case 'c':
                     mNonStaticView *= Matrix4.CreateTranslation(0, mDirectionalSpeed, 0);
-                    MoveCamera(mNonStaticView);
+                    MoveView(mNonStaticView);
                     break;
                 case 'q':
                     mNonStaticView *= Matrix4.CreateRotationY(-mRotationalSpeed);
-                    MoveCamera(mNonStaticView);
+                    MoveView(mNonStaticView);
                     break;
                 case 'e':
                     mNonStaticView *= Matrix4.CreateRotationY(mRotationalSpeed);
-                    MoveCamera(mNonStaticView);
+                    MoveView(mNonStaticView);
                     break;
             }
         }
@@ -633,16 +633,12 @@ namespace Labs.ACW
         /// <summary>
         /// Updates the view matrix when the camera is moved
         /// </summary>
-        private void MoveCamera(Matrix4 pView)
+        private void MoveView(Matrix4 pView)
         {
             var uViewLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uView");
             GL.UniformMatrix4(uViewLocation, true, ref pView);
 
-            var uEyePosition = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uEyePosition");
-            var eyePosition = new Vector4(pView.ExtractTranslation(), 1);
-            GL.Uniform4(uEyePosition, eyePosition);
-
-            TransformLightPos(pView);
+            MoveLightPos(pView);
         }
 
 
@@ -650,7 +646,7 @@ namespace Labs.ACW
         /// Transforms the light positions so they stay stationary relative to the current view
         /// </summary>
         /// <param name="pView"></param>
-        private void TransformLightPos(Matrix4 pView)
+        private void MoveLightPos(Matrix4 pView)
         {
             for (var lightIndex = 0; lightIndex < mLightingProperties.LightCount; lightIndex++)
             {
