@@ -1,11 +1,12 @@
 ﻿// TODO: Get Lighting working with textures, Add frame buffer objects, Add spotlights
 
 using Labs.Utility;
+
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
+
 using System;
-using System.Threading;
 
 namespace Labs.ACW
 {
@@ -113,15 +114,15 @@ namespace Labs.ACW
 
         private readonly float[] mConeVertices = new float[]
         {
-             0f,  4f,  0f,       0, 1, 0,
-             0.25f,  -0.25f,  0.75f, 1, 0, 1,
-             0.75f, -0.25f,  0.25f,   1, 0, 1,
-             1f, -0.25f,  -0.25f,    1, 0, -1,
-             0.25f, -0.25f, -0.75f,   1, 0, -1,
-             -0.25f, -0.25f, -0.75f, 1, 0, -1,
-            -0.75f,  -0.25f, 0.25f,  -1, 0, -1,
-             -0.75f,  -0.25f, 0.25f, -1, 0, 1,
-            -0.25f,  -0.25f,  0.75f, -1, 0, 1,
+                0f,    4f,  0f,    0, 1, 0,
+             0.25f,-0.25f,  0.75f, 1, 0, 1,
+             0.75f,-0.25f,  0.25f, 1, 0, 1,
+                1f,-0.25f, -0.25f, 1, 0,-1,
+             0.25f,-0.25f, -0.75f, 1, 0,-1,
+            -0.25f,-0.25f, -0.75f, 1, 0,-1,
+            -0.75f,-0.25f,  0.25f,-1, 0,-1,
+            -0.75f,-0.25f,  0.25f,-1, 0, 1,
+            -0.25f,-0.25f,  0.75f,-1, 0, 1,
         };
 
         private readonly int[] mConeIndices = new int[]

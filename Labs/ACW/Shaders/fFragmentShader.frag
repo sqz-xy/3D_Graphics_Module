@@ -51,6 +51,8 @@ void main()
 		vec4 reflectedVector = reflect(-lightDir, oNormal);
 
 		float dist = distance(uLight[i].Position, oSurfacePosition);
+
+		// Attenuation
 		float attenuation = (1.0 / (1.0 + 0.1 * dist + 0.01 * dist * dist));
 
 		float diffuseFactor = max(dot(oNormal, lightDir), 0);
@@ -64,13 +66,13 @@ void main()
 		vec4 totalLightAtten = totalLight * attenuation;
 
 		// If no Texture Coords are present
-	if (oTexCoords.xy == vec2(0, 0))
-		FragColour = totalLightAtten;
-	else
-		// Check the current texture index
-		if (uTextureIndex == 0)
-			FragColour = FragColour + calculateTextureLight(texture(uTextureSampler1, oTexCoords), ambientLight, diffuseLight, specularLight) * attenuation;
-		else if (uTextureIndex == 1)
-		    FragColour = FragColour + calculateTextureLight(texture(uTextureSampler2, oTexCoords), ambientLight, diffuseLight, specularLight) * attenuation;
+		if (oTexCoords.xy == vec2(0, 0))
+			FragColour = totalLightAtten;
+		else
+			// Check the current texture index
+			if (uTextureIndex == 0)
+				FragColour = FragColour + calculateTextureLight(texture(uTextureSampler1, oTexCoords), ambientLight, diffuseLight, specularLight) * attenuation;
+			else if (uTextureIndex == 1)
+				FragColour = FragColour + calculateTextureLight(texture(uTextureSampler2, oTexCoords), ambientLight, diffuseLight, specularLight) * attenuation;
 	}			
 }
