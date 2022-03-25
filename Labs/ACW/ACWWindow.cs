@@ -339,7 +339,7 @@ namespace Labs.ACW
             mLightingProperties.DiffuseReflectivity = new Vector3(0.5f, 0.5f, 0.5f);
             mLightingProperties.SpecularReflectivity = new Vector3(0.7f, 0.7f, 0.7f);
 
-            mLightingProperties.Shininess = 12.8f;
+            mLightingProperties.Shininess = 15f;
         }
 
         /// <summary>
