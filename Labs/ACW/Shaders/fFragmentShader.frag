@@ -40,6 +40,7 @@ struct DirectionalLightProperties {
 
 uniform DirectionalLightProperties uDirectionalLight;
 
+// Calculates the global directional light
 vec4 CalculateDirectionalLight(vec4 pEyeDirection)
 {
 	vec4 lightDir = normalize(-uDirectionalLight.Direction);

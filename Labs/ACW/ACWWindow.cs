@@ -351,9 +351,10 @@ namespace Labs.ACW
             mDirectionalLightProperties.Direction = new Vector4(1, 1, 1, 1);
             
             // The three light colours
-            mDirectionalLightProperties.AmbientLight = new Vector3(0.05f, 0.05f, 0.05f);
-            mDirectionalLightProperties.DiffuseLight = new Vector3(0.05f, 0.05f, 0.05f);
-            mDirectionalLightProperties.SpecularLight = new Vector3(0.05f, 0.05f, 0.05f);
+            mDirectionalLightProperties.AmbientLight = new Vector3(0.02f, 0.02f, 0.02f);
+            mDirectionalLightProperties.DiffuseLight = new Vector3(0.02f, 0.02f, 0.02f);
+            mDirectionalLightProperties.SpecularLight = new Vector3(0.02f, 0.02f, 0.02f);
+
         }
 
         /// <summary>
@@ -409,7 +410,7 @@ namespace Labs.ACW
             var uShininess = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uMaterial.Shininess");
             GL.Uniform1(uShininess, mPointLightProperties.Shininess);
 
-            // Directional Lighting, per vertex
+            // Directional Lighting, per Fragment
             var uLightDirection = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uDirectionalLight.Direction");
             GL.Uniform4(uLightDirection, mDirectionalLightProperties.Direction);
 
