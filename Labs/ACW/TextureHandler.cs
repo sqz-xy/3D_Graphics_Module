@@ -105,11 +105,7 @@ namespace Labs.ACW
         /// </summary>
         public void DeleteTextures()
         {
-            GL.BindTexture(TextureTarget.Texture2D, 0);
-            foreach (var texture in mTexture_IDs)
-            {
-                GL.DeleteTexture(texture);
-            }
+            GL.DeleteTextures(mTextureIndex, mTexture_IDs);
         }
     }
 }

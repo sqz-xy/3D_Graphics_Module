@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ACW\ACWWindow.cs" />
+    <Compile Include="ACW\DirectionalLightProperties.cs" />
     <Compile Include="ACW\PointLightProperties.cs" />
     <Compile Include="ACW\TextureHandler.cs" />
     <Compile Include="ACW\VertexDataHandler.cs" />

@@ -31,18 +31,26 @@ struct MaterialProperties {
 
 uniform MaterialProperties uMaterial;
 
-vec4 CalculateDirectionalLight(vec4 pNormal, vec4 pEyePos, vec3 pSpecular, float pShininess)
-{
-	vec3 normal = normalize(vec3(pNormal));
-	vec3 eyeNormal = normalize(vec3(uEyePosition));
-	float intensity = max(dot(normal, uLightDirection), 0);
+struct DirectionalLightProperties {
+	vec4 Direction;
+	vec3 AmbientLight;
+	vec3 DiffuseLight;
+	vec3 SpecularLight;
+};
 
-	if (intensity > 0.0) 
-	{     
-        vec3 halfVector = normalize(uLightDirection + eyeNormal);  
-        float intSpec = max(dot(halfVector, normal), 0.0);
-        return vec4(pSpecular * pow(intSpec, pShininess), 1);
-    }
+uniform DirectionalLightProperties uDirectionalLight;
+
+vec4 CalculateDirectionalLight(vec4 pEyeDirection)
+{
+	vec4 lightDir = normalize(-uDirectionalLight.Direction);
+	vec4 reflectedVector = reflect(-lightDir, oNormal);
+	float diffuseFactor = max(dot(oNormal, uDirectionalLight.Direction), 0);
+	float specularFactor = pow(max(dot(reflectedVector, pEyeDirection), 0.0), uMaterial.Shininess);
+
+	vec3 diffuseLight = diffuseFactor * uDirectionalLight.DiffuseLight * uMaterial.DiffuseReflectivity;
+	vec3 specularLight = specularFactor * uDirectionalLight.SpecularLight * uMaterial.SpecularReflectivity;
+	vec3 ambientLight = uDirectionalLight.AmbientLight * uMaterial.AmbientReflectivity;
+	return vec4(diffuseLight + specularLight + ambientLight, 1);
 }
 
 void main()
@@ -70,10 +78,10 @@ void main()
 		vec3 specularLight = uLight[i].SpecularLight * uMaterial.SpecularReflectivity * specularFactor;
 
 		// Calculate the directional Light // DOESNT WORK
-		vec4 directionalLight = CalculateDirectionalLight(oNormal, uEyePosition, specularLight, uMaterial.Shininess);
+		vec4 directionalLight = CalculateDirectionalLight(eyeDirection);
 
 		// Total the light
-		vec4 totalLight = vec4(ambientLight + diffuseLight + specularLight, 1);
+		vec4 totalLight = vec4(ambientLight + diffuseLight + specularLight, 1) + directionalLight;
 		vec4 totalLightAtten = totalLight * attenuation;
 
 		// If no Texture Coords are present

@@ -7,6 +7,7 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 
 using System;
+using System.Drawing;
 
 namespace Labs.ACW
 {
@@ -28,6 +29,7 @@ namespace Labs.ACW
 
         // Lighting Properties
         private PointLightProperties mPointLightProperties;
+        private DirectionalLightProperties mDirectionalLightProperties;
 
         // Handlers
         private readonly VertexDataHandler mVertexDataHandler;
@@ -167,6 +169,7 @@ namespace Labs.ACW
 
             // Light properties struct
             mPointLightProperties = new PointLightProperties(4);
+            mDirectionalLightProperties = new DirectionalLightProperties();
         }
 
         /// <summary>
@@ -323,6 +326,7 @@ namespace Labs.ACW
         /// </summary>
         private void InitializeLightProperties()
         {
+            // Point Lighting
             // The three light positions
             mPointLightProperties.LightPositions[0] = new Vector4(3, 0.5f, -9.5f, 1);
             mPointLightProperties.LightPositions[1] = new Vector4(-3, 0.5f, -9.5f, 1);
@@ -341,6 +345,15 @@ namespace Labs.ACW
             mPointLightProperties.SpecularReflectivity = new Vector3(0.7f, 0.7f, 0.7f);
 
             mPointLightProperties.Shininess = 15f;
+
+            // Directional Lighting
+            // Light Direction
+            mDirectionalLightProperties.Direction = new Vector4(1, 1, 1, 1);
+            
+            // The three light colours
+            mDirectionalLightProperties.AmbientLight = new Vector3(0.05f, 0.05f, 0.05f);
+            mDirectionalLightProperties.DiffuseLight = new Vector3(0.05f, 0.05f, 0.05f);
+            mDirectionalLightProperties.SpecularLight = new Vector3(0.05f, 0.05f, 0.05f);
         }
 
         /// <summary>
@@ -397,10 +410,17 @@ namespace Labs.ACW
             GL.Uniform1(uShininess, mPointLightProperties.Shininess);
 
             // Directional Lighting, per vertex
-            var uLightDirectionLocation = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uLightDirection");
-            Vector3 normalisedLightDirection, lightDirection = new Vector3(-1, -1, -1);
-            Vector3.Normalize(ref lightDirection, out normalisedLightDirection);
-            GL.Uniform3(uLightDirectionLocation, normalisedLightDirection);
+            var uLightDirection = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uDirectionalLight.Direction");
+            GL.Uniform4(uLightDirection, mDirectionalLightProperties.Direction);
+
+            var uAmbientLight = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uDirectionalLight.AmbientLight");
+            GL.Uniform3(uAmbientLight, mDirectionalLightProperties.AmbientLight);
+
+            var uDiffuseLight = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uDirectionalLight.DiffuseLight");
+            GL.Uniform3(uDiffuseLight, mDirectionalLightProperties.DiffuseLight);
+
+            var uSpecularLight = GL.GetUniformLocation(mLightingShader.ShaderProgramID, "uDirectionalLight.SpecularLight");
+            GL.Uniform3(uSpecularLight, mDirectionalLightProperties.SpecularLight);
         }
 
         #endregion
