@@ -1,4 +1,4 @@
-﻿// TODO: Get Lighting working with textures, Add frame buffer objects, Add spotlights
+﻿// Final Submission | Thomas Beet | 632115
 
 using Labs.Utility;
 
